@@ -3,6 +3,7 @@ package com.github.gokid96.e_commerce.balance.controller;
 import com.github.gokid96.e_commerce.balance.dto.request.BalanceChargeRequest;
 import com.github.gokid96.e_commerce.balance.dto.response.BalanceResponse;
 import com.github.gokid96.e_commerce.common.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class BalanceController {
     }
 
     @PostMapping("/{userId}/balance/charge")
-    public ApiResponse<?> chargeBalance(@PathVariable long userId, @RequestBody BalanceChargeRequest request) {
+    public ApiResponse<?> chargeBalance(@PathVariable long userId, @Valid @RequestBody BalanceChargeRequest request) {
         return ApiResponse.ok();
     }
 }
