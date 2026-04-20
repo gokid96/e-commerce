@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class BalanceChargeRequest {
     @NotNull(message = "충전 금액은 필수입니다.")
     @Positive(message = "충전 금액은 양수여야 합니다.")
-    private long amount;
+    private Long amount;
 
     private BalanceChargeRequest(long amount) {
         this.amount = amount;

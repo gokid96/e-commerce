@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class BalanceController {
 
     @GetMapping("/{userId}/balance")
-    public ApiResponse<BalanceResponse> getBalance(@PathVariable long userId) {
+    public ApiResponse<BalanceResponse> getBalance(@PathVariable("userId") Long userId) {
         return ApiResponse.ok(BalanceResponse.of(1000000L));
     }
 
     @PostMapping("/{userId}/balance/charge")
-    public ApiResponse<?> chargeBalance(@PathVariable long userId, @Valid @RequestBody BalanceChargeRequest request) {
+    public ApiResponse<?> chargeBalance(@PathVariable("userId") Long userId, @Valid @RequestBody BalanceChargeRequest request) {
         return ApiResponse.ok();
     }
 }
