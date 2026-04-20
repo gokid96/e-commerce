@@ -19,7 +19,10 @@ class BalanceControllerTest extends ControllerTestSupport {
     @DisplayName("잔액을 조회한다.")
     @Test
     void getBalance() throws Exception {
-        mockMvc.perform(get("/api/v1/users/{userId}/balance", 1L))
+        // when & then
+        mockMvc.perform(
+                        get("/api/v1/users/{userId}/balance", 1L)
+                )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
@@ -30,11 +33,15 @@ class BalanceControllerTest extends ControllerTestSupport {
     @DisplayName("잔액 충전 시, 금액은 필수이다.")
     @Test
     void chargeBalanceWithoutAmount() throws Exception {
+        // given
         BalanceChargeRequest request = new BalanceChargeRequest();
 
-        mockMvc.perform(post("/api/v1/users/{userId}/balance/charge", 1L)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON))
+        // when & then
+        mockMvc.perform(
+                        post("/api/v1/users/{userId}/balance/charge", 1L)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400))
@@ -45,11 +52,15 @@ class BalanceControllerTest extends ControllerTestSupport {
     @ParameterizedTest
     @ValueSource(longs = {-1000L, 0L})
     void chargeBalanceWithNegativeOrZeroAmount(long amount) throws Exception {
+        // given
         BalanceChargeRequest request = BalanceChargeRequest.of(amount);
 
-        mockMvc.perform(post("/api/v1/users/{userId}/balance/charge", 1L)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON))
+        // when & then
+        mockMvc.perform(
+                        post("/api/v1/users/{userId}/balance/charge", 1L)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400))
@@ -59,11 +70,15 @@ class BalanceControllerTest extends ControllerTestSupport {
     @DisplayName("잔액을 충전한다.")
     @Test
     void chargeBalance() throws Exception {
+        // given
         BalanceChargeRequest request = BalanceChargeRequest.of(10000L);
 
-        mockMvc.perform(post("/api/v1/users/{userId}/balance/charge", 1L)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON))
+        // when & then
+        mockMvc.perform(
+                        post("/api/v1/users/{userId}/balance/charge", 1L)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))

@@ -19,13 +19,13 @@ import java.util.List;
 public class CouponController {
 
     @GetMapping
-    public ApiResponse<List<CouponResponse>> getCoupons(@PathVariable long userId) {
+    public ApiResponse<List<CouponResponse>> getCoupons(@PathVariable("userId") Long userId) {
         return ApiResponse.ok(List.of(CouponResponse.of(1L,"쿠폰명",0.1,LocalDateTime.now())));
     }
 
-    @PostMapping
-    public ApiResponse<?> issueCoupon( @PathVariable long userId,
-                                       @Valid @RequestBody CouponIssueRequest request) {
+    @PostMapping("/issue")
+    public ApiResponse<?> issueCoupon(@PathVariable("userId") Long userId,
+                                      @Valid @RequestBody CouponIssueRequest request) {
         return ApiResponse.ok();
     }
 }
