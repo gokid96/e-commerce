@@ -9,10 +9,6 @@ import lombok.Getter;
 public class BalanceResponse {
     private long amount;
 
-//    private BalanceResponse(long amount) {
-//        this.amount = amount;
-//    }
-
     public static BalanceResponse of(long amount) {
         return new BalanceResponse(amount);
     }
