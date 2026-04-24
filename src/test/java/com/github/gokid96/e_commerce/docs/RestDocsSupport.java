@@ -1,5 +1,6 @@
 package com.github.gokid96.e_commerce.docs;
 
+import com.github.gokid96.e_commerce.common.ApiControllerAdvice;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -19,8 +20,9 @@ public abstract class RestDocsSupport {
     @BeforeEach
     void setUp(RestDocumentationContextProvider provider) {
         this.mockMvc = MockMvcBuilders.standaloneSetup(initController())
-            .apply(documentationConfiguration(provider))
-            .build();
+                .apply(documentationConfiguration(provider))
+                .setControllerAdvice(new ApiControllerAdvice())
+                .build();
     }
 
     protected abstract Object initController();
