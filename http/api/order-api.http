@@ -1,0 +1,22 @@
+### 주문 생성 API (쿠폰 사용)
+POST http://127.0.0.1:8080/api/v1/orders
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "couponId": 2,
+  "products": [
+    { "id": 3, "quantity": 2 }
+  ]
+}
+
+### 주문 생성 API (쿠폰 미사용)
+POST http://127.0.0.1:8080/api/v1/orders
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "products": [
+    { "id": 3, "quantity": 1 }
+  ]
+}
