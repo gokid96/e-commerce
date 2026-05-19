@@ -1,0 +1,14 @@
+package com.github.gokid96.e_commerce.balance.domain;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public enum BalanceTransactionType {
+
+    CHARGE("충전"),
+    USE("사용");
+
+    private final String description;
+}
