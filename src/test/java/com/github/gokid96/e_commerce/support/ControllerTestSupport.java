@@ -1,12 +1,14 @@
 package com.github.gokid96.e_commerce.support;
 
-import com.github.gokid96.e_commerce.balance.controller.BalanceController;
+import com.github.gokid96.e_commerce.balance.application.BalanceFacade;
+import com.github.gokid96.e_commerce.balance.interfaces.BalanceController;
 import com.github.gokid96.e_commerce.common.ApiControllerAdvice;
 import com.github.gokid96.e_commerce.coupon.controller.CouponController;
 import com.github.gokid96.e_commerce.order.controller.OrderController;
 import com.github.gokid96.e_commerce.product.controller.ProductController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
@@ -24,4 +26,7 @@ public abstract class ControllerTestSupport {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @MockitoBean
+    protected BalanceFacade balanceFacade;
 }
