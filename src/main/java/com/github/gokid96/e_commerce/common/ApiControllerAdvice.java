@@ -16,4 +16,10 @@ public class ApiControllerAdvice {
                 e.getBindingResult().getAllErrors().get(0).getDefaultMessage()
         );
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<Object> illegalArgumentException(IllegalArgumentException e) {
+        return ApiResponse.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
 }

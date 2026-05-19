@@ -1,6 +1,6 @@
-package com.github.gokid96.e_commerce.balance.controller;
+package com.github.gokid96.e_commerce.balance.interfaces;
 
-import com.github.gokid96.e_commerce.balance.dto.request.BalanceChargeRequest;
+import com.github.gokid96.e_commerce.balance.application.BalanceResult;
 import com.github.gokid96.e_commerce.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -19,27 +20,28 @@ class BalanceControllerTest extends ControllerTestSupport {
     @DisplayName("잔액을 조회한다.")
     @Test
     void getBalance() throws Exception {
+        // given
+        BalanceResult.Balance result = BalanceResult.Balance.builder()
+                .amount(1_000_000L)
+                .build();
+        given(balanceFacade.getBalance(1L)).willReturn(result);
         // when & then
-        mockMvc.perform(
-                        get("/api/v1/users/{userId}/balance", 1L)
-                )
+        mockMvc.perform(get("/api/v1/users/{userId}/balance", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.message").value("OK"))
-                .andExpect(jsonPath("$.data.amount").value(1000000));
+                .andExpect(jsonPath("$.data.amount").value(1_000_000L));
     }
 
-    @DisplayName("잔액 충전 시, 금액은 필수이다.")
+    @DisplayName("잔액 충전 시, 금액은 필수다.")
     @Test
     void chargeBalanceWithoutAmount() throws Exception {
         // given
-        BalanceChargeRequest request = new BalanceChargeRequest();
-
+       String content = "{}";
         // when & then
-        mockMvc.perform(
-                        post("/api/v1/users/{userId}/balance/charge", 1L)
-                                .content(objectMapper.writeValueAsString(request))
+        mockMvc.perform(post("/api/v1/users/{userId}/balance/charge", 1L)
+                                .content(content)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
@@ -53,12 +55,12 @@ class BalanceControllerTest extends ControllerTestSupport {
     @ValueSource(longs = {-1000L, 0L})
     void chargeBalanceWithNegativeOrZeroAmount(long amount) throws Exception {
         // given
-        BalanceChargeRequest request = BalanceChargeRequest.of(amount);
+       String content = "{\"amount\":" + amount + "}";
 
         // when & then
         mockMvc.perform(
                         post("/api/v1/users/{userId}/balance/charge", 1L)
-                                .content(objectMapper.writeValueAsString(request))
+                                .content(content)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
@@ -71,12 +73,12 @@ class BalanceControllerTest extends ControllerTestSupport {
     @Test
     void chargeBalance() throws Exception {
         // given
-        BalanceChargeRequest request = BalanceChargeRequest.of(10000L);
+        String content = "{\"amount\": 10000}";
 
         // when & then
         mockMvc.perform(
                         post("/api/v1/users/{userId}/balance/charge", 1L)
-                                .content(objectMapper.writeValueAsString(request))
+                                .content(content)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
@@ -84,4 +86,7 @@ class BalanceControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.message").value("OK"));
     }
+
+
+
 }
