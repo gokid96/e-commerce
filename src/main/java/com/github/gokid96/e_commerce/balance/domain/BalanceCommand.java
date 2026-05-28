@@ -7,14 +7,15 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BalanceCommand {
+
     @Getter
     public static class Charge {
-        private final Long UserId;
+        private final Long userId;
         private final Long amount;
 
         @Builder
         private Charge(final Long userId, final Long amount) {
-            UserId = userId;
+            this.userId = userId;
             this.amount = amount;
         }
 
@@ -28,12 +29,12 @@ public class BalanceCommand {
 
     @Getter
     public static class Use {
-        private final Long UserId;
+        private final Long userId;
         private final Long amount;
 
         @Builder
         private Use(final Long userId, final Long amount) {
-            UserId = userId;
+            this.userId = userId;
             this.amount = amount;
         }
 
