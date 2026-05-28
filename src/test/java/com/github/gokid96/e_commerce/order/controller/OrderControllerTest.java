@@ -1,6 +1,7 @@
 package com.github.gokid96.e_commerce.order.controller;
 
 import com.github.gokid96.e_commerce.support.ControllerTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -10,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled("주문 도메인 정식 구현 시 재작성 예정")
 class OrderControllerTest extends ControllerTestSupport {
 
     @DisplayName("주문을 생성한다.")

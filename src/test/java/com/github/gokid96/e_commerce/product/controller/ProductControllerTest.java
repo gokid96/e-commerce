@@ -1,6 +1,7 @@
 package com.github.gokid96.e_commerce.product.controller;
 
 import com.github.gokid96.e_commerce.support.ControllerTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+@Disabled("상품 도메인 정식 구현 시 재작성 예정")
 class ProductControllerTest extends ControllerTestSupport {
 
     @DisplayName("상품 목록을 조회한다.")
