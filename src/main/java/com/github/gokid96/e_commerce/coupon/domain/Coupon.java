@@ -39,7 +39,7 @@ public class Coupon {
     }
 
     public static Coupon create(String name, long discountAmount, int totalQuantity) {
-        if (discountAmount < 0) {
+        if (discountAmount <= 0) {
             throw new IllegalArgumentException("할인 금액은 양수여야 합니다.");
         }
         if (totalQuantity <= 0) {
@@ -59,7 +59,7 @@ public class Coupon {
         }
         if (issuedQuantity >= totalQuantity) {
             this.status = CouponStatus.UNAVAILABLE;
-            throw new IllegalStateException("쿠폰이 모두 소진되었습니다.");
+            throw new IllegalArgumentException("쿠폰이 모두 소진되었습니다.");
         }
         this.issuedQuantity++;
         if (issuedQuantity >= totalQuantity) {
