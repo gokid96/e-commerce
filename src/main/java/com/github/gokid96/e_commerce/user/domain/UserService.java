@@ -16,7 +16,7 @@ public class UserService {
 
         return UserInfo.User.builder()
                 .userId(user.getId())
-                .userName(user.getUserName())
+                .nickname(user.getNickname())
                 .build();
     }
 
