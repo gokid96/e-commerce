@@ -82,6 +82,7 @@ public class CouponFacadeTest {
         // then
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getCouponName()).isEqualTo("신규 가입 할인");
+        assertThat(result.get(0).getUsedStatus()).isEqualTo(UserCouponUsedStatus.UNUSED);
 
         InOrder inOrder = inOrder(userService, couponService);
         inOrder.verify(userService).getUser(1L);
