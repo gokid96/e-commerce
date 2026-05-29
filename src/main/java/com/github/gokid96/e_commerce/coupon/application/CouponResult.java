@@ -32,6 +32,7 @@ public class CouponResult {
                     .couponId(info.getCouponId())
                     .couponName(info.getCouponName())
                     .discountAmount(info.getDiscountAmount())
+                    .usedStatus(info.getUsedStatus())
                     .userCouponId(info.getUserCouponId())
                     .build();
         }
