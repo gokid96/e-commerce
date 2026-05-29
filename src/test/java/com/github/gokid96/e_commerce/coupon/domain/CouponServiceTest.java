@@ -31,9 +31,9 @@ public class CouponServiceTest {
     void issueCoupon() {
         // given
         Coupon coupon = Coupon.create("신규 가입 할인", 10_000L, 100);
-        given(couponRepository.findCouponById(1L)).willReturn(Optional.of(coupon));
+        given(couponRepository.findCouponById(5L)).willReturn(Optional.of(coupon));
 
-        CouponCommand.Issue command = CouponCommand.Issue.of(1L, 1L);
+        CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
 
         // when
         couponService.issueCoupon(command);
@@ -47,9 +47,9 @@ public class CouponServiceTest {
     @Test
     void issueCoupon_notFound() {
         // given
-        given(couponRepository.findCouponById(1L)).willReturn(Optional.empty());
+        given(couponRepository.findCouponById(5L)).willReturn(Optional.empty());
 
-        CouponCommand.Issue command = CouponCommand.Issue.of(1L, 1L);
+        CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
 
         // when & then
         assertThatThrownBy(() -> couponService.issueCoupon(command))

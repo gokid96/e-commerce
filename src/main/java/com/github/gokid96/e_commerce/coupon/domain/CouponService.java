@@ -12,7 +12,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
 
     public void issueCoupon(CouponCommand.Issue command) {
-        Coupon coupon = couponRepository.findCouponById(command.getUserId())
+        Coupon coupon = couponRepository.findCouponById(command.getCouponId())
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
 
         coupon.issue();
