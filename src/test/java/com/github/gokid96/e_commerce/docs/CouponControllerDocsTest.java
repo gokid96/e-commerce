@@ -96,7 +96,7 @@ class CouponControllerDocsTest extends RestDocsSupport {
                 .userCouponId(100L)
                 .couponId(5L)
                 .couponName("신규 가입 할인")
-                .discountAmount(10_000L)
+                .discountRate(0.1)
                 .usedStatus(UserCouponUsedStatus.UNUSED)
                 .build();
         given(couponFacade.getUserCoupons(1L)).willReturn(List.of(result));
@@ -117,7 +117,7 @@ class CouponControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data[].userCouponId").description("발급된 쿠폰 ID"),
                                 fieldWithPath("data[].couponId").description("쿠폰 정책 ID"),
                                 fieldWithPath("data[].couponName").description("쿠폰 이름"),
-                                fieldWithPath("data[].discountAmount").description("할인 금액"),
+                                fieldWithPath("data[].discountRate").description("할인율"),
                                 fieldWithPath("data[].usedStatus").description("사용 여부 (UNUSED/USED)")
                         )
                 ));
