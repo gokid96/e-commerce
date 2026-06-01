@@ -70,7 +70,7 @@ public class CouponFacadeTest {
                 .userCouponId(100L)
                 .couponId(5L)
                 .couponName("신규 가입 할인")
-                .discountAmount(10_000L)
+                .discountRate(0.1)
                 .usedStatus(UserCouponUsedStatus.UNUSED)
                 .build();
         given(couponService.getUserCoupons(1L)).willReturn(List.of(info));

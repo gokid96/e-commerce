@@ -16,22 +16,22 @@ public class CouponResult {
         private final Long userCouponId;
         private final Long couponId;
         private final String couponName;
-        private final long discountAmount;
+        private final double discountRate;
         private final UserCouponUsedStatus usedStatus;
 
         @Builder
-        private UserCoupon(Long userCouponId,Long couponId,String couponName,long discountAmount,UserCouponUsedStatus usedStatus) {
+        private UserCoupon(Long userCouponId,Long couponId,String couponName,double discountRate,UserCouponUsedStatus usedStatus) {
             this.userCouponId = userCouponId;
             this.couponId = couponId;
             this.couponName = couponName;
-            this.discountAmount = discountAmount;
+            this.discountRate = discountRate;
             this.usedStatus = usedStatus;
         }
         public static UserCoupon of(CouponInfo.UserCoupon info){
             return UserCoupon.builder()
                     .couponId(info.getCouponId())
                     .couponName(info.getCouponName())
-                    .discountAmount(info.getDiscountAmount())
+                    .discountRate(info.getDiscountRate())
                     .usedStatus(info.getUsedStatus())
                     .userCouponId(info.getUserCouponId())
                     .build();

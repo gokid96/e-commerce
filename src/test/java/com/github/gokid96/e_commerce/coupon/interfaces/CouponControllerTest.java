@@ -90,7 +90,7 @@ class CouponControllerTest extends ControllerTestSupport {
                 .userCouponId(100L)
                 .couponId(5L)
                 .couponName("신규 가입 할인")
-                .discountAmount(10_000L)
+                .discountRate(0.1)
                 .usedStatus(UserCouponUsedStatus.UNUSED)
                 .build();
         given(couponFacade.getUserCoupons(1L)).willReturn(List.of(result));
@@ -101,7 +101,6 @@ class CouponControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data[0].couponName").value("신규 가입 할인"))
-                .andExpect(jsonPath("$.data[0].discountAmount").value(10_000L))
-                .andExpect(jsonPath("$.data[0].usedStatus").value("UNUSED"));
+                .andExpect(jsonPath("$.data[0].discountRate").value(0.1))                .andExpect(jsonPath("$.data[0].usedStatus").value("UNUSED"));
     }
 }

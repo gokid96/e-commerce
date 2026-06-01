@@ -13,16 +13,16 @@ public class CouponInfo {
         private final Long userCouponId;
         private final Long couponId;
         private final String couponName;
-        private final long discountAmount;
+        private final double discountRate;
         private final UserCouponUsedStatus usedStatus;
 
         @Builder
         private UserCoupon(Long userCouponId, Long couponId, String couponName,
-                           long discountAmount, UserCouponUsedStatus usedStatus) {
+                           double discountRate, UserCouponUsedStatus usedStatus) {
             this.userCouponId = userCouponId;
             this.couponId = couponId;
             this.couponName = couponName;
-            this.discountAmount = discountAmount;
+            this.discountRate = discountRate;
             this.usedStatus = usedStatus;
         }
 
@@ -34,7 +34,7 @@ public class CouponInfo {
                     .userCouponId(userCoupon.getId())
                     .couponId(coupon.getId())
                     .couponName(coupon.getName())
-                    .discountAmount(coupon.getDiscountAmount())
+                    .discountRate(coupon.getDiscountRate())
                     .usedStatus(userCoupon.getUsedStatus())
                     .build();
         }

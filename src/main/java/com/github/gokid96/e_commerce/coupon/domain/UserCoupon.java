@@ -1,21 +1,26 @@
 package com.github.gokid96.e_commerce.coupon.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserCoupon {
 
     @Id
+    @Column(name = "user_coupon_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -25,12 +30,18 @@ public class UserCoupon {
     @Enumerated(EnumType.STRING)
     private UserCouponUsedStatus usedStatus;
 
+    private LocalDateTime issuedAt;
+    private LocalDateTime usedAt;
+
     @Builder
-    private UserCoupon(Long id, Long userId, Long couponId, UserCouponUsedStatus usedStatus) {
+    private UserCoupon(Long id, Long userId, Long couponId, UserCouponUsedStatus usedStatus,
+                       LocalDateTime issuedAt, LocalDateTime usedAt) {
         this.id = id;
         this.userId = userId;
         this.couponId = couponId;
         this.usedStatus = usedStatus;
+        this.issuedAt = issuedAt;
+        this.usedAt = usedAt;
     }
 
     public static UserCoupon create(Long userId, Long couponId) {
@@ -38,6 +49,7 @@ public class UserCoupon {
                 .userId(userId)
                 .couponId(couponId)
                 .usedStatus(UserCouponUsedStatus.UNUSED)
+                .issuedAt(LocalDateTime.now())
                 .build();
     }
 
@@ -46,6 +58,7 @@ public class UserCoupon {
             throw new IllegalArgumentException("이미 사용된 쿠폰입니다.");
         }
         this.usedStatus = UserCouponUsedStatus.USED;
+        this.usedAt = LocalDateTime.now();
     }
 }
 

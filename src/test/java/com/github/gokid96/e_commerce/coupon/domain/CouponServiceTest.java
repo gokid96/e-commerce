@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ public class CouponServiceTest {
     @Test
     void issueCoupon() {
         // given
-        Coupon coupon = Coupon.create("신규 가입 할인", 10_000L, 100);
+        Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
         given(couponRepository.findCouponById(5L)).willReturn(Optional.of(coupon));
 
         CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
@@ -38,7 +39,7 @@ public class CouponServiceTest {
         // when
         couponService.issueCoupon(command);
 
-        assertThat(coupon.getIssuedQuantity()).isEqualTo(1);
+        assertThat(coupon.getQuantity()).isEqualTo(99);
         verify(couponRepository, times(1)).saveCoupon(coupon);
         verify(couponRepository, times(1)).saveUserCoupon(any(UserCoupon.class));
     }
@@ -105,7 +106,7 @@ public class CouponServiceTest {
     @Test
     void getUserCoupons(){
         // given
-        Coupon coupon = Coupon.create("신규 가입 할인",10_000L,100);
+        Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
         UserCoupon userCoupon = UserCoupon.create(1L, 5L);
 
         given(couponRepository.findUserCouponsByUserId(1L))
@@ -119,7 +120,7 @@ public class CouponServiceTest {
         // then
         assertThat(infos).hasSize(1);
         assertThat(infos.get(0).getCouponName()).isEqualTo("신규 가입 할인");
-        assertThat(infos.get(0).getDiscountAmount()).isEqualTo(10_000L);
+        assertThat(infos.get(0).getDiscountRate()).isEqualTo(0.1);
         assertThat(infos.get(0).getUsedStatus()).isEqualTo(UserCouponUsedStatus.UNUSED);
     }
 

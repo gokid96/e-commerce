@@ -10,12 +10,12 @@ public class UserInfo {
     @Getter
     public static  class User {
         private final  Long userId;
-        private final  String userName;
+        private final  String nickname;
 
         @Builder
-        private User(Long userId, String userName) {
+        private User(Long userId, String nickname) {
             this.userId = userId;
-            this.userName = userName;
+            this.nickname = nickname;
         }
 
     }

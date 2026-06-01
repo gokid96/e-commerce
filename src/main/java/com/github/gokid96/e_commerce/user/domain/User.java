@@ -20,17 +20,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String userName;
+    private String nickname;
 
     @Builder
-    private User(Long id, String userName) {
+    private User(Long id, String nickname) {
         this.id = id;
-        this.userName = userName;
+        this.nickname = nickname;
     }
 
-    public static User create(String userName) {
+    public static User create(String nickname) {
         return User.builder()
-                .userName(userName)
+                .nickname(nickname)
                 .build();
     }
 }
