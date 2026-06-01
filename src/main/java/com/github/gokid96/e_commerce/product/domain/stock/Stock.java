@@ -1,0 +1,44 @@
+package com.github.gokid96.e_commerce.product.domain.stock;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Stock {
+
+    @Id
+    @Column(name = "stock_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long productId;
+
+    private int quantity;
+
+    @Builder
+    private Stock(Long id, Long productId, int quantity) {
+        this.id = id;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
+    public static Stock create(Long productId, int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("재고 수량은 0 이상이어야 합니다.");
+
+        }
+        return Stock.builder()
+                .productId(productId)
+                .quantity(quantity)
+                .build();
+    }
+}
