@@ -15,7 +15,7 @@ public enum ProductSellingStatus {
 
     private final String description;
 
-    private static final List<ProductSellingStatus> CANNOT_SELLING_STATUS = List.of(HOLD, SELLING);
+    private static final List<ProductSellingStatus> CANNOT_SELLING_STATUS = List.of(HOLD, STOP_SELLING);
 
     public boolean cannotSelling(){
         return CANNOT_SELLING_STATUS.contains(this);
