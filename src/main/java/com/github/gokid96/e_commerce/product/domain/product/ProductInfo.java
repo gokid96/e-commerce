@@ -38,11 +38,14 @@ public class ProductInfo {
             this.stock = stock;
         }
 
-        public static Product of(Long productId, String productName, long productPrice, int stock) {
+        public static Product of(
+                com.github.gokid96.e_commerce.product.domain.product.Product product,
+                int stock
+        ){
             return Product.builder()
-                    .productId(productId)
-                    .productName(productName)
-                    .productPrice(productPrice)
+                    .productId(product.getId())
+                    .productName(product.getName())
+                    .productPrice(product.getPrice())
                     .stock(stock)
                     .build();
         }
