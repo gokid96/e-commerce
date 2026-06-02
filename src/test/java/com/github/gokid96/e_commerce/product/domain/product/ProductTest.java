@@ -1,7 +1,5 @@
-package com.github.gokid96.e_commerce.product.domain;
+package com.github.gokid96.e_commerce.product.domain.product;
 
-import com.github.gokid96.e_commerce.product.domain.product.Product;
-import com.github.gokid96.e_commerce.product.domain.product.ProductSellingStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
