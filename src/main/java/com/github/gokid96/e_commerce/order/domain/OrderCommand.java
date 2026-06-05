@@ -40,23 +40,23 @@ public class OrderCommand {
     public static class OrderProduct {
         private final Long productId;
         private final String productName;
-        private final long quantityPrice;
+        private final long productPrice;
         private final int quantity;
 
         @Builder
-        private OrderProduct(Long productId, String productName, long quantityPrice, int quantity) {
+        private OrderProduct(Long productId, String productName, long productPrice, int quantity) {
             this.productId = productId;
             this.productName = productName;
-            this.quantityPrice = quantityPrice;
+            this.productPrice = productPrice;
             this.quantity = quantity;
 
         }
 
-        public static OrderProduct of(Long productId, String productName, long quantityPrice, int quantity) {
+        public static OrderProduct of(Long productId, String productName, long productPrice, int quantity) {
             return OrderProduct.builder()
                     .productId(productId)
                     .productName(productName)
-                    .quantityPrice(quantityPrice)
+                    .productPrice(productPrice)
                     .quantity(quantity)
                     .build();
         }
