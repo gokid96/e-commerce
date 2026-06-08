@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -32,11 +33,11 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    private LocalDate paidAt;
+    private LocalDateTime paidAt;
 
     @Builder
     private Payment(Long id,Long orderId,long amount, PaymentMethod paymentMethod,
-                    PaymentStatus paymentStatus, LocalDate paidAt) {
+                    PaymentStatus paymentStatus, LocalDateTime paidAt) {
         this.id = id;
         this.orderId = orderId;
         this.paymentMethod = paymentMethod;
@@ -60,7 +61,7 @@ public class Payment {
             throw new IllegalArgumentException("결제 가능 상태가 아닙니다.");
         }
         this.paymentStatus = PaymentStatus.COMPLETED;
-        this.paidAt = LocalDate.now();
+        this.paidAt = LocalDateTime.now();
     }
 }
 
