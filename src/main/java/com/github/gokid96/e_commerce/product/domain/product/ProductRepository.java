@@ -7,4 +7,6 @@ public interface ProductRepository {
     Product save(Product product);
 
     List<Product> findBySellStatusIn(List<ProductSellingStatus> statuses);
+
+    List<Product> findByIdIn(List<Long> productIds);
 }
