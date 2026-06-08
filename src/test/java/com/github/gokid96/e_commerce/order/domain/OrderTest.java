@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class OrderTest {
 
@@ -58,5 +59,13 @@ public class OrderTest {
 
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
+    }
+
+    @Test
+    @DisplayName("주문 상품이 없으면 주문을 생성할 수 없다")
+    void create_emptyOrderProducts() {
+        assertThatThrownBy(() -> Order.create(1L, null, 0.0, List.of()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 상품이 없습니다.");
     }
 }
