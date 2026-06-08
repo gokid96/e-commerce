@@ -41,4 +41,11 @@ public class Stock {
                 .quantity(quantity)
                 .build();
     }
+
+    public void deduct(int quantity){
+        if(this.quantity< quantity){
+            throw new IllegalArgumentException("재고가 부족합니다.");
+        }
+        this.quantity -= quantity;
+    }
 }
