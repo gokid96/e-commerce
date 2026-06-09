@@ -48,7 +48,6 @@ public class CouponService {
         return CouponInfo.UserCoupon.of(userCoupon, coupon);
     }
 
-
     public List<CouponInfo.UserCoupon> getUserCoupons(Long userId) {
         List<UserCoupon> userCoupons = couponRepository.findUserCouponsByUserId(userId);
 
