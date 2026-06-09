@@ -41,12 +41,53 @@ public class ProductInfo {
         public static Product of(
                 com.github.gokid96.e_commerce.product.domain.product.Product product,
                 int stock
-        ){
+        ) {
             return Product.builder()
                     .productId(product.getId())
                     .productName(product.getName())
                     .productPrice(product.getPrice())
                     .stock(stock)
+                    .build();
+        }
+    }
+
+    @Getter
+    public static class OrderProducts {
+        private final List<OrderProduct> products;
+
+        @Builder
+        private OrderProducts(List<OrderProduct> products) {
+            this.products = products;
+        }
+
+        public static OrderProducts of(List<OrderProduct> products) {
+            return OrderProducts.builder()
+                    .products(products)
+                    .build();
+        }
+    }
+
+    @Getter
+    public static class OrderProduct {
+        private final Long productId;
+        private final String productName;
+        private final long productPrice;
+        private final int quantity;
+
+        @Builder
+        private OrderProduct(Long productId, String productName, long productPrice, int quantity) {
+            this.productId = productId;
+            this.productName = productName;
+            this.productPrice = productPrice;
+            this.quantity = quantity;
+        }
+
+        public static OrderProduct of(Long productId, String productName, long productPrice, int quantity) {
+            return OrderProduct.builder()
+                    .productId(productId)
+                    .productName(productName)
+                    .productPrice(productPrice)
+                    .quantity(quantity)
                     .build();
         }
     }

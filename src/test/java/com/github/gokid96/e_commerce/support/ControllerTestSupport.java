@@ -5,6 +5,8 @@ import com.github.gokid96.e_commerce.balance.interfaces.BalanceController;
 import com.github.gokid96.e_commerce.common.ApiControllerAdvice;
 import com.github.gokid96.e_commerce.coupon.application.CouponFacade;
 import com.github.gokid96.e_commerce.coupon.interfaces.CouponController;
+import com.github.gokid96.e_commerce.order.application.OrderFacade;
+import com.github.gokid96.e_commerce.order.interfaces.OrderController;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
 import com.github.gokid96.e_commerce.product.interfaces.ProductController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import tools.jackson.databind.ObjectMapper;
         BalanceController.class,
         CouponController.class,
         ProductController.class,
+        OrderController.class,
         ApiControllerAdvice.class
 })
 public abstract class ControllerTestSupport {
@@ -30,4 +33,6 @@ public abstract class ControllerTestSupport {
     protected CouponFacade couponFacade;
     @MockitoBean
     protected ProductService productService;
+    @MockitoBean
+    protected OrderFacade orderFacade;
 }

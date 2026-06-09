@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 
@@ -32,7 +33,8 @@ public class ProductServiceTest {
     void getSellingProducts() {
         // given
         Product product1 = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.SELLING).build();
-        Product product2 = Product.builder().id(2L).name("상품B").price(2000L).sellStatus(ProductSellingStatus.SELLING).build();     given(productRepository.findBySellStatusIn(ProductSellingStatus.forSelling()))
+        Product product2 = Product.builder().id(2L).name("상품B").price(2000L).sellStatus(ProductSellingStatus.SELLING).build();
+        given(productRepository.findBySellStatusIn(ProductSellingStatus.forSelling()))
                 .willReturn(List.of(product1, product2));
 
         given(stockService.getStock(product1.getId())).willReturn(StockInfo.Stock.of(10L, 50));
@@ -64,6 +66,65 @@ public class ProductServiceTest {
 
         // then
         assertThat(result.getProducts()).isEmpty();
+    }
+
+    @DisplayName("주문할 상품들을 수량과 함께 조회한다.")
+    @Test
+    void getOrderProducts() {
+        // given
+        Product product1 = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.SELLING).build();
+        Product product2 = Product.builder().id(2L).name("상품B").price(2000L).sellStatus(ProductSellingStatus.SELLING).build();
+        given(productRepository.findByIdIn(List.of(1L, 2L))).willReturn(List.of(product1, product2));
+
+        ProductCommand.OrderProducts command = ProductCommand.OrderProducts.of(List.of(
+                ProductCommand.OrderProduct.of(1L, 2),
+                ProductCommand.OrderProduct.of(2L, 3)
+        ));
+
+        // when
+        ProductInfo.OrderProducts result = productService.getOrderProducts(command);
+
+        // then
+        assertThat(result.getProducts()).hasSize(2);
+        assertThat(result.getProducts().get(0).getProductName()).isEqualTo("상품A");
+        assertThat(result.getProducts().get(0).getProductPrice()).isEqualTo(1000L);
+        assertThat(result.getProducts().get(0).getQuantity()).isEqualTo(2);
+        assertThat(result.getProducts().get(1).getQuantity()).isEqualTo(3);
+    }
+
+    @DisplayName("존재하지 않는 상품이 포함되면 주문 상품 조회에 실패한다.")
+    @Test
+    void getOrderProducts_notFound() {
+        //given
+        Product product1 = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.SELLING).build();
+        given(productRepository.findByIdIn(List.of(1L, 2L))).willReturn(List.of(product1));
+
+        ProductCommand.OrderProducts command = ProductCommand.OrderProducts.of(List.of(
+                ProductCommand.OrderProduct.of(1L, 2),
+                ProductCommand.OrderProduct.of(2L, 3)
+        ));
+
+        // when & then
+        assertThatThrownBy(() -> productService.getOrderProducts(command))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 상품입니다.");
+    }
+
+    @DisplayName("판매 중이 아닌 상품은 주문할 수 없다.")
+    @Test
+    void getOrderProducts_notSelling() {
+        // given
+        Product product = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.STOP_SELLING).build();
+        given(productRepository.findByIdIn(List.of(1L))).willReturn(List.of(product));
+
+        ProductCommand.OrderProducts command = ProductCommand.OrderProducts.of(List.of(
+                ProductCommand.OrderProduct.of(1L, 1)
+        ));
+
+        // when & then
+        assertThatThrownBy(() -> productService.getOrderProducts(command))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("판매 중인 상품이 아닙니다.");
     }
 
 }

@@ -34,6 +34,20 @@ public class CouponService {
         couponRepository.saveUserCoupon(userCoupon);
     }
 
+    public CouponInfo.UserCoupon getUserCoupon(CouponCommand.Use command) {
+        UserCoupon userCoupon = couponRepository.findUserCouponById(command.getUserCouponId())
+                .orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
+
+        if (!userCoupon.getUserId().equals(command.getUserId())) {
+            throw new IllegalArgumentException("본인의 쿠폰이 아닙니다.");
+        }
+
+        Coupon coupon = couponRepository.findCouponById(userCoupon.getCouponId())
+                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+
+        return CouponInfo.UserCoupon.of(userCoupon, coupon);
+    }
+
     public List<CouponInfo.UserCoupon> getUserCoupons(Long userId) {
         List<UserCoupon> userCoupons = couponRepository.findUserCouponsByUserId(userId);
 
@@ -44,7 +58,6 @@ public class CouponService {
                     return CouponInfo.UserCoupon.of(userCoupon, coupon);
                 })
                 .toList();
-
     }
 
 

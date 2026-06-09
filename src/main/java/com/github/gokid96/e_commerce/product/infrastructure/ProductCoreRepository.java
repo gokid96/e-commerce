@@ -24,4 +24,9 @@ public class ProductCoreRepository implements ProductRepository {
     public List<Product> findBySellStatusIn(List<ProductSellingStatus> statuses) {
         return productJpaRepository.findBySellStatusIn(statuses);
     }
+
+    @Override
+    public List<Product> findByIdIn(List<Long> ids) {
+        return productJpaRepository.findByIdIn(ids);
+    }
 }
