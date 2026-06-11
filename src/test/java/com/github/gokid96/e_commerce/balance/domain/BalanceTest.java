@@ -79,4 +79,14 @@ public class BalanceTest {
         assertThat(balance.getAmount()).isZero();
     }
 
+    @DisplayName("최대 잔액을 초과해 충전할 수 없다.")
+    @Test
+    void charge_exceedMax(){
+        // given
+        Balance balance = Balance.create(1L,9_000_000L);
+        // when & then
+        assertThatThrownBy(()-> balance.charge(2_000_000L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("최대 잔액(1,000만원)을 초과할 수 없습니다.");
+    }
 }
