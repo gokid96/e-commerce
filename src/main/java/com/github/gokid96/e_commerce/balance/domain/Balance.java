@@ -27,6 +27,8 @@ public class Balance {
 
     private long amount;
 
+    private static final long MAX_BALANCE_AMOUNT = 10_000_000L;
+
     @OneToMany(mappedBy = "balance", cascade = CascadeType.ALL)
     private List<BalanceTransaction> balanceTransactions = new ArrayList<>();
 
@@ -39,9 +41,7 @@ public class Balance {
     }
 
     public static Balance create(Long userId, Long amount) {
-        if (amount == null || amount <= 0) {
-            throw new IllegalArgumentException("충전 금액은 양수여야 합니다.");
-        }
+        validateAmount(amount);
         return Balance.builder()
                 .userId(userId)
                 .amount(amount)
@@ -51,6 +51,9 @@ public class Balance {
     public void charge(long amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("충전 금액은 양수여야 합니다.");
+        }
+        if (this.amount + amount > MAX_BALANCE_AMOUNT) {
+            throw new IllegalArgumentException("최대 잔액(1,000만원)을 초과할 수 없습니다.");
         }
         this.amount += amount;
         addChargeTransaction(amount);
@@ -69,5 +72,14 @@ public class Balance {
 
     private void addChargeTransaction(long amount) {
         balanceTransactions.add(BalanceTransaction.ofCharge(this, amount));
+    }
+
+    private static void validateAmount(Long amount) {
+        if (amount == null || amount <= 0) {
+            throw new IllegalArgumentException("충전 금액은 양수여야 합니다.");
+        }
+        if (amount > MAX_BALANCE_AMOUNT) {
+            throw new IllegalArgumentException("최대 잔액(1,000만원)을 초과할 수 없습니다.");
+        }
     }
 }
