@@ -50,5 +50,15 @@ public class ProductService {
         return ProductInfo.OrderProducts.of(orderProducts);
     }
 
+    public ProductInfo.Products getProducts(ProductCommand.Products command) {
+        List<ProductInfo.Product> products = command.getProductIds().stream()
+                .map(productRepository::findById)
+                .map(product -> {
+                    StockInfo.Stock stock = stockService.getStock(product.getId());
+                    return ProductInfo.Product.of(product, stock.getQuantity());
+                }).toList();
+        return ProductInfo.Products.of(products);
+    }
+
 
 }

@@ -29,4 +29,10 @@ public class ProductCoreRepository implements ProductRepository {
     public List<Product> findByIdIn(List<Long> ids) {
         return productJpaRepository.findByIdIn(ids);
     }
+
+    @Override
+    public Product findById(Long productId){
+        return productJpaRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 상품입니다."));
+    }
 }
