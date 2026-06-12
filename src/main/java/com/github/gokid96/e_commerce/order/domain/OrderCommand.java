@@ -62,4 +62,24 @@ public class OrderCommand {
         }
 
     }
+
+    @Getter
+    public static class TopOrders {
+        private final List<Long> orderIds;
+        private final int limit;
+
+        @Builder
+        private TopOrders(List<Long> orderIds, int limit) {
+            this.orderIds = orderIds;
+            this.limit = limit;
+        }
+
+        public static TopOrders of(List<Long> orderIds, int limit) {
+            return TopOrders.builder()
+                    .orderIds(orderIds)
+                    .limit(limit)
+                    .build();
+        }
+    }
+
 }
