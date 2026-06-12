@@ -74,7 +74,8 @@ public class ProductServiceTest {
         // given
         Product product1 = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.SELLING).build();
         Product product2 = Product.builder().id(2L).name("상품B").price(2000L).sellStatus(ProductSellingStatus.SELLING).build();
-        given(productRepository.findByIdIn(List.of(1L, 2L))).willReturn(List.of(product1, product2));
+        given(productRepository.findById(1L)).willReturn(product1);
+        given(productRepository.findById(2L)).willReturn(product2);
 
         ProductCommand.OrderProducts command = ProductCommand.OrderProducts.of(List.of(
                 ProductCommand.OrderProduct.of(1L, 2),
@@ -97,7 +98,8 @@ public class ProductServiceTest {
     void getOrderProducts_notFound() {
         //given
         Product product1 = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.SELLING).build();
-        given(productRepository.findByIdIn(List.of(1L, 2L))).willReturn(List.of(product1));
+        given(productRepository.findById(1L)).willReturn(product1);
+        given(productRepository.findById(2L)).willThrow(new IllegalArgumentException("존재하지 않는 상품입니다."));
 
         ProductCommand.OrderProducts command = ProductCommand.OrderProducts.of(List.of(
                 ProductCommand.OrderProduct.of(1L, 2),
@@ -115,7 +117,7 @@ public class ProductServiceTest {
     void getOrderProducts_notSelling() {
         // given
         Product product = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.STOP_SELLING).build();
-        given(productRepository.findByIdIn(List.of(1L))).willReturn(List.of(product));
+        given(productRepository.findById(1L)).willReturn(product);
 
         ProductCommand.OrderProducts command = ProductCommand.OrderProducts.of(List.of(
                 ProductCommand.OrderProduct.of(1L, 1)

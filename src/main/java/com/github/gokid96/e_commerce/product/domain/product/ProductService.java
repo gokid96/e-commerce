@@ -6,9 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,15 +27,9 @@ public class ProductService {
     }
 
     public ProductInfo.OrderProducts getOrderProducts(ProductCommand.OrderProducts command) {
-        Map<Long, Product> productMap = productRepository.findByIdIn(command.productIds()).stream()
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
-
         List<ProductInfo.OrderProduct> orderProducts = command.getProducts().stream()
                 .map(item -> {
-                    Product product = productMap.get(item.getProductId());
-                    if (product == null) {
-                        throw new IllegalArgumentException("존재하지 않는 상품입니다.");
-                    }
+                    Product product = productRepository.findById(item.getProductId());
                     if (product.cannotSelling()) {
                         throw new IllegalArgumentException("판매 중인 상품이 아닙니다.");
                     }
@@ -46,7 +37,6 @@ public class ProductService {
                             product.getId(), product.getName(), product.getPrice(), item.getQuantity());
                 })
                 .toList();
-
         return ProductInfo.OrderProducts.of(orderProducts);
     }
 
