@@ -7,6 +7,7 @@ import com.github.gokid96.e_commerce.coupon.application.CouponFacade;
 import com.github.gokid96.e_commerce.coupon.interfaces.CouponController;
 import com.github.gokid96.e_commerce.order.application.OrderFacade;
 import com.github.gokid96.e_commerce.order.interfaces.OrderController;
+import com.github.gokid96.e_commerce.product.application.ProductFacade;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
 import com.github.gokid96.e_commerce.product.interfaces.ProductController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ public abstract class ControllerTestSupport {
     protected CouponFacade couponFacade;
     @MockitoBean
     protected ProductService productService;
+    @MockitoBean
+    protected ProductFacade productFacade;
     @MockitoBean
     protected OrderFacade orderFacade;
 }

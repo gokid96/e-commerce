@@ -45,7 +45,20 @@ public class ProductCommand {
                     .productId(productId)
                     .quantity(quantity).build();
         }
+    }
 
+    @Getter
+    public static class Products {
+        private final List<Long> productIds;
+
+        @Builder
+        private Products(List<Long> productIds) {
+            this.productIds = productIds;
+        }
+
+        public static Products of(List<Long> productIds) {
+            return Products.builder().productIds(productIds).build();
+        }
     }
 
 

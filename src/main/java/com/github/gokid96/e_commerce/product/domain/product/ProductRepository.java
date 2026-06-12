@@ -9,4 +9,7 @@ public interface ProductRepository {
     List<Product> findBySellStatusIn(List<ProductSellingStatus> statuses);
 
     List<Product> findByIdIn(List<Long> productIds);
+
+    Product findById(Long productId);
+
 }
