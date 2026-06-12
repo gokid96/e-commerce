@@ -26,6 +26,8 @@ public class Payment {
 
     private Long orderId;
 
+    private long amount;
+
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
@@ -39,6 +41,7 @@ public class Payment {
                     PaymentStatus paymentStatus, LocalDateTime paidAt) {
         this.id = id;
         this.orderId = orderId;
+        this.amount = amount;
         this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
         this.paidAt = paidAt;
@@ -51,7 +54,7 @@ public class Payment {
         return Payment.builder()
                 .orderId(orderId)
                 .amount(amount)
-                .paymentMethod(PaymentMethod.BALANCE)
+                .paymentMethod(PaymentMethod.UNKNOWN)
                 .paymentStatus(PaymentStatus.READY)
                 .build();
     }
