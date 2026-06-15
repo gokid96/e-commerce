@@ -1,5 +1,6 @@
 package com.github.gokid96.e_commerce.product.interfaces.dto;
 
+import com.github.gokid96.e_commerce.product.application.ProductResult;
 import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,8 +20,8 @@ public class ProductResponse {
             this.products = products;
         }
 
-        public static Products of(ProductInfo.Products info) {
-            List<Product> products = info.getProducts().stream()
+        public static Products of(ProductResult.Products result) {
+            List<Product> products = result.getProducts().stream()
                     .map(Product::of)
                     .toList();
             return new Products(products);
@@ -42,7 +43,7 @@ public class ProductResponse {
             this.stock = stock;
         }
 
-        public static Product of(ProductInfo.Product info) {
+        public static Product of(ProductResult.Product info) {
             return Product.builder()
                     .id(info.getProductId())
                     .name(info.getProductName())

@@ -8,6 +8,8 @@ import com.github.gokid96.e_commerce.payment.domain.PaymentService;
 import com.github.gokid96.e_commerce.product.domain.product.ProductCommand;
 import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
+import com.github.gokid96.e_commerce.product.domain.stock.StockInfo;
+import com.github.gokid96.e_commerce.product.domain.stock.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,14 +24,35 @@ public class ProductFacade {
     private final PaymentService paymentService;
     private final OrderService orderService;
     private final ProductService productService;
+    private final StockService stockService;
 
     @Transactional(readOnly = true)
-    public ProductInfo.Products getPopularProducts() {
+    public ProductResult.Products getProducts() {
+        ProductInfo.Products products = productService.getSellingProducts();
+        return toResult(products);
+    }
+
+    @Transactional(readOnly = true)
+    public ProductResult.Products getPopularProducts() {
         PaymentInfo.Orders completedOrders = paymentService.getCompletedOrdersBetweenDays(RECENT_DAYS);
 
         OrderCommand.TopOrders command = OrderCommand.TopOrders.of(completedOrders.getOrderIds(), TOP_LIMIT);
         OrderInfo.TopPaidProducts topPaidProducts = orderService.getTopPaidProducts(command);
 
-        return productService.getProducts(ProductCommand.Products.of(topPaidProducts.getProductIds()));
+        ProductInfo.Products products = productService.getProducts(
+                ProductCommand.Products.of(topPaidProducts.getProductIds()));
+        return toResult(products);
+    }
+
+    private ProductResult.Products toResult(ProductInfo.Products products) {
+        return ProductResult.Products.of(products.getProducts().stream()
+                .map(this::toProductResult)
+                .toList());
+    }
+
+    private ProductResult.Product toProductResult(ProductInfo.Product product) {
+        StockInfo.Stock stock = stockService.getStock(product.getProductId());
+        return ProductResult.Product.of(
+                product.getProductId(), product.getProductName(), product.getProductPrice(), stock.getQuantity());
     }
 }
