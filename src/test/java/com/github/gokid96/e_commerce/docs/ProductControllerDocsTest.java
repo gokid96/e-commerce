@@ -1,8 +1,7 @@
 package com.github.gokid96.e_commerce.docs;
 
 import com.github.gokid96.e_commerce.product.application.ProductFacade;
-import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
-import com.github.gokid96.e_commerce.product.domain.product.ProductService;
+import com.github.gokid96.e_commerce.product.application.ProductResult;
 import com.github.gokid96.e_commerce.product.interfaces.ProductController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,28 +19,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class ProductControllerDocsTest extends RestDocsSupport {
 
-    private final ProductService productService = Mockito.mock(ProductService.class);
     private final ProductFacade productFacade = Mockito.mock(ProductFacade.class);
 
     @Override
     protected Object initController() {
-        return new ProductController(productService,productFacade);
+        return new ProductController(productFacade);
     }
 
     @DisplayName("상품 목록 조회 API")
     @Test
     void getProducts() throws Exception {
-        // given
-        ProductInfo.Product product = ProductInfo.Product.builder()
-                .productId(1L)
-                .productName("상품명")
-                .productPrice(30000L)
-                .stock(100)
-                .build();
-        given(productService.getSellingProducts())
-                .willReturn(ProductInfo.Products.of(List.of(product)));
+        given(productFacade.getProducts())
+                .willReturn(ProductResult.Products.of(List.of(
+                        ProductResult.Product.of(1L, "상품명", 30000L, 100)
+                )));
 
-        // when & then
         mockMvc.perform(get("/api/v1/products"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -56,20 +48,15 @@ class ProductControllerDocsTest extends RestDocsSupport {
                         )
                 ));
     }
+
     @DisplayName("인기 상품 조회 API")
     @Test
     void getPopularProducts() throws Exception {
-        // given
-        ProductInfo.Product product = ProductInfo.Product.builder()
-                .productId(1L)
-                .productName("상품명")
-                .productPrice(30000L)
-                .stock(100)
-                .build();
         given(productFacade.getPopularProducts())
-                .willReturn(ProductInfo.Products.of(List.of(product)));
+                .willReturn(ProductResult.Products.of(List.of(
+                        ProductResult.Product.of(1L, "상품명", 30000L, 100)
+                )));
 
-        // when & then
         mockMvc.perform(get("/api/v1/products/ranks"))
                 .andDo(print())
                 .andExpect(status().isOk())

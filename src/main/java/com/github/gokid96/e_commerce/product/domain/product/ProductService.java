@@ -12,16 +12,10 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final StockService stockService;
 
     public ProductInfo.Products getSellingProducts() {
-        List<Product> products = productRepository.findBySellStatusIn(ProductSellingStatus.forSelling());
-
-        List<ProductInfo.Product> infos = products.stream()
-                .map(product -> {
-                    StockInfo.Stock stock = stockService.getStock(product.getId());
-                    return ProductInfo.Product.of(product, stock.getQuantity());
-                })
+        List<ProductInfo.Product> infos = productRepository.findBySellStatusIn(ProductSellingStatus.forSelling()).stream()
+                .map(ProductInfo.Product::of)
                 .toList();
         return ProductInfo.Products.of(infos);
     }
@@ -43,10 +37,8 @@ public class ProductService {
     public ProductInfo.Products getProducts(ProductCommand.Products command) {
         List<ProductInfo.Product> products = command.getProductIds().stream()
                 .map(productRepository::findById)
-                .map(product -> {
-                    StockInfo.Stock stock = stockService.getStock(product.getId());
-                    return ProductInfo.Product.of(product, stock.getQuantity());
-                }).toList();
+                .map(ProductInfo.Product::of)
+                .toList();
         return ProductInfo.Products.of(products);
     }
 

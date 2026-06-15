@@ -28,25 +28,20 @@ public class ProductInfo {
         private final Long productId;
         private final String productName;
         private final long productPrice;
-        private final int stock;
 
         @Builder
-        private Product(Long productId, String productName, long productPrice, int stock) {
+        private Product(Long productId, String productName, long productPrice) {
             this.productId = productId;
             this.productName = productName;
             this.productPrice = productPrice;
-            this.stock = stock;
         }
 
         public static Product of(
-                com.github.gokid96.e_commerce.product.domain.product.Product product,
-                int stock
-        ) {
+                com.github.gokid96.e_commerce.product.domain.product.Product product) {
             return Product.builder()
                     .productId(product.getId())
                     .productName(product.getName())
                     .productPrice(product.getPrice())
-                    .stock(stock)
                     .build();
         }
     }
