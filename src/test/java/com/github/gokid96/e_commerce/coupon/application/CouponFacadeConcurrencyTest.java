@@ -3,6 +3,7 @@ package com.github.gokid96.e_commerce.coupon.application;
 import com.github.gokid96.e_commerce.coupon.domain.Coupon;
 import com.github.gokid96.e_commerce.coupon.domain.CouponRepository;
 import com.github.gokid96.e_commerce.coupon.domain.CouponStatus;
+import com.github.gokid96.e_commerce.coupon.domain.UserCouponUsedStatus;
 import com.github.gokid96.e_commerce.support.ConcurrencyTestSupport;
 import com.github.gokid96.e_commerce.user.domain.User;
 import com.github.gokid96.e_commerce.user.domain.UserRepository;
@@ -29,7 +30,7 @@ public class CouponFacadeConcurrencyTest extends ConcurrencyTestSupport {
     @Test
     void issueCouponConcurrencySameUser() {
         // given
-        User user = User.create("항플");
+        User user = User.create("유저");
         userRepository.save(user);
 
         Coupon coupon = Coupon.create("쿠폰명", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
@@ -41,7 +42,7 @@ public class CouponFacadeConcurrencyTest extends ConcurrencyTestSupport {
         executeConcurrency(3, () -> couponFacade.issueCoupon(criteria));
 
         // then (목표: 한 사용자는 1개만 발급 → 수량 9)
-        assertThat(couponRepository.findUserCouponsByUserId(user.getId())).hasSize(1);
+        assertThat(couponRepository.findUserCouponsByUserIdAndUsedStatusIn(user.getId(), UserCouponUsedStatus.forUsable())).hasSize(1);
 
         Coupon remainCoupon = couponRepository.findCouponById(coupon.getId()).orElseThrow();
         assertThat(remainCoupon.getQuantity()).isEqualTo(9);

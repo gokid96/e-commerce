@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +19,10 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "user_coupon", indexes = {
+        @Index(name = "idx_user_status", columnList = "user_id, used_status"),
+        @Index(name = "idx_user_coupon", columnList = "user_id, coupon_id")
+})
 public class UserCoupon {
 
     @Id
