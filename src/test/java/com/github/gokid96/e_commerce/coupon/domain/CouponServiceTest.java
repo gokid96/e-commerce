@@ -39,6 +39,7 @@ public class CouponServiceTest {
         // when
         couponService.issueCoupon(command);
 
+        // then
         assertThat(coupon.getQuantity()).isEqualTo(99);
         verify(couponRepository, times(1)).saveCoupon(coupon);
         verify(couponRepository, times(1)).saveUserCoupon(any(UserCoupon.class));
@@ -61,7 +62,7 @@ public class CouponServiceTest {
     @DisplayName("쿠폰을 사용한다.")
     @Test
     void useCoupon() {
-        //given
+        // given
         UserCoupon userCoupon = UserCoupon.create(1L, 5L);
         given(couponRepository.findUserCouponById(100L)).willReturn(Optional.of(userCoupon));
 
@@ -77,11 +78,11 @@ public class CouponServiceTest {
 
     @DisplayName("존재하지 않는 사용자 쿠폰은 사용할 수 없다.")
     @Test
-    void useCoupon_netFound() {
+    void useCoupon_notFound() {
         // given
         given(couponRepository.findUserCouponById(100L)).willReturn(Optional.empty());
-
         CouponCommand.Use command = CouponCommand.Use.of(1L, 100L);
+
         // when & then
         assertThatThrownBy(() -> couponService.useCoupon(command))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -97,19 +98,87 @@ public class CouponServiceTest {
 
         CouponCommand.Use command = CouponCommand.Use.of(1L, 100L); // 사용자 1번
 
+        // when & then
         assertThatThrownBy(() -> couponService.useCoupon(command))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("본인의 쿠폰이 아닙니다.");
     }
 
-    @DisplayName("사용자가 보유한 쿠폰 목록을 조회한다.")
+    @DisplayName("주문용: 사용 가능한 쿠폰을 조회한다.")
+    @Test
+    void getUsableCoupon() {
+        // given
+        UserCoupon userCoupon = UserCoupon.builder()
+                .id(100L).userId(1L).couponId(5L)
+                .usedStatus(UserCouponUsedStatus.UNUSED)
+                .issuedAt(LocalDateTime.now())
+                .build();
+        given(couponRepository.findUserCouponByUserIdAndCouponId(1L, 5L)).willReturn(userCoupon);
+
+        CouponCommand.UsableCoupon command = CouponCommand.UsableCoupon.of(1L, 5L);
+
+        // when
+        CouponInfo.UsableCoupon result = couponService.getUsableCoupon(command);
+
+        // then
+        assertThat(result.getUserCouponId()).isEqualTo(100L);
+    }
+
+    @DisplayName("이미 사용된 쿠폰은 사용 가능 조회 시 예외가 발생한다.")
+    @Test
+    void getUsableCoupon_cannotUse() {
+        // given
+        UserCoupon userCoupon = UserCoupon.builder()
+                .id(100L).userId(1L).couponId(5L)
+                .usedStatus(UserCouponUsedStatus.USED)
+                .issuedAt(LocalDateTime.now()).usedAt(LocalDateTime.now())
+                .build();
+        given(couponRepository.findUserCouponByUserIdAndCouponId(1L, 5L)).willReturn(userCoupon);
+
+        CouponCommand.UsableCoupon command = CouponCommand.UsableCoupon.of(1L, 5L);
+
+        // when & then
+        assertThatThrownBy(() -> couponService.getUsableCoupon(command))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("사용할 수 없는 쿠폰입니다.");
+    }
+
+    @DisplayName("쿠폰 할인율을 조회한다.")
+    @Test
+    void getCoupon() {
+
+        // given
+        Coupon coupon = Coupon.create("10% 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
+        given(couponRepository.findCouponById(5L)).willReturn(Optional.of(coupon));
+
+        // when
+        CouponInfo.Coupon result = couponService.getCoupon(5L);
+
+        // then
+        assertThat(result.getDiscountRate()).isEqualTo(0.1);
+        assertThat(result.getCouponName()).isEqualTo("10% 할인");
+    }
+
+    @DisplayName("발급되지 않은 쿠폰의 할인율은 조회할 수 없다.")
+    @Test
+    void getCoupon_notFound() {
+        // given
+        given(couponRepository.findCouponById(5L)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> couponService.getCoupon(5L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("쿠폰이 존재하지 않습니다.");
+    }
+
+    @DisplayName("사용자가 보유한 사용 가능 쿠폰 목록을 조회한다.")
     @Test
     void getUserCoupons() {
         // given
         Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
         UserCoupon userCoupon = UserCoupon.create(1L, 5L);
 
-        given(couponRepository.findUserCouponsByUserId(1L))
+        given(couponRepository.findUserCouponsByUserIdAndUsedStatusIn(1L, UserCouponUsedStatus.forUsable()))
                 .willReturn(List.of(userCoupon));
         given(couponRepository.findCouponById(5L))
                 .willReturn(Optional.of(coupon));
@@ -128,61 +197,12 @@ public class CouponServiceTest {
     @Test
     void getUserCoupons_empty() {
         // given
-        given(couponRepository.findUserCouponsByUserId(1L)).willReturn(List.of());
-
+        given(couponRepository.findUserCouponsByUserIdAndUsedStatusIn(1L, UserCouponUsedStatus.forUsable()))
+                .willReturn(List.of());
         // when
         List<CouponInfo.UserCoupon> infos = couponService.getUserCoupons(1L);
 
         // then
         assertThat(infos).isEmpty();
     }
-
-    @DisplayName("주문용 사용자 쿠폰(할인율)을 조회한다.")
-    @Test
-    void getUserCoupon() {
-        // given
-        Coupon coupon = Coupon.create("10% 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
-        UserCoupon userCoupon = UserCoupon.create(1L, 5L);
-        given(couponRepository.findUserCouponById(100L)).willReturn(Optional.of(userCoupon));
-        given(couponRepository.findCouponById(5L)).willReturn(Optional.of(coupon));
-
-        CouponCommand.Use command = CouponCommand.Use.of(1L, 100L);
-
-        // when
-        CouponInfo.UserCoupon result = couponService.getUserCoupon(command);
-
-        // then
-        assertThat(result.getDiscountRate()).isEqualTo(0.1);
-        assertThat(result.getCouponName()).isEqualTo("10% 할인");
-    }
-
-    @DisplayName("발급되지 않은 쿠폰은 조회할 수 없다.")
-    @Test
-    void getUserCoupon_notFound() {
-        // given
-        given(couponRepository.findUserCouponById(100L)).willReturn(Optional.empty());
-
-        CouponCommand.Use command = CouponCommand.Use.of(1L, 100L);
-
-        // when & then
-        assertThatThrownBy(() -> couponService.getUserCoupon(command))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("발급된 쿠폰이 존재하지 않습니다.");
-    }
-
-    @DisplayName("본인의 쿠폰이 아니면 조회할 수 없다.")
-    @Test
-    void getUserCoupon_notOwner() {
-        // given
-        UserCoupon userCoupon = UserCoupon.create(2L, 5L);
-        given(couponRepository.findUserCouponById(100L)).willReturn(Optional.of(userCoupon));
-
-        CouponCommand.Use command = CouponCommand.Use.of(1L, 100L);
-
-        // when & then
-        assertThatThrownBy(() -> couponService.getUserCoupon(command))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("본인의 쿠폰이 아닙니다.");
-    }
-
 }

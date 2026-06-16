@@ -28,7 +28,7 @@ public class CouponInfo {
 
         public static UserCoupon of(
                 com.github.gokid96.e_commerce.coupon.domain.UserCoupon userCoupon,
-                Coupon coupon
+                com.github.gokid96.e_commerce.coupon.domain.Coupon coupon
         ) {
             return UserCoupon.builder()
                     .userCouponId(userCoupon.getId())
@@ -39,5 +39,42 @@ public class CouponInfo {
                     .build();
         }
 
+    }
+
+    @Getter
+    public static class Coupon {
+        private final Long couponId;
+        private final String couponName;
+        private final double discountRate;
+
+        @Builder
+        private Coupon(Long couponId, String couponName, double discountRate) {
+            this.couponId = couponId;
+            this.couponName = couponName;
+            this.discountRate = discountRate;
+        }
+
+        public static Coupon of(com.github.gokid96.e_commerce.coupon.domain.Coupon coupon) {
+            return Coupon.builder()
+                    .couponId(coupon.getId())
+                    .couponName(coupon.getName())
+                    .discountRate(coupon.getDiscountRate())
+                    .build();
+        }
+    }
+    @Getter
+    public static class UsableCoupon {
+        private final Long userCouponId;
+
+        @Builder
+        private UsableCoupon(Long userCouponId) {
+            this.userCouponId = userCouponId;
+        }
+
+        public static UsableCoupon of(Long userCouponId) {
+            return UsableCoupon.builder()
+                    .userCouponId(userCouponId)
+                    .build();
+        }
     }
 }

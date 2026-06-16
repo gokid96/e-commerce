@@ -34,22 +34,33 @@ public class CouponService {
         couponRepository.saveUserCoupon(userCoupon);
     }
 
-    public CouponInfo.UserCoupon getUserCoupon(CouponCommand.Use command) {
-        UserCoupon userCoupon = couponRepository.findUserCouponById(command.getUserCouponId())
-                .orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
+    public CouponInfo.UsableCoupon getUsableCoupon(CouponCommand.UsableCoupon command) {
+        UserCoupon userCoupon = couponRepository.findUserCouponByUserIdAndCouponId(
+                command.getUserId(), command.getCouponId());
 
-        if (!userCoupon.getUserId().equals(command.getUserId())) {
-            throw new IllegalArgumentException("본인의 쿠폰이 아닙니다.");
+        if (userCoupon.cannotUse()) {
+            throw new IllegalStateException("사용할 수 없는 쿠폰입니다.");
         }
 
-        Coupon coupon = couponRepository.findCouponById(userCoupon.getCouponId())
-                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+        return CouponInfo.UsableCoupon.of(userCoupon.getId());
+    }
 
-        return CouponInfo.UserCoupon.of(userCoupon, coupon);
+    public CouponInfo.Coupon getCoupon(Long couponId) {
+        Coupon coupon = couponRepository.findCouponById(couponId)
+                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+        return CouponInfo.Coupon.of(coupon);
+    }
+
+    public void useUserCoupon(Long userCouponId) {
+        UserCoupon userCoupon = couponRepository.findUserCouponById(userCouponId)
+                .orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
+        userCoupon.use();
+        couponRepository.saveUserCoupon(userCoupon);
     }
 
     public List<CouponInfo.UserCoupon> getUserCoupons(Long userId) {
-        List<UserCoupon> userCoupons = couponRepository.findUserCouponsByUserId(userId);
+        List<UserCoupon> userCoupons = couponRepository.findUserCouponsByUserIdAndUsedStatusIn(
+                userId, UserCouponUsedStatus.forUsable());
 
         return userCoupons.stream()
                 .map(userCoupon -> {
@@ -59,13 +70,4 @@ public class CouponService {
                 })
                 .toList();
     }
-
-
 }
-
-
-
-
-
-
-
