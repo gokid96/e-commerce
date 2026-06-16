@@ -20,20 +20,20 @@ public class OrderCriteria {
     @Getter
     public static class Create {
         private final Long userId;
-        private final Long userCouponId;
+        private final Long couponId;
         private final List<OrderProduct> products;
 
         @Builder
-        private Create(Long userId, Long userCouponId, List<OrderProduct> products) {
+        private Create(Long userId, Long couponId, List<OrderProduct> products) {
             this.userId = userId;
-            this.userCouponId = userCouponId;
+            this.couponId = couponId;
             this.products = products;
         }
 
-        public static Create of(Long userId, Long userCouponId, List<OrderProduct> products) {
+        public static Create of(Long userId, Long couponId, List<OrderProduct> products) {
             return Create.builder()
                     .userId(userId)
-                    .userCouponId(userCouponId)
+                    .couponId(couponId)
                     .products(products)
                     .build();
         }
@@ -54,15 +54,15 @@ public class OrderCriteria {
             );
         }
 
-        public CouponCommand.Use toCouponCommand() {
-            return CouponCommand.Use.of(userId, userCouponId);
+        public CouponCommand.UsableCoupon toCouponCommand() {
+            return CouponCommand.UsableCoupon.of(userId, couponId);
         }
 
         public BalanceCommand.Use toBalanceCommand(long amount) {
             return BalanceCommand.Use.of(userId, amount);
         }
 
-        public OrderCommand.Create toOrderCommand(double discountRate, ProductInfo.OrderProducts orderProducts) {
+        public OrderCommand.Create toOrderCommand(Long userCouponId, double discountRate, ProductInfo.OrderProducts orderProducts) {
             return OrderCommand.Create.of(
                     userId,
                     userCouponId,
@@ -77,7 +77,6 @@ public class OrderCriteria {
         public PaymentCommand.Payment toPaymentCommand(OrderInfo.Order order) {
             return PaymentCommand.Payment.of(order.getOrderId(), order.getTotalPrice());
         }
-
     }
 
     @Getter

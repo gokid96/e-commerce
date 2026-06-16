@@ -1,6 +1,7 @@
 package com.github.gokid96.e_commerce.order.application;
 
 import com.github.gokid96.e_commerce.balance.domain.BalanceService;
+import com.github.gokid96.e_commerce.coupon.domain.CouponInfo;
 import com.github.gokid96.e_commerce.coupon.domain.CouponService;
 import com.github.gokid96.e_commerce.order.domain.OrderInfo;
 import com.github.gokid96.e_commerce.order.domain.OrderService;
@@ -12,6 +13,8 @@ import com.github.gokid96.e_commerce.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,24 +35,26 @@ public class OrderFacade {
         ProductInfo.OrderProducts orderProducts =
                 productService.getOrderProducts(criteria.toProductCommand());
 
-        double discountRate = 0.0;
-        if (criteria.getUserCouponId() != null) {
-            discountRate = couponService.getUserCoupon(criteria.toCouponCommand()).getDiscountRate();
-        }
+        Optional<Long> optionalCouponId = Optional.ofNullable(criteria.getCouponId());
+        Optional<CouponInfo.UsableCoupon> optionalUsableCoupon = optionalCouponId
+                .map(id -> couponService.getUsableCoupon(criteria.toCouponCommand()));
+        double discountRate = optionalCouponId
+                .map(couponService::getCoupon)
+                .map(CouponInfo.Coupon::getDiscountRate)
+                .orElse(0.0);
+        Long userCouponId = optionalUsableCoupon
+                .map(CouponInfo.UsableCoupon::getUserCouponId)
+                .orElse(null);
 
         OrderInfo.Order order =
-                orderService.createOrder(criteria.toOrderCommand(discountRate, orderProducts));
+                orderService.createOrder(criteria.toOrderCommand(userCouponId, discountRate, orderProducts));
 
         balanceService.useBalance(criteria.toBalanceCommand(order.getTotalPrice()));
-        if (criteria.getUserCouponId() != null) {
-            couponService.useCoupon(criteria.toCouponCommand());
-        }
+        optionalUsableCoupon.ifPresent(c -> couponService.useUserCoupon(c.getUserCouponId()));
         stockService.deductStock(criteria.toStockCommand());
         paymentService.pay(criteria.toPaymentCommand(order));
         orderService.paidOrder(order.getOrderId());
 
         return OrderResult.Order.of(order);
     }
-
-
 }

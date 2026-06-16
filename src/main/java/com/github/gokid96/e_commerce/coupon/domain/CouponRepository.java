@@ -10,10 +10,15 @@ public interface CouponRepository {
 
     // Coupon
     Optional<Coupon> findCouponById(Long CouponId);
+
     Coupon saveCoupon(Coupon coupon);
 
     // UserCoupon
     Optional<UserCoupon> findUserCouponById(Long userCouponId);
+
     UserCoupon saveUserCoupon(UserCoupon userCoupon);
-    List<UserCoupon> findUserCouponsByUserId(Long userId);
+
+    List<UserCoupon> findUserCouponsByUserIdAndUsedStatusIn(Long userId, List<UserCouponUsedStatus> usedStatuses);
+
+    UserCoupon findUserCouponByUserIdAndCouponId(Long userId, Long couponId);
 }

@@ -17,7 +17,7 @@ public class OrderRequest {
     @NotNull(message = "사용자 ID는 필수입니다.")
     private Long userId;
 
-    private Long userCouponId;
+    private Long couponId;
 
     @Valid
     @NotEmpty(message = "상품 목록은 1개 이상이어야 합니다.")
@@ -26,7 +26,7 @@ public class OrderRequest {
     public OrderCriteria.Create toCriteria() {
         return OrderCriteria.Create.of(
                 userId,
-                userCouponId,
+                couponId,
                 products.stream()
                         .map(p -> OrderCriteria.OrderProduct.of(p.getProductId(), p.getQuantity()))
                         .toList()

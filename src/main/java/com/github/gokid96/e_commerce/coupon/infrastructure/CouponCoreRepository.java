@@ -3,6 +3,7 @@ package com.github.gokid96.e_commerce.coupon.infrastructure;
 import com.github.gokid96.e_commerce.coupon.domain.Coupon;
 import com.github.gokid96.e_commerce.coupon.domain.CouponRepository;
 import com.github.gokid96.e_commerce.coupon.domain.UserCoupon;
+import com.github.gokid96.e_commerce.coupon.domain.UserCouponUsedStatus;
 import com.github.gokid96.e_commerce.coupon.infrastructure.jpa.CouponJpaRepository;
 import com.github.gokid96.e_commerce.coupon.infrastructure.jpa.UserCouponJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +44,13 @@ public class CouponCoreRepository implements CouponRepository {
     }
 
     @Override
-    public List<UserCoupon> findUserCouponsByUserId(Long userId) {
-        return userCouponJpaRepository.findAllByUserId(userId);
+    public List<UserCoupon> findUserCouponsByUserIdAndUsedStatusIn(Long userId, List<UserCouponUsedStatus> usedStatuses) {
+        return userCouponJpaRepository.findByUserIdAndUsedStatusIn(userId, usedStatuses);
     }
 
+    @Override
+    public UserCoupon findUserCouponByUserIdAndCouponId(Long userId, Long couponId) {
+        return userCouponJpaRepository.findByUserIdAndCouponId(userId, couponId)
+                .orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
+    }
 }
