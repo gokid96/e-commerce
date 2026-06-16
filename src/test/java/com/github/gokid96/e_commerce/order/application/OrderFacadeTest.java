@@ -76,8 +76,9 @@ public class OrderFacadeTest {
         inOrder.verify(paymentService).pay(any());
         inOrder.verify(orderService).paidOrder(100L);
 
-        verify(couponService, never()).getUserCoupon(any());
-        verify(couponService, never()).useCoupon(any());
+        verify(couponService, never()).getUsableCoupon(any());
+        verify(couponService, never()).getCoupon(any());
+        verify(couponService, never()).useUserCoupon(any());
     }
 
     @DisplayName("쿠폰 사용 시 할인율 조회와 쿠폰 사용까지 함께 수행된다.")
@@ -89,17 +90,21 @@ public class OrderFacadeTest {
 
         given(productService.getOrderProducts(any())).willReturn(
                 ProductInfo.OrderProducts.of(List.of(
-                        ProductInfo.OrderProduct.of(10L,"상품A", 1000L, 2))));
-        given(couponService.getUserCoupon(any())).willReturn(
-                CouponInfo.UserCoupon.builder().discountRate(0.1).build());
+                        ProductInfo.OrderProduct.of(10L, "상품A", 1000L, 2))));
+        given(couponService.getUsableCoupon(any())).willReturn(
+                CouponInfo.UsableCoupon.builder().userCouponId(500L).build());
+        given(couponService.getCoupon(any())).willReturn(
+                CouponInfo.Coupon.builder().discountRate(0.1).build());
         given(orderService.createOrder(any())).willReturn(
                 OrderInfo.Order.builder().orderId(100L).totalPrice(1800L).discountPrice(200L).build());
+
         // when
         orderFacade.createOrder(criteria);
 
         // then
-        verify(couponService).getUserCoupon(any());
-        verify(couponService).useCoupon(any());
+        verify(couponService).getUsableCoupon(any());
+        verify(couponService).getCoupon(any());
+        verify(couponService).useUserCoupon(500L);
         verify(orderService).paidOrder(100L);
 
     }

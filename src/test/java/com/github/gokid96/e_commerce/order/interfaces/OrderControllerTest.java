@@ -25,7 +25,7 @@ class OrderControllerTest extends ControllerTestSupport {
         String content = """
                 {
                   "userId": 1,
-                  "userCouponId": 50,
+                  "couponId": 50,
                   "products": [ { "productId": 10, "quantity": 2 } ]
                 }
                 """;

@@ -83,7 +83,7 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
         UserCoupon userCoupon = couponRepository.saveUserCoupon(
                 UserCoupon.create(user.getId(), coupon.getId()));
 
-        OrderCriteria.Create criteria = OrderCriteria.Create.of(user.getId(), userCoupon.getId(),
+        OrderCriteria.Create criteria = OrderCriteria.Create.of(user.getId(), coupon.getId(),
                 List.of(OrderCriteria.OrderProduct.of(product.getId(), 2)));
 
         // when
