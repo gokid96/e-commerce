@@ -14,6 +14,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderExternalClient orderExternalClient;
 
     public OrderInfo.Order createOrder(OrderCommand.Create command) {
         List<OrderProduct> orderProducts = command.getProducts().stream()
@@ -36,6 +37,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
 
         order.paid();
+        orderExternalClient.sendOrderMessage(order);
     }
 
     public OrderInfo.TopPaidProducts getTopPaidProducts(OrderCommand.TopOrders command) {
