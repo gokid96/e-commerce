@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,6 +33,9 @@ public class Balance {
     private Long userId;
 
     private long amount;
+
+    @Version
+    private Integer version;
 
     private static final long MAX_BALANCE_AMOUNT = 10_000_000L;
 

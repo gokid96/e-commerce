@@ -2,6 +2,7 @@ package com.github.gokid96.e_commerce.balance.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ public class BalanceService {
 
     private final BalanceRepository balanceRepository;
 
+    @Transactional
     public void chargeBalance(BalanceCommand.Charge command) {
         Optional<Balance> optionalBalance = balanceRepository.findOptionalByUserId(command.getUserId());
 
@@ -20,6 +22,7 @@ public class BalanceService {
         );
     }
 
+    @Transactional
     public void useBalance(BalanceCommand.Use command) {
         Balance balance = balanceRepository.findOptionalByUserId(command.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("잔액이 존재하지 않습니다."));
