@@ -9,7 +9,8 @@ import java.util.Optional;
 public interface CouponRepository {
 
     // Coupon
-    Optional<Coupon> findCouponById(Long CouponId);
+    Optional<Coupon> findCouponById(Long couponId);
+    Optional<Coupon> findWithLockById(Long couponId);
 
     Coupon saveCoupon(Coupon coupon);
 
