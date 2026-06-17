@@ -19,20 +19,26 @@ public class CouponCoreRepository implements CouponRepository {
     private final UserCouponJpaRepository userCouponJpaRepository;
 
     /*
-    * coupon
-    * */
+     * coupon
+     * */
     @Override
     public Optional<Coupon> findCouponById(Long couponId) {
         return couponJpaRepository.findById(couponId);
     }
 
     @Override
+    public Optional<Coupon> findWithLockById(Long couponId) {
+        return couponJpaRepository.findWithLockById(couponId);
+    }
+
+    @Override
     public Coupon saveCoupon(Coupon coupon) {
         return couponJpaRepository.save(coupon);
     }
+
     /*
-    * userCoupon
-    * */
+     * userCoupon
+     * */
     @Override
     public Optional<UserCoupon> findUserCouponById(Long couponId) {
         return userCouponJpaRepository.findById(couponId);
@@ -50,7 +56,11 @@ public class CouponCoreRepository implements CouponRepository {
 
     @Override
     public UserCoupon findUserCouponByUserIdAndCouponId(Long userId, Long couponId) {
-        return userCouponJpaRepository.findByUserIdAndCouponId(userId, couponId)
-                .orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
+        return userCouponJpaRepository.findByUserIdAndCouponId(userId, couponId).orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
+    }
+
+    @Override
+    public Optional<UserCoupon> findOptionalUserCouponByUserIdAndCouponId(Long userId, Long couponId) {
+        return userCouponJpaRepository.findByUserIdAndCouponId(userId, couponId);
     }
 }

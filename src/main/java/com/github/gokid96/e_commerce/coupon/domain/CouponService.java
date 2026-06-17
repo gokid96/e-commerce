@@ -2,6 +2,7 @@ package com.github.gokid96.e_commerce.coupon.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -11,9 +12,15 @@ public class CouponService {
 
     private final CouponRepository couponRepository;
 
+    @Transactional
     public void issueCoupon(CouponCommand.Issue command) {
-        Coupon coupon = couponRepository.findCouponById(command.getCouponId())
+        Coupon coupon = couponRepository.findWithLockById(command.getCouponId())
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+
+        couponRepository.findOptionalUserCouponByUserIdAndCouponId(command.getUserId(), command.getCouponId())
+                .ifPresent(userCoupon -> {
+                    throw new IllegalArgumentException("이미 발급된 쿠폰입니다.");
+                });
 
         coupon.issue();
         couponRepository.saveCoupon(coupon);
