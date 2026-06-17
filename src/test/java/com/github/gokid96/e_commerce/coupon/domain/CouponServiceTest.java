@@ -32,7 +32,7 @@ public class CouponServiceTest {
     void issueCoupon() {
         // given
         Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
-        given(couponRepository.findCouponById(5L)).willReturn(Optional.of(coupon));
+        given(couponRepository.findWithLockById(5L)).willReturn(Optional.of(coupon));
 
         CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
 
@@ -49,7 +49,7 @@ public class CouponServiceTest {
     @Test
     void issueCoupon_notFound() {
         // given
-        given(couponRepository.findCouponById(5L)).willReturn(Optional.empty());
+        given(couponRepository.findWithLockById(5L)).willReturn(Optional.empty());
 
         CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
 
