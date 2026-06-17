@@ -21,7 +21,7 @@ public class StockService {
     }
 
     private void deductStock(StockCommand.OrderProduct command) {
-        Stock stock = stockRepository.findByProductIdWithLock(command.getProductId());
+        Stock stock = stockRepository.findWithLockByProductId(command.getProductId());
         stock.deduct(command.getQuantity());
     }
 
