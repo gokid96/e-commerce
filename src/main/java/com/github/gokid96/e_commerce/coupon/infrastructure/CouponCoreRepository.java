@@ -58,4 +58,9 @@ public class CouponCoreRepository implements CouponRepository {
     public UserCoupon findUserCouponByUserIdAndCouponId(Long userId, Long couponId) {
         return userCouponJpaRepository.findByUserIdAndCouponId(userId, couponId).orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
     }
+
+    @Override
+    public Optional<UserCoupon> findOptionalUserCouponByUserIdAndCouponId(Long userId, Long couponId) {
+        return userCouponJpaRepository.findByUserIdAndCouponId(userId, couponId);
+    }
 }

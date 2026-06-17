@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +23,11 @@ import java.time.LocalDateTime;
 @Table(name = "user_coupon", indexes = {
         @Index(name = "idx_user_status", columnList = "user_id, used_status"),
         @Index(name = "idx_user_coupon", columnList = "user_id, coupon_id")
-})
+},
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_user_coupon", columnNames = {"user_id", "coupon_id"})
+        }
+)
 public class UserCoupon {
 
     @Id

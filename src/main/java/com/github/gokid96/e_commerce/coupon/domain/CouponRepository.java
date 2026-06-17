@@ -22,4 +22,7 @@ public interface CouponRepository {
     List<UserCoupon> findUserCouponsByUserIdAndUsedStatusIn(Long userId, List<UserCouponUsedStatus> usedStatuses);
 
     UserCoupon findUserCouponByUserIdAndCouponId(Long userId, Long couponId);
+
+    Optional<UserCoupon> findOptionalUserCouponByUserIdAndCouponId(Long userId, Long couponId);
+
 }

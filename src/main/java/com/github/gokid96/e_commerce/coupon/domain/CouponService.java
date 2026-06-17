@@ -17,6 +17,11 @@ public class CouponService {
         Coupon coupon = couponRepository.findWithLockById(command.getCouponId())
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
 
+        couponRepository.findOptionalUserCouponByUserIdAndCouponId(command.getUserId(), command.getCouponId())
+                .ifPresent(userCoupon -> {
+                    throw new IllegalArgumentException("이미 발급된 쿠폰입니다.");
+                });
+
         coupon.issue();
         couponRepository.saveCoupon(coupon);
 
