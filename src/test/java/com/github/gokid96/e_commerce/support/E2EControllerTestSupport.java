@@ -1,11 +1,11 @@
 package com.github.gokid96.e_commerce.support;
 
 import com.github.gokid96.e_commerce.support.database.DatabaseCleaner;
-import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.web.servlet.client.RestTestClient;
 
 public abstract class E2EControllerTestSupport extends IntegrationTestSupport {
 
@@ -15,9 +15,13 @@ public abstract class E2EControllerTestSupport extends IntegrationTestSupport {
     @Autowired
     private DatabaseCleaner databaseCleaner;
 
+    protected RestTestClient client;
+
     @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
+    void setUpClient() {
+        client = RestTestClient.bindToServer()
+                .baseUrl("http://localhost:" + port)
+                .build();
     }
 
     @AfterEach
