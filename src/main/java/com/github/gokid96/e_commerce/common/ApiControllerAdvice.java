@@ -22,4 +22,10 @@ public class ApiControllerAdvice {
     public ApiResponse<Object> illegalArgumentException(IllegalArgumentException e) {
         return ApiResponse.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiResponse<Object> illegalStateException(IllegalArgumentException e) {
+        return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+    }
 }
