@@ -55,7 +55,7 @@ class CouponTest {
 
         // when & then
         assertThatThrownBy(coupon::issue)
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(IllegalStateException.class)
                 .hasMessage("발급 불가능한 쿠폰입니다.");
     }
 
@@ -73,7 +73,7 @@ class CouponTest {
 
         // when & then
         assertThatThrownBy(coupon::issue)
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(IllegalStateException.class)
                 .hasMessage("쿠폰이 만료되었습니다.");
     }
 
@@ -86,7 +86,7 @@ class CouponTest {
 
         // when & then
         assertThatThrownBy(coupon::issue)
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(IllegalStateException.class)
                 .hasMessage("쿠폰이 모두 소진되었습니다.");
     }
 }

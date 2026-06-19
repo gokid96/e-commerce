@@ -25,7 +25,7 @@ public class ProductService {
                 .map(item -> {
                     Product product = productRepository.findById(item.getProductId());
                     if (product.cannotSelling()) {
-                        throw new IllegalArgumentException("판매 중인 상품이 아닙니다.");
+                        throw new IllegalStateException("판매 중인 상품이 아닙니다.");
                     }
                     return ProductInfo.OrderProduct.of(
                             product.getId(), product.getName(), product.getPrice(), item.getQuantity());
