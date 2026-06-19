@@ -33,18 +33,33 @@ public class OrderInfo {
     }
 
     @Getter
-    public static class TopPaidProducts {
-        private final List<Long> productIds;
+    public static class PaidProduct {
+        private final Long productId;
+        private final int quantity;
 
-        @Builder
-        private TopPaidProducts(List<Long> productIds) {
-            this.productIds = productIds;
+        public PaidProduct(Long productId, int quantity) {
+            this.productId = productId;
+            this.quantity = quantity;
         }
 
-        public static TopPaidProducts of(List<Long> productIds) {
-            return TopPaidProducts.builder()
-                    .productIds(productIds)
-                    .build();
+        public static PaidProduct of(Long productId, int quantity) {
+            return new PaidProduct(productId, quantity);
         }
     }
+
+    @Getter
+    public static class PaidProducts {
+        private final List<PaidProduct> products;
+
+
+        @Builder
+        private PaidProducts(List<PaidProduct> products) {
+            this.products = products;
+        }
+
+        public static PaidProducts of(List<PaidProduct> products) {
+            return PaidProducts.builder().products(products).build();
+        }
+    }
+
 }

@@ -33,17 +33,13 @@ public class ProductFacade {
 
     @Transactional(readOnly = true)
     public ProductResult.Products getPopularProducts() {
-        // PaymentInfo.Orders completedOrders = paymentService.getCompletedOrdersBetweenDays(RECENT_DAYS);
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(RECENT_DAYS);
 
-        // OrderCommand.TopOrders command = OrderCommand.TopOrders.of(completedOrders.getOrderIds(), TOP_LIMIT);
-        // OrderInfo.TopPaidProducts topPaidProducts = orderService.getTopPaidProducts(command);
         RankCommand.PopularSellRank command = RankCommand.PopularSellRank.of(TOP_LIMIT, startDate, endDate);
         RankInfo.PopularProducts popularProducts = rankService.getPopularSellRank(command);
 
         ProductInfo.Products products = productService.getProducts(
-                //        ProductCommand.Products.of(topPaidProducts.getProductIds()));
                 ProductCommand.Products.of(popularProducts.getProductIds()));
         return toResult(products);
     }

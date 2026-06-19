@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,8 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
+    private LocalDateTime paidAt;
+
     @Builder
     private Order(Long userId, Long userCouponId, double discountRate, List<OrderProduct> orderProducts) {
         this.userId = userId;
@@ -56,7 +59,7 @@ public class Order {
     }
 
     public static Order create(Long userId, Long userCouponId, double discountRate, List<OrderProduct> orderProducts) {
-        if(orderProducts == null || orderProducts.isEmpty()) {
+        if (orderProducts == null || orderProducts.isEmpty()) {
             throw new IllegalArgumentException("주문 상품이 없습니다.");
         }
         return Order.builder()
@@ -67,8 +70,9 @@ public class Order {
                 .build();
     }
 
-    public void paid() {
+    public void paid(LocalDateTime paidAt) {
         this.orderStatus = OrderStatus.PAID;
+        this.paidAt = paidAt;
     }
 
     private long calculateTotalPrice(List<OrderProduct> orderProducts) {

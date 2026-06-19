@@ -78,45 +78,4 @@ public class OrderServiceTest {
                 .hasMessage("주문이 존재하지 않습니다.");
     }
 
-    @DisplayName("결제 완료된 주문 상품들을 판매 수량 기준 내림차순으로 정렬해 반환한다.")
-    @Test
-    void getTopPaidProducts() {
-        // given
-        List<OrderProduct> orderProducts = List.of(
-                OrderProduct.create(1L, "상품명", 2_000L, 2),
-                OrderProduct.create(2L, "상품명", 3_000L, 3),
-                OrderProduct.create(1L, "상품명", 2_000L, 4),
-                OrderProduct.create(3L, "상품명", 2_000L, 3),
-                OrderProduct.create(4L, "상품명", 2_000L, 2),
-                OrderProduct.create(5L, "상품명", 2_000L, 1)
-        );
-        given(orderRepository.findOrderIdsIn(any()))
-                .willReturn(orderProducts);
-
-        OrderCommand.TopOrders command = OrderCommand.TopOrders.of(List.of(1L, 2L), 5);
-
-        // when
-        OrderInfo.TopPaidProducts topPaidProducts = orderService.getTopPaidProducts(command);
-
-        // then
-        assertThat(topPaidProducts.getProductIds()).hasSize(5)
-                .containsExactly(1L, 2L, 3L, 4L, 5L);
-
-    }
-
-    @DisplayName("결제 완료된 주문이 없으면 빈 인기상품 목록을 반환한다.")
-    @Test
-    void getTopPaidProducts_empty() {
-        // given
-        given(orderRepository.findOrderIdsIn(any()))
-                .willReturn(List.of());
-
-        OrderCommand.TopOrders command = OrderCommand.TopOrders.of(List.of(1L, 2L), 5);
-
-        // when
-        OrderInfo.TopPaidProducts topPaidProducts = orderService.getTopPaidProducts(command);
-
-        // then
-        assertThat(topPaidProducts.getProductIds()).isEmpty();
-    }
 }

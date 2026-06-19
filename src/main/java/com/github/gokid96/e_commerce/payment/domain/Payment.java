@@ -7,30 +7,24 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "payment", indexes = {
-        @Index(name = "idx_payment_status_paid_at", columnList = "payment_status, paid_at")
-})
+@Table(name = "payment")
 public class Payment {
 
     @Id
     @Column(name = "payment_id")
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long orderId;
-
     private long amount;
 
     @Enumerated(EnumType.STRING)
@@ -39,21 +33,17 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    private LocalDateTime paidAt;
-
     @Builder
-    private Payment(Long id,Long orderId,long amount, PaymentMethod paymentMethod,
-                    PaymentStatus paymentStatus, LocalDateTime paidAt) {
+    private Payment(Long id, Long orderId, long amount, PaymentMethod paymentMethod, PaymentStatus paymentStatus) {
         this.id = id;
         this.orderId = orderId;
         this.amount = amount;
         this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
-        this.paidAt = paidAt;
     }
 
-    public static Payment create(Long orderId, long amount){
-        if(amount <= 0){
+    public static Payment create(Long orderId, long amount) {
+        if (amount <= 0) {
             throw new IllegalArgumentException("결제 금액은 0보다 커야 합니다.");
         }
         return Payment.builder()
@@ -63,14 +53,11 @@ public class Payment {
                 .paymentStatus(PaymentStatus.READY)
                 .build();
     }
-    public void pay(){
-        if(paymentStatus.cannotPayable()){
+
+    public void pay() {
+        if (paymentStatus.cannotPayable()) {
             throw new IllegalArgumentException("결제 가능 상태가 아닙니다.");
         }
         this.paymentStatus = PaymentStatus.COMPLETED;
-        this.paidAt = LocalDateTime.now();
     }
 }
-
-
-
