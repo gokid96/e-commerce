@@ -3,9 +3,6 @@ package com.github.gokid96.e_commerce.payment.domain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -17,17 +14,4 @@ public class PaymentService {
         payment.pay();
         paymentRepository.save(payment);
     }
-
-    public PaymentInfo.Orders getCompletedOrdersBetweenDays(int recentDays) {
-        LocalDateTime endDateTime = LocalDateTime.now();
-        LocalDateTime startDateTime = LocalDateTime.now().minusDays(recentDays);
-
-        List<Payment> completedPayments = paymentRepository
-                .findCompletedPaymentsWithIn(PaymentStatus.forCompleted(), startDateTime, endDateTime);
-        return PaymentInfo.Orders.of(completedPayments.stream()
-                .map(Payment::getOrderId)
-                .toList());
-    }
-
-
 }

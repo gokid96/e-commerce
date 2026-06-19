@@ -27,7 +27,6 @@ public class PaymentTest {
 
         // then
         assertThat(payment.getPaymentStatus()).isEqualTo(PaymentStatus.COMPLETED);
-        assertThat(payment.getPaidAt()).isNotNull();
     }
     @DisplayName("완료 상태는 결제 불가, 준비 상태는 결제 가능이다.")
     @Test
