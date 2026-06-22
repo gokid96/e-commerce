@@ -1,4 +1,4 @@
-package com.github.gokid96.e_commerce.order.interfaces;
+package com.github.gokid96.e_commerce.order.infrastructure;
 
 import com.github.gokid96.e_commerce.order.domain.OrderCommand;
 import com.github.gokid96.e_commerce.order.domain.OrderInfo;

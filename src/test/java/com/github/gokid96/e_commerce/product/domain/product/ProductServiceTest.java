@@ -99,7 +99,7 @@ public class ProductServiceTest {
         ));
 
         assertThatThrownBy(() -> productService.getOrderProducts(command))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(IllegalStateException.class)
                 .hasMessage("판매 중인 상품이 아닙니다.");
     }
 

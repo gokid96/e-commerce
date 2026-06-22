@@ -8,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -21,7 +22,9 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(name = "orders")
+@Table(name = "orders", indexes = {
+        @Index(name = "idx_order_status_paid_at", columnList = "order_status, paid_at")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
 

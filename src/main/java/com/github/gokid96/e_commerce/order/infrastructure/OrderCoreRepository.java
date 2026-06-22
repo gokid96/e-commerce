@@ -5,7 +5,6 @@ import com.github.gokid96.e_commerce.order.domain.OrderCommand;
 import com.github.gokid96.e_commerce.order.domain.OrderInfo;
 import com.github.gokid96.e_commerce.order.domain.OrderRepository;
 import com.github.gokid96.e_commerce.order.infrastructure.jpa.OrderJpaRepository;
-import com.github.gokid96.e_commerce.order.interfaces.OrderQueryDslRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

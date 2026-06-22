@@ -70,13 +70,13 @@ public class Coupon {
 
     public void issue() {
         if (status.cannotPublishable()) {
-            throw new IllegalArgumentException("발급 불가능한 쿠폰입니다.");
+            throw new IllegalStateException("발급 불가능한 쿠폰입니다.");
         }
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("쿠폰이 만료되었습니다.");
+            throw new IllegalStateException("쿠폰이 만료되었습니다.");
         }
         if (quantity <= 0) {
-            throw new IllegalArgumentException("쿠폰이 모두 소진되었습니다.");
+            throw new IllegalStateException("쿠폰이 모두 소진되었습니다.");
         }
         this.quantity--;
     }
