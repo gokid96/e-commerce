@@ -20,7 +20,7 @@ class ProductControllerTest extends ControllerTestSupport {
     void getProducts() throws Exception {
         given(productFacade.getProducts())
                 .willReturn(ProductResult.Products.of(List.of(
-                        ProductResult.Product.of(1L, "상품명", 30000L, 100)
+                        ProductResult.Product.of(1L, "상품명", 30000L)
                 )));
 
         mockMvc.perform(get("/api/v1/products"))
@@ -30,8 +30,7 @@ class ProductControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.message").value("OK"))
                 .andExpect(jsonPath("$.data.products[0].id").value(1))
                 .andExpect(jsonPath("$.data.products[0].name").value("상품명"))
-                .andExpect(jsonPath("$.data.products[0].price").value(30000))
-                .andExpect(jsonPath("$.data.products[0].stock").value(100));
+                .andExpect(jsonPath("$.data.products[0].price").value(30000));
     }
 
     @DisplayName("인기 상품 목록을 조회한다.")
@@ -39,7 +38,7 @@ class ProductControllerTest extends ControllerTestSupport {
     void getPopularProducts() throws Exception {
         given(productFacade.getPopularProducts())
                 .willReturn(ProductResult.Products.of(List.of(
-                        ProductResult.Product.of(1L, "상품명", 30000L, 100)
+                        ProductResult.Product.of(1L, "상품명", 30000L)
                 )));
 
         mockMvc.perform(get("/api/v1/products/ranks"))
@@ -49,7 +48,6 @@ class ProductControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.message").value("OK"))
                 .andExpect(jsonPath("$.data.products[0].id").value(1))
                 .andExpect(jsonPath("$.data.products[0].name").value("상품명"))
-                .andExpect(jsonPath("$.data.products[0].price").value(30000))
-                .andExpect(jsonPath("$.data.products[0].stock").value(100));
+                .andExpect(jsonPath("$.data.products[0].price").value(30000));
     }
 }
