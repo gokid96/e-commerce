@@ -29,22 +29,20 @@ public class ProductResult {
         private final Long productId;
         private final String productName;
         private final long productPrice;
-        private final int stock;
+
 
         @Builder
-        private Product(Long productId, String productName, long productPrice, int stock) {
+        private Product(Long productId, String productName, long productPrice) {
             this.productId = productId;
             this.productName = productName;
             this.productPrice = productPrice;
-            this.stock = stock;
         }
 
-        public static Product of(Long productId, String productName, long productPrice, int stock) {
+        public static Product of(Long productId, String productName, long productPrice) {
             return Product.builder()
                     .productId(productId)
                     .productName(productName)
                     .productPrice(productPrice)
-                    .stock(stock)
                     .build();
         }
     }

@@ -31,7 +31,7 @@ class ProductControllerDocsTest extends RestDocsSupport {
     void getProducts() throws Exception {
         given(productFacade.getProducts())
                 .willReturn(ProductResult.Products.of(List.of(
-                        ProductResult.Product.of(1L, "상품명", 30000L, 100)
+                        ProductResult.Product.of(1L, "상품명", 30000L)
                 )));
 
         mockMvc.perform(get("/api/v1/products"))
@@ -43,8 +43,7 @@ class ProductControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("message").description("응답 메시지"),
                                 fieldWithPath("data.products[].id").description("상품 ID"),
                                 fieldWithPath("data.products[].name").description("상품명"),
-                                fieldWithPath("data.products[].price").description("가격"),
-                                fieldWithPath("data.products[].stock").description("재고 수량")
+                                fieldWithPath("data.products[].price").description("가격")
                         )
                 ));
     }
@@ -54,7 +53,7 @@ class ProductControllerDocsTest extends RestDocsSupport {
     void getPopularProducts() throws Exception {
         given(productFacade.getPopularProducts())
                 .willReturn(ProductResult.Products.of(List.of(
-                        ProductResult.Product.of(1L, "상품명", 30000L, 100)
+                        ProductResult.Product.of(1L, "상품명", 30000L)
                 )));
 
         mockMvc.perform(get("/api/v1/products/ranks"))
@@ -66,8 +65,7 @@ class ProductControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("message").description("응답 메시지"),
                                 fieldWithPath("data.products[].id").description("상품 ID"),
                                 fieldWithPath("data.products[].name").description("상품명"),
-                                fieldWithPath("data.products[].price").description("가격"),
-                                fieldWithPath("data.products[].stock").description("재고 수량")
+                                fieldWithPath("data.products[].price").description("가격")
                         )
                 ));
     }
