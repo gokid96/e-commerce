@@ -1,7 +1,6 @@
 package com.github.gokid96.e_commerce.product.interfaces.dto;
 
 import com.github.gokid96.e_commerce.product.application.ProductResult;
-import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,14 +32,12 @@ public class ProductResponse {
         private final Long id;
         private final String name;
         private final long price;
-        private final int stock;
 
         @Builder
-        private Product(Long id, String name, long price, int stock) {
+        private Product(Long id, String name, long price) {
             this.id = id;
             this.name = name;
             this.price = price;
-            this.stock = stock;
         }
 
         public static Product of(ProductResult.Product info) {
@@ -48,7 +45,6 @@ public class ProductResponse {
                     .id(info.getProductId())
                     .name(info.getProductName())
                     .price(info.getProductPrice())
-                    .stock(info.getStock())
                     .build();
         }
 

@@ -3,8 +3,6 @@ package com.github.gokid96.e_commerce.product.application;
 import com.github.gokid96.e_commerce.product.domain.product.ProductCommand;
 import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
-import com.github.gokid96.e_commerce.product.domain.stock.StockInfo;
-import com.github.gokid96.e_commerce.product.domain.stock.StockService;
 import com.github.gokid96.e_commerce.rank.domain.RankCommand;
 import com.github.gokid96.e_commerce.rank.domain.RankInfo;
 import com.github.gokid96.e_commerce.rank.domain.RankService;
@@ -22,7 +20,6 @@ public class ProductFacade {
     private static final int TOP_LIMIT = 5;
 
     private final ProductService productService;
-    private final StockService stockService;
     private final RankService rankService;
 
     @Transactional(readOnly = true)
@@ -51,8 +48,7 @@ public class ProductFacade {
     }
 
     private ProductResult.Product toProductResult(ProductInfo.Product product) {
-        StockInfo.Stock stock = stockService.getStock(product.getProductId());
         return ProductResult.Product.of(
-                product.getProductId(), product.getProductName(), product.getProductPrice(), stock.getQuantity());
+                product.getProductId(), product.getProductName(), product.getProductPrice());
     }
 }
