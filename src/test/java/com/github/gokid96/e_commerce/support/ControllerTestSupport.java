@@ -10,6 +10,8 @@ import com.github.gokid96.e_commerce.order.interfaces.OrderController;
 import com.github.gokid96.e_commerce.product.application.ProductFacade;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
 import com.github.gokid96.e_commerce.product.interfaces.ProductController;
+import com.github.gokid96.e_commerce.rank.application.RankFacade;
+import com.github.gokid96.e_commerce.rank.interfaces.RankController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -20,6 +22,7 @@ import tools.jackson.databind.ObjectMapper;
         BalanceController.class,
         CouponController.class,
         ProductController.class,
+        RankController.class,
         OrderController.class,
         ApiControllerAdvice.class
 })
@@ -36,6 +39,8 @@ public abstract class ControllerTestSupport {
     protected ProductService productService;
     @MockitoBean
     protected ProductFacade productFacade;
+    @MockitoBean
+    protected RankFacade rankFacade;
     @MockitoBean
     protected OrderFacade orderFacade;
 }

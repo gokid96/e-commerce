@@ -1,6 +1,7 @@
 package com.github.gokid96.e_commerce.support;
 
 import com.github.gokid96.e_commerce.support.database.DatabaseCleaner;
+import com.github.gokid96.e_commerce.support.database.RedisCacheCleaner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public abstract class E2EControllerTestSupport extends IntegrationTestSupport {
     @Autowired
     private DatabaseCleaner databaseCleaner;
 
+    @Autowired
+    private RedisCacheCleaner redisCacheCleaner;
+
     protected RestTestClient client;
 
     @BeforeEach
@@ -27,5 +31,6 @@ public abstract class E2EControllerTestSupport extends IntegrationTestSupport {
     @AfterEach
     void tearDown() {
         databaseCleaner.clean();
+        redisCacheCleaner.clean();
     }
 }

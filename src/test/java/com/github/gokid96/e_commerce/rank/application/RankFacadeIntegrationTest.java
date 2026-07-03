@@ -3,10 +3,17 @@ package com.github.gokid96.e_commerce.rank.application;
 import com.github.gokid96.e_commerce.order.domain.Order;
 import com.github.gokid96.e_commerce.order.domain.OrderProduct;
 import com.github.gokid96.e_commerce.order.domain.OrderRepository;
+import com.github.gokid96.e_commerce.product.domain.product.Product;
+import com.github.gokid96.e_commerce.product.domain.product.ProductRepository;
+import com.github.gokid96.e_commerce.product.domain.product.ProductSellingStatus;
+import com.github.gokid96.e_commerce.rank.domain.Rank;
 import com.github.gokid96.e_commerce.rank.domain.RankCommand;
 import com.github.gokid96.e_commerce.rank.domain.RankInfo;
 import com.github.gokid96.e_commerce.rank.domain.RankRepository;
 import com.github.gokid96.e_commerce.support.IntegrationTestSupport;
+import com.github.gokid96.e_commerce.support.database.RedisCacheCleaner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +37,22 @@ public class RankFacadeIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private RankRepository rankRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private RedisCacheCleaner redisCacheCleaner;
+
+    @BeforeEach
+    void setUp() {
+        redisCacheCleaner.clean();
+    }
+
+    @AfterEach
+    void tearDown() {
+        redisCacheCleaner.clean();
+    }
 
     @DisplayName("일별 랭킹을 생성한다.")
     @Test
@@ -60,6 +83,25 @@ public class RankFacadeIntegrationTest extends IntegrationTestSupport {
         assertThat(result).hasSize(3)
                 .extracting(RankInfo.PopularProduct::getProductId)
                 .containsExactly(3L, 2L, 1L); // 상품3(8) > 상품2(6) > 상품1(4)
+    }
+
+    @DisplayName("최근 3일 판매 랭킹 상위 상품을 조회한다.")
+    @Test
+    void getPopularProducts() {
+        // given
+        Product product1 = productRepository.save(Product.create("상품1",1_000L, ProductSellingStatus.SELLING));
+        Product product2 = productRepository.save(Product.create("상품2",2_000L, ProductSellingStatus.SELLING));
+        Product product3 = productRepository.save(Product.create("상품3",3_000L, ProductSellingStatus.STOP_SELLING));
+
+        rankRepository.save(Rank.createSell(product1.getId(), LocalDate.now().minusDays(1), 10));
+        rankRepository.save(Rank.createSell(product2.getId(), LocalDate.now().minusDays(1), 34));
+        rankRepository.save(Rank.createSell(product3.getId(), LocalDate.now().minusDays(2), 42));
+        // when
+        RankResult.PopularProducts result = rankFacade.getPopularProducts(RankCriteria.PopularProducts.ofTop5Days3());
+
+        // then
+        assertThat(result.getProducts()).hasSize(3).extracting("productId").containsExactly(product3.getId(), product2.getId(), product1.getId());
+
     }
 
 }
