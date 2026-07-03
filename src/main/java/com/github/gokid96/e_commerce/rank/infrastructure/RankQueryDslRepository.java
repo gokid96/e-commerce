@@ -2,6 +2,7 @@ package com.github.gokid96.e_commerce.rank.infrastructure;
 
 import com.github.gokid96.e_commerce.rank.domain.RankCommand;
 import com.github.gokid96.e_commerce.rank.domain.RankInfo;
+import com.github.gokid96.e_commerce.rank.domain.RankType;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,10 @@ public class RankQueryDslRepository {
                         ))
                 .from(rank)
                 .where(rank.rankDate.between(command.getStartDate(), command.getEndDate()))
+                .where(
+                        rank.rankType.eq(RankType.SELL),
+                        rank.rankDate.between(command.getStartDate(), command.getEndDate())
+                )
                 .groupBy(rank.productId)
                 .orderBy(rank.score.sumAggregate().desc())
                 .limit(command.getTop())
