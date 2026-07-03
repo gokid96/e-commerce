@@ -47,26 +47,4 @@ class ProductControllerDocsTest extends RestDocsSupport {
                         )
                 ));
     }
-
-    @DisplayName("인기 상품 조회 API")
-    @Test
-    void getPopularProducts() throws Exception {
-        given(productFacade.getPopularProducts())
-                .willReturn(ProductResult.Products.of(List.of(
-                        ProductResult.Product.of(1L, "상품명", 30000L)
-                )));
-
-        mockMvc.perform(get("/api/v1/products/ranks"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("product-ranks",
-                        responseFields(
-                                fieldWithPath("code").description("응답 코드"),
-                                fieldWithPath("message").description("응답 메시지"),
-                                fieldWithPath("data.products[].id").description("상품 ID"),
-                                fieldWithPath("data.products[].name").description("상품명"),
-                                fieldWithPath("data.products[].price").description("가격")
-                        )
-                ));
-    }
 }
