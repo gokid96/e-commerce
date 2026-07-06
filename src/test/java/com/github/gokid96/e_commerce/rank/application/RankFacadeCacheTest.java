@@ -10,6 +10,7 @@ import com.github.gokid96.e_commerce.rank.domain.RankRepository;
 import com.github.gokid96.e_commerce.support.IntegrationTestSupport;
 import com.github.gokid96.e_commerce.support.database.DatabaseCleaner;
 import com.github.gokid96.e_commerce.support.database.RedisCacheCleaner;
+import com.github.gokid96.e_commerce.support.database.RedisKeyCleaner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +33,7 @@ class RankFacadeCacheTest extends IntegrationTestSupport {
     @Autowired private RedisCacheTemplate redisCacheTemplate;
     @Autowired private RedisCacheCleaner redisCacheCleaner;
     @Autowired private DatabaseCleaner databaseCleaner;
+    @Autowired private RedisKeyCleaner redisKeyCleaner;
 
     private Product product1;
     private Product product2;
@@ -41,6 +43,8 @@ class RankFacadeCacheTest extends IntegrationTestSupport {
     void setUp() {
         databaseCleaner.clean();
         redisCacheCleaner.clean();
+        redisKeyCleaner.clean();
+
         product1 = productRepository.save(Product.create("상품1", 1_000L, ProductSellingStatus.SELLING));
         product2 = productRepository.save(Product.create("상품2", 2_000L, ProductSellingStatus.SELLING));
         product3 = productRepository.save(Product.create("상품3", 3_000L, ProductSellingStatus.SELLING));
@@ -54,6 +58,7 @@ class RankFacadeCacheTest extends IntegrationTestSupport {
     void tearDown() {
         databaseCleaner.clean();
         redisCacheCleaner.clean();
+        redisKeyCleaner.clean();
     }
 
     @DisplayName("인기 상품을 조회하면 결과가 캐시에 저장된다.")

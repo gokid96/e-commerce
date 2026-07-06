@@ -15,15 +15,24 @@ import com.github.gokid96.e_commerce.product.domain.product.ProductRepository;
 import com.github.gokid96.e_commerce.product.domain.product.ProductSellingStatus;
 import com.github.gokid96.e_commerce.product.domain.stock.Stock;
 import com.github.gokid96.e_commerce.product.domain.stock.StockRepository;
+import com.github.gokid96.e_commerce.rank.domain.RankCommand;
+import com.github.gokid96.e_commerce.rank.domain.RankInfo;
+import com.github.gokid96.e_commerce.rank.domain.RankKey;
+import com.github.gokid96.e_commerce.rank.domain.RankKeys;
+import com.github.gokid96.e_commerce.rank.domain.RankRepository;
+import com.github.gokid96.e_commerce.rank.domain.RankType;
 import com.github.gokid96.e_commerce.support.IntegrationTestSupport;
+import com.github.gokid96.e_commerce.support.database.RedisKeyCleaner;
 import com.github.gokid96.e_commerce.user.domain.User;
 import com.github.gokid96.e_commerce.user.domain.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,6 +48,8 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
     @Autowired private StockRepository stockRepository;
     @Autowired private OrderRepository orderRepository;
     @Autowired private CouponRepository couponRepository;
+    @Autowired private RankRepository rankRepository;
+    @Autowired private RedisKeyCleaner redisKeyCleaner;
 
     private User user;
     private Product product;
@@ -49,6 +60,12 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
         balanceRepository.save(Balance.create(user.getId(), 500_000L));
         product = productRepository.save(Product.create("블랙뱃지", 100_000L, ProductSellingStatus.SELLING));
         stockRepository.save(Stock.create(product.getId(), 100));
+        redisKeyCleaner.clean();
+    }
+
+    @AfterEach
+    void tearDown() {
+        redisKeyCleaner.clean();
     }
 
     @DisplayName("쿠폰 없이 주문 결제를 한다.")
@@ -72,6 +89,13 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
 
         Order order = orderRepository.findById(result.getOrderId()).orElseThrow();
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
+
+        RankCommand.Query query = RankCommand.Query.of(1,
+                RankKey.ofDays(RankType.SELL, 3),
+                RankKeys.ofDaysWithDate(RankType.SELL, 3, LocalDate.now()));
+        assertThat(rankRepository.findPopularSellRanks(query))
+                .extracting(RankInfo.PopularProduct::getProductId)
+                .containsExactly(product.getId());
     }
 
     @DisplayName("쿠폰을 사용해 주문 결제를 한다.")
@@ -101,5 +125,13 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
 
         Order order = orderRepository.findById(result.getOrderId()).orElseThrow();
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
+
+        RankCommand.Query query = RankCommand.Query.of(1,
+                RankKey.ofDays(RankType.SELL, 3),
+                RankKeys.ofDaysWithDate(RankType.SELL, 3, LocalDate.now()));
+        assertThat(rankRepository.findPopularSellRanks(query))
+                .extracting(RankInfo.PopularProduct::getProductId)
+                .containsExactly(product.getId());
+
     }
 }

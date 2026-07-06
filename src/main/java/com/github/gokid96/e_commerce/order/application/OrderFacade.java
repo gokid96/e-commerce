@@ -9,11 +9,13 @@ import com.github.gokid96.e_commerce.payment.domain.PaymentService;
 import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
 import com.github.gokid96.e_commerce.product.domain.stock.StockService;
+import com.github.gokid96.e_commerce.rank.domain.RankService;
 import com.github.gokid96.e_commerce.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -27,6 +29,7 @@ public class OrderFacade {
     private final BalanceService balanceService;
     private final StockService stockService;
     private final PaymentService paymentService;
+    private final RankService rankService;
 
     @Transactional
     public OrderResult.Order createOrder(OrderCriteria.Create criteria) {
@@ -54,6 +57,7 @@ public class OrderFacade {
         stockService.deductStock(criteria.toStockCommand());
         paymentService.pay(criteria.toPaymentCommand(order));
         orderService.paidOrder(order.getOrderId());
+        rankService.createSellRank(criteria.toRankCommand(LocalDate.now()));
 
         return OrderResult.Order.of(order);
     }

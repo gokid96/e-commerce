@@ -55,8 +55,7 @@ public class RankServiceUnitTest {
                 RankInfo.PopularProduct.of(4L, 76L),
                 RankInfo.PopularProduct.of(5L, 65L)
         ));
-        RankCommand.PopularSellRank command = RankCommand.PopularSellRank.of(5, LocalDate.of(2026, 6, 23), LocalDate.of(2026, 6, 30));
-
+        RankCommand.PopularSellRank command = RankCommand.PopularSellRank.of(5, 3, LocalDate.of(2026, 6, 30));
         // when
         RankInfo.PopularProducts result = rankService.getPopularSellRank(command);
 

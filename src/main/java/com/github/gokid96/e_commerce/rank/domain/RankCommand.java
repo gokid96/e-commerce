@@ -46,19 +46,36 @@ public class RankCommand {
     @Getter
     public static class PopularSellRank {
         private final int top;
-        private final LocalDate startDate;
-        private final LocalDate endDate;
+        private final int days;
+        private final LocalDate date;
 
         @Builder
-        private PopularSellRank(int top, LocalDate startDate, LocalDate endDate) {
+        private PopularSellRank(int top, int days, LocalDate date) {
             this.top = top;
-            this.startDate = startDate;
-            this.endDate = endDate;
+            this.days = days;
+            this.date = date;
         }
 
-        public static PopularSellRank of(int top, LocalDate startDate, LocalDate endDate) {
-            return PopularSellRank.builder().top(top).startDate(startDate).endDate(endDate).build();
+        public static PopularSellRank of(int top, int days, LocalDate date) {
+            return PopularSellRank.builder().top(top).days(days).date(date).build();
         }
     }
 
+    @Getter
+    public static class Query {
+        private final int top;
+        private final RankKey target;
+        private final RankKeys sources;
+
+        @Builder
+        private Query(int top, RankKey target, RankKeys sources) {
+            this.top = top;
+            this.target = target;
+            this.sources = sources;
+        }
+
+        public static Query of(int top, RankKey target, RankKeys sources) {
+            return Query.builder().top(top).target(target).sources(sources).build();
+        }
+    }
 }

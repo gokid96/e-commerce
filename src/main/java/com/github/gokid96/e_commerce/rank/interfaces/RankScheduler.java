@@ -16,16 +16,14 @@ public class RankScheduler {
 
     private final RankFacade rankFacade;
 
-    @Scheduled(cron = "0 0 1 * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void createDailyRank() {
-        log.info("일별 판매 랭크 생성 스케줄러 실행");
+        log.info("실시간 인기상품 캐싱 스케줄러 실행");
         try {
-            LocalDate yesterday = LocalDate.now().minusDays(1);
-            rankFacade.createDailyRankAt(yesterday);
             rankFacade.updatePopularProducts(RankCriteria.PopularProducts.ofTop5Days3());
-            log.info("일별 판매 랭크 생성 및 캐시 갱신 완료: {}", yesterday);
+            log.info("실시간 인기상품 캐싱 스케줄러 완료");
         } catch (Exception e) {
-            log.error("일별 판매 랭크 생성 스케줄러 실행 중 오류 발생", e);
+            log.error("실시간 인기상품 캐싱 스케줄러 실행 중 오류 발생", e);
         }
     }
 }

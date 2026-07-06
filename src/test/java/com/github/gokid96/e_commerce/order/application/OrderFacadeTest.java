@@ -9,6 +9,7 @@ import com.github.gokid96.e_commerce.payment.domain.PaymentService;
 import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
 import com.github.gokid96.e_commerce.product.domain.stock.StockService;
+import com.github.gokid96.e_commerce.rank.domain.RankService;
 import com.github.gokid96.e_commerce.user.domain.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,9 @@ public class OrderFacadeTest {
     @Mock
     private PaymentService paymentService;
 
+    @Mock
+    private RankService rankService;
+
     @InjectMocks
     private OrderFacade orderFacade;
 
@@ -67,7 +71,7 @@ public class OrderFacadeTest {
         // then
         assertThat(result.getOrderId()).isEqualTo(100L);
 
-        InOrder inOrder = inOrder(userService, productService, orderService, balanceService, stockService, paymentService);
+        InOrder inOrder = inOrder(userService, productService, orderService, balanceService, stockService, paymentService, rankService);
         inOrder.verify(userService).getUser(1L);
         inOrder.verify(productService).getOrderProducts(any());
         inOrder.verify(orderService).createOrder(any());
@@ -75,6 +79,7 @@ public class OrderFacadeTest {
         inOrder.verify(stockService).deductStock(any());
         inOrder.verify(paymentService).pay(any());
         inOrder.verify(orderService).paidOrder(100L);
+        inOrder.verify(rankService).createSellRank(any());
 
         verify(couponService, never()).getUsableCoupon(any());
         verify(couponService, never()).getCoupon(any());
