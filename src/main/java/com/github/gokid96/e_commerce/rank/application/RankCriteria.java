@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RankCriteria {
 
@@ -25,4 +27,18 @@ public class RankCriteria {
             return new PopularProducts(RankConstant.TOP_5, RankConstant.DAYS_3);
         }
     }
+
+    @Getter
+    public static class PersistDailyRank {
+        private final LocalDate date;
+
+        private PersistDailyRank(LocalDate date) {
+            this.date = date;
+        }
+
+        public static PersistDailyRank ofBeforeDays(LocalDate date) {
+            return new PersistDailyRank(date.minusDays(RankConstant.PERSIST_DAYS));
+        }
+    }
+
 }

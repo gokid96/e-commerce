@@ -77,4 +77,10 @@ public class RankFacade {
     private RankCommand.Create createCommand(OrderInfo.PaidProduct product, LocalDate date) {
         return RankCommand.Create.of(product.getProductId(), product.getQuantity(), date);
     }
+
+    @Transactional
+    public void persistDailyRank(RankCriteria.PersistDailyRank criteria) {
+        rankService.persistDailyRank(criteria.getDate());
+    }
+
 }

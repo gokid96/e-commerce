@@ -82,4 +82,22 @@ public class RankServiceIntegrationTest extends IntegrationTestSupport {
                 .extracting(RankInfo.PopularProduct::getProductId)
                 .containsExactly(7L, 8L, 6L, 4L, 5L);
     }
+
+    @DisplayName("일별 랭크를 DB로 영속하면 DB에 저장되고 Redis 키는 삭제된다.")
+    @Test
+    void persistDailyRank() {
+        // given
+        LocalDate date = LocalDate.of(2026, 5, 27);
+        rankRepository.save(Rank.createSell(1L, date, 10L));
+        rankRepository.save(Rank.createSell(2L, date, 20L));
+
+        // when
+        rankService.persistDailyRank(date);
+
+        // then
+        assertThat(rankRepository.findBy(RankType.SELL, date)).hasSize(2)
+                .extracting(Rank::getProductId)
+                .containsExactlyInAnyOrder(1L, 2L);
+        assertThat(rankRepository.findDailyRank(RankKey.ofDate(RankType.SELL, date))).isEmpty();
+    }
 }

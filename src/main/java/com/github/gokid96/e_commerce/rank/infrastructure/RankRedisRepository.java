@@ -3,6 +3,7 @@ package com.github.gokid96.e_commerce.rank.infrastructure;
 import com.github.gokid96.e_commerce.rank.domain.Rank;
 import com.github.gokid96.e_commerce.rank.domain.RankCommand;
 import com.github.gokid96.e_commerce.rank.domain.RankInfo;
+import com.github.gokid96.e_commerce.rank.domain.RankKey;
 import com.github.gokid96.e_commerce.rank.domain.RankKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -49,5 +50,16 @@ public class RankRedisRepository {
         Long productId = tuple.getValue();
         long score = Optional.ofNullable(tuple.getScore()).map(Double::longValue).orElse(0L);
         return RankInfo.PopularProduct.of(productId, score);
+    }
+
+    public List<RankInfo.PopularProduct> findDailyRank(RankKey key) {
+        Set<TypedTuple<Long>> tuples = redisTemplate.opsForZSet().rangeWithScores(key.generate(), 0, -1);
+        return Optional.ofNullable(tuples)
+                .map(this::toPopularProducts)
+                .orElse(new ArrayList<>());
+    }
+
+    public boolean delete(RankKey key) {
+        return Boolean.TRUE.equals(redisTemplate.delete(key.generate()));
     }
 }
