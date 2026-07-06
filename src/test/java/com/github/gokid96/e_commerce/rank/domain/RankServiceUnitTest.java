@@ -13,6 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -55,8 +56,7 @@ public class RankServiceUnitTest {
                 RankInfo.PopularProduct.of(4L, 76L),
                 RankInfo.PopularProduct.of(5L, 65L)
         ));
-        RankCommand.PopularSellRank command = RankCommand.PopularSellRank.of(5, LocalDate.of(2026, 6, 23), LocalDate.of(2026, 6, 30));
-
+        RankCommand.PopularSellRank command = RankCommand.PopularSellRank.of(5, 3, LocalDate.of(2026, 6, 30));
         // when
         RankInfo.PopularProducts result = rankService.getPopularSellRank(command);
 
@@ -64,5 +64,29 @@ public class RankServiceUnitTest {
         assertThat(result.getProducts()).hasSize(5)
                 .extracting(RankInfo.PopularProduct::getProductId)
                 .containsExactly(1L, 2L, 3L, 4L, 5L);
+    }
+    @DisplayName("일별 랭크를 DB로 영속하고 Redis 키를 삭제한다.")
+    @Test
+    void persistDailyRank() {
+        given(rankRepository.findDailyRank(any())).willReturn(List.of(
+                RankInfo.PopularProduct.of(1L, 10L),
+                RankInfo.PopularProduct.of(2L, 20L)
+        ));
+
+        rankService.persistDailyRank(LocalDate.of(2026, 5, 27));
+
+        verify(rankRepository, times(1)).saveAll(any());
+        verify(rankRepository, times(1)).delete(any());
+    }
+
+    @DisplayName("영속할 랭크가 없으면 아무것도 하지 않는다.")
+    @Test
+    void persistDailyRankWhenEmpty() {
+        given(rankRepository.findDailyRank(any())).willReturn(List.of());
+
+        rankService.persistDailyRank(LocalDate.of(2026, 5, 27));
+
+        verify(rankRepository, never()).saveAll(any());
+        verify(rankRepository, never()).delete(any());
     }
 }

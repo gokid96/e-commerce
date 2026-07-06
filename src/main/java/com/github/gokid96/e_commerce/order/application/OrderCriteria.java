@@ -8,10 +8,12 @@ import com.github.gokid96.e_commerce.payment.domain.PaymentCommand;
 import com.github.gokid96.e_commerce.product.domain.product.ProductCommand;
 import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import com.github.gokid96.e_commerce.product.domain.stock.StockCommand;
+import com.github.gokid96.e_commerce.rank.domain.RankCommand;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor
@@ -77,6 +79,13 @@ public class OrderCriteria {
         public PaymentCommand.Payment toPaymentCommand(OrderInfo.Order order) {
             return PaymentCommand.Payment.of(order.getOrderId(), order.getTotalPrice());
         }
+
+        public RankCommand.CreateList toRankCommand(LocalDate date) {
+            return RankCommand.CreateList.of(products.stream()
+                    .map(p -> RankCommand.Create.of(p.getProductId(), p.getQuantity(), date))
+                    .toList());
+        }
+
     }
 
     @Getter

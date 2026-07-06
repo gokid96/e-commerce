@@ -18,6 +18,7 @@ public class RankQueryDslRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    @Deprecated
     public List<RankInfo.PopularProduct> findPopularSellRanks(RankCommand.PopularSellRank command) {
         return queryFactory.select(
                         Projections.constructor(
@@ -26,10 +27,11 @@ public class RankQueryDslRepository {
                                 rank.score.sumAggregate().as("totalScore")
                         ))
                 .from(rank)
-                .where(rank.rankDate.between(command.getStartDate(), command.getEndDate()))
                 .where(
                         rank.rankType.eq(RankType.SELL),
-                        rank.rankDate.between(command.getStartDate(), command.getEndDate())
+                        rank.rankDate.between(
+                                command.getDate().minusDays(command.getDays()),
+                                command.getDate())
                 )
                 .groupBy(rank.productId)
                 .orderBy(rank.score.sumAggregate().desc())
