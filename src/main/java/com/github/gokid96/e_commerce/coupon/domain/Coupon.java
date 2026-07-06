@@ -81,5 +81,9 @@ public class Coupon {
         this.quantity--;
     }
 
+    public void finish() {
+        this.status = CouponStatus.FINISHED;
+    }
+
 }
 

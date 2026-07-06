@@ -224,4 +224,34 @@ public class CouponServiceTest {
 
     }
 
+    @DisplayName("발급 가능 상태의 쿠폰 목록을 조회한다.")
+    @Test
+    void getPublishableCoupons() {
+        // given
+        Coupon coupon = Coupon.create("선착순 쿠폰", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
+        given(couponRepository.findCouponsByStatus(CouponStatus.PUBLISHABLE)).willReturn(List.of(coupon));
+
+        // when
+        CouponInfo.PublishableCoupons result = couponService.getPublishableCoupons();
+
+        // then
+        assertThat(result.getCoupons()).hasSize(1)
+                .extracting(CouponInfo.PublishableCoupon::getQuantity)
+                .containsExactly(10);
+    }
+
+    @DisplayName("쿠폰을 발급 종료 처리한다.")
+    @Test
+    void finishCoupon() {
+        // given
+        Coupon coupon = Coupon.create("선착순 쿠폰", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
+        given(couponRepository.findCouponById(5L)).willReturn(Optional.of(coupon));
+
+        // when
+        couponService.finishCoupon(5L);
+
+        // then
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.FINISHED);
+        verify(couponRepository, times(1)).saveCoupon(coupon);
+    }
 }

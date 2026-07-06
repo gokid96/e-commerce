@@ -2,6 +2,7 @@ package com.github.gokid96.e_commerce.coupon.infrastructure;
 
 import com.github.gokid96.e_commerce.coupon.domain.Coupon;
 import com.github.gokid96.e_commerce.coupon.domain.CouponRepository;
+import com.github.gokid96.e_commerce.coupon.domain.CouponStatus;
 import com.github.gokid96.e_commerce.coupon.domain.UserCoupon;
 import com.github.gokid96.e_commerce.coupon.domain.UserCouponUsedStatus;
 import com.github.gokid96.e_commerce.coupon.infrastructure.jpa.CouponJpaRepository;
@@ -34,6 +35,11 @@ public class CouponCoreRepository implements CouponRepository {
     @Override
     public Coupon saveCoupon(Coupon coupon) {
         return couponJpaRepository.save(coupon);
+    }
+
+    @Override
+    public List<Coupon> findCouponsByStatus(CouponStatus status) {
+        return couponJpaRepository.findByStatus(status);
     }
 
     /*

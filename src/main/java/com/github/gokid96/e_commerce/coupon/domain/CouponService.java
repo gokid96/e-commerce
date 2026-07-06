@@ -77,4 +77,21 @@ public class CouponService {
                 })
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public CouponInfo.PublishableCoupons getPublishableCoupons() {
+        List<CouponInfo.PublishableCoupon> coupons =
+                couponRepository.findCouponsByStatus(CouponStatus.PUBLISHABLE).stream()
+                        .map(c -> CouponInfo.PublishableCoupon.of(c.getId(), c.getQuantity()))
+                        .toList();
+        return CouponInfo.PublishableCoupons.of(coupons);
+    }
+
+    @Transactional
+    public void finishCoupon(Long couponId) {
+        Coupon coupon = couponRepository.findCouponById(couponId)
+                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+        coupon.finish();
+        couponRepository.saveCoupon(coupon);
+    }
 }

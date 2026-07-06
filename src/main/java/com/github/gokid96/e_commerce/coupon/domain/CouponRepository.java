@@ -11,6 +11,7 @@ public interface CouponRepository {
     // Coupon
     Optional<Coupon> findCouponById(Long couponId);
     Optional<Coupon> findWithLockById(Long couponId);
+    List<Coupon> findCouponsByStatus(CouponStatus status);
 
     Coupon saveCoupon(Coupon coupon);
 
