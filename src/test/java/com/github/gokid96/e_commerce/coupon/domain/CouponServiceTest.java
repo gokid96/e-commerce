@@ -28,37 +28,7 @@ public class CouponServiceTest {
     @InjectMocks
     private CouponService couponService;
 
-    @DisplayName("쿠폰을 발급한다.")
-    @Test
-    void issueCoupon() {
-        // given
-        Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
-        given(couponRepository.findWithLockById(5L)).willReturn(Optional.of(coupon));
 
-        CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
-
-        // when
-        couponService.issueCoupon(command);
-
-        // then
-        assertThat(coupon.getQuantity()).isEqualTo(99);
-        verify(couponRepository, times(1)).saveCoupon(coupon);
-        verify(couponRepository, times(1)).saveUserCoupon(any(UserCoupon.class));
-    }
-
-    @DisplayName("존재하지 않는 쿠폰은 발급할 수 없다.")
-    @Test
-    void issueCoupon_notFound() {
-        // given
-        given(couponRepository.findWithLockById(5L)).willReturn(Optional.empty());
-
-        CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
-
-        // when & then
-        assertThatThrownBy(() -> couponService.issueCoupon(command))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("쿠폰이 존재하지 않습니다.");
-    }
 
     @DisplayName("쿠폰을 사용한다.")
     @Test
@@ -205,24 +175,6 @@ public class CouponServiceTest {
 
         // then
         assertThat(infos).isEmpty();
-    }
-
-    @DisplayName("이미 발급받은 쿠폰은 다시 발급할 수 없다.")
-    @Test
-    void issueCoupon_duplicate() {
-        // given
-        Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
-        given(couponRepository.findWithLockById(5L)).willReturn(Optional.of(coupon));
-        given(couponRepository.findOptionalUserCouponByUserIdAndCouponId(1L, 5L))
-                .willReturn(Optional.of(UserCoupon.create(1L, 5L)));
-
-        CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
-
-        // when & then
-        assertThatThrownBy(() -> couponService.issueCoupon(command))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 발급된 쿠폰입니다.");
-
     }
 
     @DisplayName("발급 가능 상태의 쿠폰 목록을 조회한다.")

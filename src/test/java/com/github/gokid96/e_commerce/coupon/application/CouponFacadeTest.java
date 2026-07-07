@@ -19,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class CouponFacadeTest {
@@ -32,19 +34,39 @@ public class CouponFacadeTest {
     @InjectMocks
     private CouponFacade couponFacade;
 
-    @DisplayName("쿠폰 발급 시 사용자 검증 후 발급이 순서대로 수행된다.")
+    @DisplayName("쿠폰 발급 요청을 접수한다.")
     @Test
-    void issueCoupon() {
-        // given
-        CouponCriteria.Issue criteria = CouponCriteria.Issue.of(1L, 5L);
+    void requestPublishUserCoupon() {
+        couponFacade.requestPublishUserCoupon(CouponCriteria.PublishRequest.of(1L, 5L));
 
-        // when
-        couponFacade.issueCoupon(criteria);
+        verify(couponService, times(1)).requestPublishUserCoupon(any());
+    }
 
-        // then
-        InOrder inOrder = inOrder(userService, couponService);
-        inOrder.verify(userService).getUser(1L);
-        inOrder.verify(couponService).issueCoupon(any(CouponCommand.Issue.class));
+    @DisplayName("발급 가능 쿠폰별로 후보를 발급한다.")
+    @Test
+    void publishUserCoupons() {
+        given(couponService.getPublishableCoupons()).willReturn(CouponInfo.PublishableCoupons.of(List.of(
+                CouponInfo.PublishableCoupon.of(5L, 10),
+                CouponInfo.PublishableCoupon.of(6L, 20)
+        )));
+
+        couponFacade.publishUserCoupons(CouponCriteria.Publish.of(100));
+
+        verify(couponService, times(2)).publishUserCoupons(any());
+    }
+
+    @DisplayName("수량이 소진된 쿠폰만 발급 종료 처리한다.")
+    @Test
+    void finishedPublishCoupons() {
+        given(couponService.getPublishableCoupons()).willReturn(CouponInfo.PublishableCoupons.of(List.of(
+                CouponInfo.PublishableCoupon.of(5L, 10),
+                CouponInfo.PublishableCoupon.of(6L, 20)
+        )));
+        given(couponService.isPublishFinished(any())).willReturn(true, false);
+
+        couponFacade.finishedPublishCoupons();
+
+        verify(couponService, times(1)).finishCoupon(5L);
     }
 
     @DisplayName("쿠폰 사용 시 사용자 검증 후 사용이 순서대로 수행된다.")

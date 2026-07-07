@@ -14,22 +14,6 @@ public class CouponService {
 
     private final CouponRepository couponRepository;
 
-    @Transactional
-    public void issueCoupon(CouponCommand.Issue command) {
-        Coupon coupon = couponRepository.findWithLockById(command.getCouponId())
-                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
-
-        couponRepository.findOptionalUserCouponByUserIdAndCouponId(command.getUserId(), command.getCouponId())
-                .ifPresent(userCoupon -> {
-                    throw new IllegalArgumentException("이미 발급된 쿠폰입니다.");
-                });
-
-        coupon.issue();
-        couponRepository.saveCoupon(coupon);
-
-        UserCoupon userCoupon = UserCoupon.create(command.getUserId(), command.getCouponId());
-        couponRepository.saveUserCoupon(userCoupon);
-    }
 
     public void useCoupon(CouponCommand.Use command) {
         UserCoupon userCoupon = couponRepository.findUserCouponById(command.getUserCouponId())

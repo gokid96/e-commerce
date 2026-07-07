@@ -11,26 +11,6 @@ import java.time.LocalDateTime;
 public class CouponCommand {
 
     @Getter
-    public static class Issue {
-        private final Long userId;
-        private final Long couponId;
-
-        @Builder
-        private Issue(Long userId, Long couponId) {
-            this.userId = userId;
-            this.couponId = couponId;
-        }
-
-        public static Issue of(Long userId, Long couponId) {
-            return Issue.builder()
-                    .userId(userId)
-                    .couponId(couponId)
-                    .build();
-        }
-
-    }
-
-    @Getter
     public static class Use {
         private final Long userId;
         private final Long userCouponId;

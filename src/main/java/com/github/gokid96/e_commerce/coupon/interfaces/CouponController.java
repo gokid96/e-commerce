@@ -28,7 +28,7 @@ public class CouponController {
             @PathVariable("userId") Long userId,
             @Valid @RequestBody CouponRequest.Issue request
     ) {
-        couponFacade.issueCoupon(request.toCriteria(userId));
+        couponFacade.requestPublishUserCoupon(request.toCriteria(userId));
         return ApiResponse.ok();
     }
 
