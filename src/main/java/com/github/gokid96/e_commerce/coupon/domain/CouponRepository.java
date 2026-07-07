@@ -11,6 +11,7 @@ public interface CouponRepository {
     // Coupon
     Optional<Coupon> findCouponById(Long couponId);
     Optional<Coupon> findWithLockById(Long couponId);
+    List<Coupon> findCouponsByStatus(CouponStatus status);
 
     Coupon saveCoupon(Coupon coupon);
 
@@ -24,5 +25,15 @@ public interface CouponRepository {
     UserCoupon findUserCouponByUserIdAndCouponId(Long userId, Long couponId);
 
     Optional<UserCoupon> findOptionalUserCouponByUserIdAndCouponId(Long userId, Long couponId);
+
+    boolean savePublishRequest(CouponCommand.PublishRequest command);
+
+    int countUserCouponsByCouponId(Long couponId);
+
+    List<CouponInfo.Candidates> findPublishCandidates(CouponCommand.Candidates command);
+
+    void saveAllUserCoupons(List<UserCoupon> userCoupons);
+
+    List<UserCoupon> findUserCouponsByCouponId(Long couponId);
 
 }

@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -27,37 +28,7 @@ public class CouponServiceTest {
     @InjectMocks
     private CouponService couponService;
 
-    @DisplayName("쿠폰을 발급한다.")
-    @Test
-    void issueCoupon() {
-        // given
-        Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
-        given(couponRepository.findWithLockById(5L)).willReturn(Optional.of(coupon));
 
-        CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
-
-        // when
-        couponService.issueCoupon(command);
-
-        // then
-        assertThat(coupon.getQuantity()).isEqualTo(99);
-        verify(couponRepository, times(1)).saveCoupon(coupon);
-        verify(couponRepository, times(1)).saveUserCoupon(any(UserCoupon.class));
-    }
-
-    @DisplayName("존재하지 않는 쿠폰은 발급할 수 없다.")
-    @Test
-    void issueCoupon_notFound() {
-        // given
-        given(couponRepository.findWithLockById(5L)).willReturn(Optional.empty());
-
-        CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
-
-        // when & then
-        assertThatThrownBy(() -> couponService.issueCoupon(command))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("쿠폰이 존재하지 않습니다.");
-    }
 
     @DisplayName("쿠폰을 사용한다.")
     @Test
@@ -206,22 +177,101 @@ public class CouponServiceTest {
         assertThat(infos).isEmpty();
     }
 
-    @DisplayName("이미 발급받은 쿠폰은 다시 발급할 수 없다.")
+    @DisplayName("발급 가능 상태의 쿠폰 목록을 조회한다.")
     @Test
-    void issueCoupon_duplicate() {
+    void getPublishableCoupons() {
         // given
-        Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
-        given(couponRepository.findWithLockById(5L)).willReturn(Optional.of(coupon));
-        given(couponRepository.findOptionalUserCouponByUserIdAndCouponId(1L, 5L))
-                .willReturn(Optional.of(UserCoupon.create(1L, 5L)));
+        Coupon coupon = Coupon.create("선착순 쿠폰", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
+        given(couponRepository.findCouponsByStatus(CouponStatus.PUBLISHABLE)).willReturn(List.of(coupon));
 
-        CouponCommand.Issue command = CouponCommand.Issue.of(1L, 5L);
+        // when
+        CouponInfo.PublishableCoupons result = couponService.getPublishableCoupons();
 
-        // when & then
-        assertThatThrownBy(() -> couponService.issueCoupon(command))
+        // then
+        assertThat(result.getCoupons()).hasSize(1)
+                .extracting(CouponInfo.PublishableCoupon::getQuantity)
+                .containsExactly(10);
+    }
+
+    @DisplayName("쿠폰 발급을 요청한다.")
+    @Test
+    void requestPublishUserCoupon() {
+        given(couponRepository.savePublishRequest(any())).willReturn(true);
+
+        boolean result = couponService.requestPublishUserCoupon(
+                CouponCommand.PublishRequest.of(1L, 5L, LocalDateTime.now()));
+
+        assertThat(result).isTrue();
+    }
+
+    @DisplayName("이미 요청한 사용자의 발급 요청은 실패한다.")
+    @Test
+    void requestPublishUserCoupon_duplicated() {
+        given(couponRepository.savePublishRequest(any())).willReturn(false);
+
+        assertThatThrownBy(() -> couponService.requestPublishUserCoupon(
+                CouponCommand.PublishRequest.of(1L, 5L, LocalDateTime.now())))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 발급된 쿠폰입니다.");
+                .hasMessage("쿠폰 발급 요청에 실패했습니다.");
+    }
 
+    @DisplayName("발급 후보를 꺼내 쿠폰을 발급한다.")
+    @Test
+    void publishUserCoupons() {
+        given(couponRepository.countUserCouponsByCouponId(5L)).willReturn(0);
+        given(couponRepository.findPublishCandidates(any())).willReturn(List.of(
+                CouponInfo.Candidates.of(1L, LocalDateTime.now()),
+                CouponInfo.Candidates.of(2L, LocalDateTime.now())
+        ));
+
+        couponService.publishUserCoupons(CouponCommand.Publish.of(5L, 10, 500));
+
+        verify(couponRepository, times(1)).saveAllUserCoupons(any());
+    }
+
+    @DisplayName("수량이 모두 발급됐으면 발급하지 않는다.")
+    @Test
+    void publishUserCoupons_soldOut() {
+        given(couponRepository.countUserCouponsByCouponId(5L)).willReturn(10);
+
+        couponService.publishUserCoupons(CouponCommand.Publish.of(5L, 10, 500));
+
+        verify(couponRepository, never()).saveAllUserCoupons(any());
+    }
+
+    @DisplayName("발급 수가 수량에 도달하면 발급 완료로 판정한다.")
+    @Test
+    void isPublishFinished() {
+        given(couponRepository.countUserCouponsByCouponId(5L)).willReturn(10);
+
+        boolean result = couponService.isPublishFinished(CouponCommand.PublishFinish.of(5L, 10));
+
+        assertThat(result).isTrue();
+    }
+
+    @DisplayName("발급 수가 수량 미만이면 발급 미완료로 판정한다.")
+    @Test
+    void isNotPublishFinished() {
+        given(couponRepository.countUserCouponsByCouponId(5L)).willReturn(9);
+
+        boolean result = couponService.isPublishFinished(CouponCommand.PublishFinish.of(5L, 10));
+
+        assertThat(result).isFalse();
+    }
+
+    @DisplayName("쿠폰을 발급 종료 처리한다.")
+    @Test
+    void finishCoupon() {
+        // given
+        Coupon coupon = Coupon.create("선착순 쿠폰", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
+        given(couponRepository.findCouponById(5L)).willReturn(Optional.of(coupon));
+
+        // when
+        couponService.finishCoupon(5L);
+
+        // then
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.FINISHED);
+        verify(couponRepository, times(1)).saveCoupon(coupon);
     }
 
 }

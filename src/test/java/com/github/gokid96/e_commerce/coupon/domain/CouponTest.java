@@ -10,6 +10,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CouponTest {
 
+    @DisplayName("쿠폰을 발급 종료 상태로 전환한다.")
+    @Test
+    void finish() {
+        Coupon coupon = Coupon.create("선착순 쿠폰", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
+
+        coupon.finish();
+
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.FINISHED);
+    }
+
     @DisplayName("쿠폰 생성 시 할인율은 0과 1 사이여야 한다.")
     @Test
     void createWithInvalidDiscountRate() {

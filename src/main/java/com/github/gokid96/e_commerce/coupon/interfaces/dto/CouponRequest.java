@@ -26,8 +26,8 @@ public class CouponRequest {
             return new Issue(couponId);
         }
 
-        public CouponCriteria.Issue toCriteria(Long userId) {
-            return CouponCriteria.Issue.of(userId, this.couponId);
+        public CouponCriteria.PublishRequest toCriteria(Long userId) {
+            return CouponCriteria.PublishRequest.of(userId, couponId);
         }
     }
 
