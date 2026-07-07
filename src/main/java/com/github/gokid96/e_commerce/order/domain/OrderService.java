@@ -1,5 +1,7 @@
 package com.github.gokid96.e_commerce.order.domain;
 
+import com.github.gokid96.e_commerce.message.domain.MessageCommand;
+import com.github.gokid96.e_commerce.message.domain.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +13,7 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderExternalClient orderExternalClient;
+    private final MessageService messageService;
 
     public OrderInfo.Order createOrder(OrderCommand.Create command) {
         List<OrderProduct> orderProducts = command.getProducts().stream()
@@ -34,7 +36,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
 
         order.paid(LocalDateTime.now());
-        orderExternalClient.sendOrderMessage(order);
+        messageService.sendOrder(MessageCommand.Order.of(order));
     }
 
     private OrderProduct toOrderProduct(OrderCommand.OrderProduct command) {
