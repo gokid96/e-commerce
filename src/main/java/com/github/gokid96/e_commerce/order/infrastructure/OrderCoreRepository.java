@@ -16,7 +16,6 @@ import java.util.Optional;
 public class OrderCoreRepository implements OrderRepository {
 
     private final OrderJpaRepository orderJpaRepository;
-    private final OrderQueryDslRepository orderQueryDslRepository;
 
     @Override
     public Order save(Order order) {
@@ -26,10 +25,5 @@ public class OrderCoreRepository implements OrderRepository {
     @Override
     public Optional<Order> findById(Long orderId) {
         return orderJpaRepository.findById(orderId);
-    }
-
-    @Override
-    public List<OrderInfo.PaidProduct> findPaidProducts(OrderCommand.PaidProducts command) {
-        return orderQueryDslRepository.findPaidProducts(command);
     }
 }

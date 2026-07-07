@@ -37,12 +37,6 @@ public class OrderService {
         orderExternalClient.sendOrderMessage(order);
     }
 
-    public OrderInfo.PaidProducts getPaidProducts(OrderCommand.DateQuery command) {
-        OrderCommand.PaidProducts queryCommand = command.toPaidProductsQuery(OrderStatus.PAID);
-        List<OrderInfo.PaidProduct> paidProducts = orderRepository.findPaidProducts(queryCommand);
-        return OrderInfo.PaidProducts.of(paidProducts);
-    }
-
     private OrderProduct toOrderProduct(OrderCommand.OrderProduct command) {
         return OrderProduct.create(
                 command.getProductId(),
