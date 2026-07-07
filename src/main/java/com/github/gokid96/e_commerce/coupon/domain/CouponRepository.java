@@ -26,4 +26,14 @@ public interface CouponRepository {
 
     Optional<UserCoupon> findOptionalUserCouponByUserIdAndCouponId(Long userId, Long couponId);
 
+    boolean savePublishRequest(CouponCommand.PublishRequest command);
+
+    int countUserCouponsByCouponId(Long couponId);
+
+    List<CouponInfo.Candidates> findPublishCandidates(CouponCommand.Candidates command);
+
+    void saveAllUserCoupons(List<UserCoupon> userCoupons);
+
+    List<UserCoupon> findUserCouponsByCouponId(Long couponId);
+
 }

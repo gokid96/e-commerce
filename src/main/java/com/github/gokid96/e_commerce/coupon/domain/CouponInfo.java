@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -106,6 +107,22 @@ public class CouponInfo {
 
         public static PublishableCoupon of(Long couponId, int quantity) {
             return PublishableCoupon.builder().couponId(couponId).quantity(quantity).build();
+        }
+    }
+
+    @Getter
+    public static class Candidates {
+        private final Long userId;
+        private final LocalDateTime issuedAt;
+
+        @Builder
+        private Candidates(Long userId, LocalDateTime issuedAt) {
+            this.userId = userId;
+            this.issuedAt = issuedAt;
+        }
+
+        public static Candidates of(Long userId, LocalDateTime issuedAt) {
+            return Candidates.builder().userId(userId).issuedAt(issuedAt).build();
         }
     }
 }

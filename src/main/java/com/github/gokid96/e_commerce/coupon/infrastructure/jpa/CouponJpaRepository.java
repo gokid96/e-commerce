@@ -15,4 +15,5 @@ public interface CouponJpaRepository extends JpaRepository<Coupon, Long> {
     Optional<Coupon> findWithLockById(Long couponId);
 
     List<Coupon> findByStatus(CouponStatus status);
+
 }
