@@ -1,7 +1,5 @@
 package com.github.gokid96.e_commerce.product.domain.product;
 
-import com.github.gokid96.e_commerce.product.domain.stock.StockInfo;
-import com.github.gokid96.e_commerce.product.domain.stock.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

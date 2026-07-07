@@ -15,7 +15,7 @@ public class RankInfo {
         private final Long productId;
         private final Long totalScore;
 
-        public PopularProduct(Long productId, Long totalScore) {   // QueryDSL projection 용 (public)
+        private PopularProduct(Long productId, Long totalScore) {
             this.productId = productId;
             this.totalScore = totalScore;
         }

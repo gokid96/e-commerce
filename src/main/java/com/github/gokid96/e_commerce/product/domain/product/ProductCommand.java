@@ -23,10 +23,6 @@ public class ProductCommand {
         public static OrderProducts of(List<OrderProduct> products) {
             return OrderProducts.builder().products(products).build();
         }
-
-        public List<Long> productIds() {
-            return products.stream().map(OrderProduct::getProductId).toList();
-        }
     }
 
     @Getter

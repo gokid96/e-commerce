@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -60,41 +59,6 @@ public class OrderCommand {
                     .productPrice(productPrice)
                     .quantity(quantity)
                     .build();
-        }
-
-    }
-
-    @Getter
-    public static class DateQuery {
-        private final LocalDate date;
-
-        @Builder
-        private DateQuery(LocalDate date) {
-            this.date = date;
-        }
-
-        public static DateQuery of(LocalDate date) {
-            return DateQuery.builder().date(date).build();
-        }
-
-        public PaidProducts toPaidProductsQuery(OrderStatus orderStatus) {
-            return PaidProducts.of(date, orderStatus);
-        }
-    }
-
-    @Getter
-    public static class PaidProducts {
-        private final LocalDate paidAt;
-        private final OrderStatus status;
-
-        @Builder
-        private PaidProducts(LocalDate paidAt, OrderStatus status) {
-            this.paidAt = paidAt;
-            this.status = status;
-        }
-
-        public static PaidProducts of(LocalDate paidAt, OrderStatus status) {
-            return PaidProducts.builder().paidAt(paidAt).status(status).build();
         }
 
     }

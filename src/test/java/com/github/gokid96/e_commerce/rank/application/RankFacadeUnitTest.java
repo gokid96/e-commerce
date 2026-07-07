@@ -1,7 +1,5 @@
 package com.github.gokid96.e_commerce.rank.application;
 
-import com.github.gokid96.e_commerce.order.domain.OrderInfo;
-import com.github.gokid96.e_commerce.order.domain.OrderService;
 import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
 import com.github.gokid96.e_commerce.rank.domain.RankInfo;
@@ -14,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,31 +27,10 @@ public class RankFacadeUnitTest {
     private RankFacade rankFacade;
 
     @Mock
-    private OrderService orderService;
-
-    @Mock
     private RankService rankService;
 
     @Mock
     private ProductService productService;
-
-    @DisplayName("일별 랭킹을 생성한다.")
-    @Test
-    void createDailyRankAt() {
-        // given
-        OrderInfo.PaidProducts paidProducts = OrderInfo.PaidProducts.of(List.of(
-                OrderInfo.PaidProduct.of(1L, 10),
-                OrderInfo.PaidProduct.of(2L, 20)
-        ));
-        given(orderService.getPaidProducts(any())).willReturn(paidProducts);
-        // when
-        rankFacade.createDailyRankAt(LocalDate.now().minusDays(1));
-
-        // then
-        InOrder inOrder = inOrder(orderService, rankService);
-        inOrder.verify(orderService, times(1)).getPaidProducts(any());
-        inOrder.verify(rankService, times(1)).createSellRank(any());
-    }
 
     @DisplayName("최근 3일 가장 많이 팔린 상위 상품을 조회한다.")
     @Test

@@ -18,9 +18,8 @@ import java.util.List;
 public class RankCoreRepository implements RankRepository {
 
     private final RankJpaRepository rankJpaRepository;
-    private final RankQueryDslRepository rankQueryDslRepository;
     private final RankRedisRepository rankRedisRepository;
-    private final RankJdbcTemplateRepository rankJdbcTemplateRepository;   // 필드 추가
+    private final RankJdbcTemplateRepository rankJdbcTemplateRepository;
 
     @Override
     public Rank save(Rank rank) {

@@ -9,12 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class StockService {
     private final StockRepository stockRepository;
 
-    @Transactional(readOnly = true)
-    public StockInfo.Stock getStock(Long productId) {
-        Stock stock = stockRepository.findByProductId(productId);
-        return StockInfo.Stock.of(stock.getId(), stock.getQuantity());
-    }
-
     @Transactional
     public void deductStock(StockCommand.OrderProducts command) {
         command.getProducts().forEach(this::deductStock);

@@ -12,5 +12,4 @@ public interface OrderRepository {
 
     Optional<Order> findById(Long orderId);
 
-    List<OrderInfo.PaidProduct> findPaidProducts(OrderCommand.PaidProducts command);
 }

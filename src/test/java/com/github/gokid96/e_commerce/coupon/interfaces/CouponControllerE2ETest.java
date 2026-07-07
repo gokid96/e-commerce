@@ -48,63 +48,7 @@ class CouponControllerE2ETest extends E2EControllerTestSupport {
                 .jsonPath("$.data[1].couponName").isEqualTo("쿠폰명2");
     }
 
-    @DisplayName("쿠폰 발급 시, 발급 가능한 상태여야 한다.")
-    @Test
-    void issueCouponWithInvalidStatus() {
-        Coupon coupon = couponRepository.saveCoupon(
-                Coupon.create("쿠폰명1", 0.1, 10, CouponStatus.REGISTERED, LocalDateTime.now().plusDays(1)));
-
-        client.post()
-                .uri("/api/v1/users/{userId}/coupons/issue", user.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Map.of("couponId", coupon.getId()))
-                .exchange()
-                .expectStatus().is5xxServerError()
-                .expectBody()
-                .jsonPath("$.code").isEqualTo(500)
-                .jsonPath("$.message").isEqualTo("발급 불가능한 쿠폰입니다.");
-    }
-
-    @DisplayName("쿠폰 발급 시, 만료된 쿠폰은 발급할 수 없다.")
-    @Test
-    void issueCouponWithExpiredDate() {
-        Coupon coupon = couponRepository.saveCoupon(Coupon.builder()
-                .name("쿠폰명1")
-                .discountRate(0.1)
-                .quantity(10)
-                .status(CouponStatus.PUBLISHABLE)
-                .expiredAt(LocalDateTime.now().minusDays(1))
-                .build());
-
-        client.post()
-                .uri("/api/v1/users/{userId}/coupons/issue", user.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Map.of("couponId", coupon.getId()))
-                .exchange()
-                .expectStatus().is5xxServerError()
-                .expectBody()
-                .jsonPath("$.code").isEqualTo(500)
-                .jsonPath("$.message").isEqualTo("쿠폰이 만료되었습니다.");
-    }
-
-    @DisplayName("쿠폰 발급 시, 쿠폰 수량이 부족하면 발급할 수 없다.")
-    @Test
-    void issueCouponWithInsufficientQuantity() {
-        Coupon coupon = couponRepository.saveCoupon(
-                Coupon.create("쿠폰명1", 0.1, 0, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1)));
-
-        client.post()
-                .uri("/api/v1/users/{userId}/coupons/issue", user.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Map.of("couponId", coupon.getId()))
-                .exchange()
-                .expectStatus().is5xxServerError()
-                .expectBody()
-                .jsonPath("$.code").isEqualTo(500)
-                .jsonPath("$.message").isEqualTo("쿠폰이 모두 소진되었습니다.");
-    }
-
-    @DisplayName("쿠폰을 발급한다.")
+    @DisplayName("쿠폰 발급을 요청하면 접수된다.")
     @Test
     void issueCoupon() {
         Coupon coupon = couponRepository.saveCoupon(
