@@ -1,6 +1,7 @@
 package com.github.gokid96.e_commerce.message.domain;
 
 import com.github.gokid96.e_commerce.order.domain.Order;
+import com.github.gokid96.e_commerce.order.domain.OrderEvent;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,14 +32,14 @@ public class MessageCommand {
             this.paidAt = paidAt;
         }
 
-        public static Order of(com.github.gokid96.e_commerce.order.domain.Order order) {
+        public static Order of(OrderEvent.Paid event) {
             return Order.builder()
-                    .orderId(order.getId())
-                    .userId(order.getUserId())
-                    .userCouponId(order.getUserCouponId())
-                    .totalPrice(order.getTotalPrice())
-                    .discountPrice(order.getDiscountPrice())
-                    .paidAt(order.getPaidAt())
+                    .orderId(event.getOrderId())
+                    .userId(event.getUserId())
+                    .userCouponId(event.getUserCouponId())
+                    .totalPrice(event.getTotalPrice())
+                    .discountPrice(event.getDiscountPrice())
+                    .paidAt(event.getPaidAt())
                     .build();
         }
     }
