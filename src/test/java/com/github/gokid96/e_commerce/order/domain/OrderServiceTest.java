@@ -1,6 +1,5 @@
 package com.github.gokid96.e_commerce.order.domain;
 
-import com.github.gokid96.e_commerce.message.domain.MessageService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +24,7 @@ public class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private MessageService messageService;
+    private OrderEventPublisher orderEventPublisher;
 
     @InjectMocks
     private OrderService orderService;
@@ -63,7 +62,7 @@ public class OrderServiceTest {
 
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
-        verify(messageService, times(1)).sendOrder(any());
+        verify(orderEventPublisher, times(1)).paid(any(OrderEvent.Paid.class));
     }
 
     @DisplayName("주문이 존재하지 않으면 결제 완료 시 예외가 발생한다.")
