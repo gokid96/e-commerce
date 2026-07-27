@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum BalanceTransactionType {
 
     CHARGE("충전"),
-    USE("사용");
+    USE("사용"),
+    REFUND("환불");
 
     private final String description;
 }
