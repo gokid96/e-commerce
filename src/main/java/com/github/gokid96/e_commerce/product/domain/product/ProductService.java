@@ -2,6 +2,7 @@ package com.github.gokid96.e_commerce.product.domain.product;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    @Transactional(readOnly = true)
     public ProductInfo.Products getSellingProducts() {
         List<ProductInfo.Product> infos = productRepository.findBySellStatusIn(ProductSellingStatus.forSelling()).stream()
                 .map(ProductInfo.Product::of)
@@ -18,6 +20,7 @@ public class ProductService {
         return ProductInfo.Products.of(infos);
     }
 
+    @Transactional(readOnly = true)
     public ProductInfo.OrderProducts getOrderProducts(ProductCommand.OrderProducts command) {
         List<ProductInfo.OrderProduct> orderProducts = command.getProducts().stream()
                 .map(item -> {
@@ -32,6 +35,7 @@ public class ProductService {
         return ProductInfo.OrderProducts.of(orderProducts);
     }
 
+    @Transactional(readOnly = true)
     public ProductInfo.Products getProducts(ProductCommand.Products command) {
         List<ProductInfo.Product> products = command.getProductIds().stream()
                 .map(productRepository::findById)
@@ -39,6 +43,4 @@ public class ProductService {
                 .toList();
         return ProductInfo.Products.of(products);
     }
-
-
 }
