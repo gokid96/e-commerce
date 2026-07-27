@@ -24,7 +24,7 @@ public class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderExternalClient orderExternalClient;
+    private OrderEventPublisher orderEventPublisher;
 
     @InjectMocks
     private OrderService orderService;
@@ -62,7 +62,7 @@ public class OrderServiceTest {
 
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
-        verify(orderExternalClient, times(1)).sendOrderMessage(order);
+        verify(orderEventPublisher, times(1)).paid(any(OrderEvent.Paid.class));
     }
 
     @DisplayName("주문이 존재하지 않으면 결제 완료 시 예외가 발생한다.")

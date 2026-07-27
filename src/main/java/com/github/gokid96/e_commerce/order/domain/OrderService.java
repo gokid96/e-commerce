@@ -1,5 +1,6 @@
 package com.github.gokid96.e_commerce.order.domain;
 
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderExternalClient orderExternalClient;
+    private final OrderEventPublisher orderEventPublisher;
 
     public OrderInfo.Order createOrder(OrderCommand.Create command) {
         List<OrderProduct> orderProducts = command.getProducts().stream()
@@ -29,12 +30,13 @@ public class OrderService {
         return OrderInfo.Order.of(order);
     }
 
+    @Transactional
     public void paidOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
 
         order.paid(LocalDateTime.now());
-        orderExternalClient.sendOrderMessage(order);
+        orderEventPublisher.paid(OrderEvent.Paid.of(order));
     }
 
     private OrderProduct toOrderProduct(OrderCommand.OrderProduct command) {
