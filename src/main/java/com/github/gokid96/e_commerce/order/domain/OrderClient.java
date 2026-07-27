@@ -1,0 +1,12 @@
+package com.github.gokid96.e_commerce.order.domain;
+
+import java.util.List;
+
+public interface OrderClient {
+
+    OrderInfo.User getUser(Long userId);
+
+    List<OrderInfo.Product> getProducts(List<OrderCommand.OrderProduct> command);
+
+    OrderInfo.Coupon getUsableCoupon(Long userCouponId);
+}

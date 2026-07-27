@@ -14,11 +14,12 @@ public class OrderTest {
     @DisplayName("할인이 없는 주문을 생성한다.")
     @Test
     void createWithoutDiscount() {
-        //given
+        // given
         List<OrderProduct> orderProducts = List.of(
                 OrderProduct.create(1L, "상품1", 1_000L, 1),
                 OrderProduct.create(2L, "상품2", 2_000L, 2)
         );
+
         // when
         Order order = Order.create(1L, null, 0.0, orderProducts);
 
@@ -26,7 +27,6 @@ public class OrderTest {
         assertThat(order.getTotalPrice()).isEqualTo(5_000L);
         assertThat(order.getDiscountPrice()).isZero();
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CREATED);
-
     }
 
     @DisplayName("할인이 있는 주문을 생성한다.")
@@ -37,6 +37,7 @@ public class OrderTest {
                 OrderProduct.create(1L, "상품1", 1_000L, 1),
                 OrderProduct.create(2L, "상품2", 2_000L, 2)
         );
+
         // when
         Order order = Order.create(1L, 10L, 0.1, orderProducts);
 
@@ -47,26 +48,42 @@ public class OrderTest {
         assertThat(order.getTotalPrice()).isEqualTo(total - discount);
     }
 
+    @DisplayName("주문 상품이 없으면 주문을 생성할 수 없다.")
+    @Test
+    void create_emptyOrderProducts() {
+        assertThatThrownBy(() -> Order.create(1L, null, 0.0, List.of()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 상품이 없습니다.");
+    }
+
     @DisplayName("주문을 결제 완료 상태로 변경한다.")
     @Test
-    void paid() {
+    void completed() {
         // given
         Order order = Order.create(1L, null, 0.0, List.of(
                 OrderProduct.create(1L, "상품1", 1_000L, 1)
         ));
 
         // when
-        order.paid(LocalDateTime.now());
+        order.completed(LocalDateTime.now());
 
         // then
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETED);
+        assertThat(order.getCompletedAt()).isNotNull();
     }
 
+    @DisplayName("주문을 취소한다.")
     @Test
-    @DisplayName("주문 상품이 없으면 주문을 생성할 수 없다")
-    void create_emptyOrderProducts() {
-        assertThatThrownBy(() -> Order.create(1L, null, 0.0, List.of()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 상품이 없습니다.");
+    void cancel() {
+        // given
+        Order order = Order.create(1L, null, 0.0, List.of(
+                OrderProduct.create(1L, "상품1", 1_000L, 1)
+        ));
+
+        // when
+        order.cancel();
+
+        // then
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
     }
 }

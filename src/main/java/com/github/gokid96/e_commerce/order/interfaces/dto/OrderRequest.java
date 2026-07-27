@@ -1,6 +1,6 @@
 package com.github.gokid96.e_commerce.order.interfaces.dto;
 
-import com.github.gokid96.e_commerce.order.application.OrderCriteria;
+import com.github.gokid96.e_commerce.order.domain.OrderCommand;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -17,18 +17,18 @@ public class OrderRequest {
     @NotNull(message = "사용자 ID는 필수입니다.")
     private Long userId;
 
-    private Long couponId;
+    private Long userCouponId;
 
     @Valid
     @NotEmpty(message = "상품 목록은 1개 이상이어야 합니다.")
     private List<OrderProductRequest> products;
 
-    public OrderCriteria.Create toCriteria() {
-        return OrderCriteria.Create.of(
+    public OrderCommand.Create toCommand() {
+        return OrderCommand.Create.of(
                 userId,
-                couponId,
+                userCouponId,
                 products.stream()
-                        .map(p -> OrderCriteria.OrderProduct.of(p.getProductId(), p.getQuantity()))
+                        .map(p -> OrderCommand.OrderProduct.of(p.getProductId(), p.getQuantity()))
                         .toList()
         );
     }
