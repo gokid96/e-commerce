@@ -42,6 +42,7 @@ public class BalanceServiceTest {
         // then
         assertThat(existing.getAmount()).isEqualTo(1_500_000L);
         verify(balanceRepository, never()).save(any(Balance.class));
+        verify(balanceRepository, times(1)).saveTransaction(any());
     }
 
     @DisplayName("잔액이 존재하지 않으면 새로 생성해서 저장한다.")
@@ -58,6 +59,7 @@ public class BalanceServiceTest {
 
         // then
         verify(balanceRepository, times(1)).save(any(Balance.class));
+        verify(balanceRepository, times(1)).saveTransaction(any());
     }
 
     @DisplayName("잔액이 존재하면 사용한다.")
@@ -75,8 +77,8 @@ public class BalanceServiceTest {
 
         // then
         assertThat(existing.getAmount()).isEqualTo(700_000L);
+        verify(balanceRepository, times(1)).saveTransaction(any());
     }
-
 
     @DisplayName("잔액이 존재하지 않으면 사용 시 예외가 발생한다.")
     @Test
@@ -121,5 +123,36 @@ public class BalanceServiceTest {
         assertThat(info.getAmount()).isZero();
     }
 
+    @DisplayName("잔액을 환불한다.")
+    @Test
+    void refundBalance() {
+        // given
+        Balance existing = Balance.create(1L, 700_000L);
+        given(balanceRepository.findOptionalByUserId(1L))
+                .willReturn(Optional.of(existing));
 
+        BalanceCommand.Refund command = BalanceCommand.Refund.of(1L, 300_000L);
+
+        // when
+        balanceService.refundBalance(command);
+
+        // then
+        assertThat(existing.getAmount()).isEqualTo(1_000_000L);
+        verify(balanceRepository, times(1)).saveTransaction(any());
+    }
+
+    @DisplayName("잔액이 존재하지 않으면 환불 시 예외가 발생한다.")
+    @Test
+    void refundBalance_notFound() {
+        // given
+        given(balanceRepository.findOptionalByUserId(1L))
+                .willReturn(Optional.empty());
+
+        BalanceCommand.Refund command = BalanceCommand.Refund.of(1L, 300_000L);
+
+        // when & then
+        assertThatThrownBy(() -> balanceService.refundBalance(command))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("잔액이 존재하지 않습니다.");
+    }
 }

@@ -51,6 +51,13 @@ public class CouponService {
         couponRepository.saveUserCoupon(userCoupon);
     }
 
+    public void cancelUserCoupon(Long userCouponId) {
+        UserCoupon userCoupon = couponRepository.findUserCouponById(userCouponId)
+                .orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
+        userCoupon.cancel();
+        couponRepository.saveUserCoupon(userCoupon);
+    }
+
     public List<CouponInfo.UserCoupon> getUserCoupons(Long userId) {
         List<UserCoupon> userCoupons = couponRepository.findUserCouponsByUserIdAndUsedStatusIn(
                 userId, UserCouponUsedStatus.forUsable());

@@ -46,5 +46,31 @@ public class UserCouponTest {
                 .hasMessage("이미 사용된 쿠폰입니다.");
     }
 
+    @DisplayName("사용된 쿠폰을 취소하면 상태가 UNUSED 로 변경된다.")
+    @Test
+    void cancel() {
+        // given
+        UserCoupon userCoupon = UserCoupon.create(1L, 5L);
+        userCoupon.use();
+
+        // when
+        userCoupon.cancel();
+
+        // then
+        assertThat(userCoupon.getUsedStatus()).isEqualTo(UserCouponUsedStatus.UNUSED);
+        assertThat(userCoupon.getUsedAt()).isNull();
+    }
+
+    @DisplayName("사용하지 않은 쿠폰은 취소할 수 없다.")
+    @Test
+    void cannotCancelUnused() {
+        // given
+        UserCoupon userCoupon = UserCoupon.create(1L, 5L);
+
+        // when & then
+        assertThatThrownBy(userCoupon::cancel)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("사용할 수 있는 쿠폰은 취소할 수 없습니다.");
+    }
 
 }

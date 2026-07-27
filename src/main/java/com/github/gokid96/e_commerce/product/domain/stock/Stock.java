@@ -39,7 +39,6 @@ public class Stock {
     public static Stock create(Long productId, int quantity) {
         if (quantity < 0) {
             throw new IllegalArgumentException("재고 수량은 0 이상이어야 합니다.");
-
         }
         return Stock.builder()
                 .productId(productId)
@@ -47,10 +46,14 @@ public class Stock {
                 .build();
     }
 
-    public void deduct(int quantity){
-        if(this.quantity< quantity){
+    public void deduct(int quantity) {
+        if (this.quantity < quantity) {
             throw new IllegalArgumentException("재고가 부족합니다.");
         }
         this.quantity -= quantity;
+    }
+
+    public void restore(int quantity) {
+        this.quantity += quantity;
     }
 }

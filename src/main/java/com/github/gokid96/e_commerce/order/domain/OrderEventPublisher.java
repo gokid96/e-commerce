@@ -2,5 +2,13 @@ package com.github.gokid96.e_commerce.order.domain;
 
 public interface OrderEventPublisher {
 
-    void paid(OrderEvent.Paid event);
+    void created(OrderEvent.Created event);
+
+    void completed(OrderEvent.Completed event);
+
+    void completeFailed(OrderEvent.CompleteFailed event);
+
+    void paymentWaited(OrderEvent.PaymentWaited event);
+
+    void failed(OrderEvent.Failed event);
 }

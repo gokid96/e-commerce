@@ -7,8 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum OrderStatus {
 
-    CREATED("주문 생성"),
-    PAID("결제 완료");
+    CREATED("주문생성"),
+    COMPLETED("주문완료"),
+    CANCELED("주문취소"),
+    ;
 
     private final String description;
 }

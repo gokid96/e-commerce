@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface BalanceRepository {
     Optional<Balance> findOptionalByUserId(Long userId);
     Balance save(Balance balance);
+    BalanceTransaction saveTransaction(BalanceTransaction balanceTransaction);
 }

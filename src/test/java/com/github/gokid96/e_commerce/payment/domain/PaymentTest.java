@@ -28,6 +28,21 @@ public class PaymentTest {
         // then
         assertThat(payment.getPaymentStatus()).isEqualTo(PaymentStatus.COMPLETED);
     }
+
+    @DisplayName("결제를 취소하면 상태가 CANCELED 이다.")
+    @Test
+    void cancel() {
+        // given
+        Payment payment = Payment.create(1L, 10_000L);
+        payment.pay();
+
+        // when
+        payment.cancel();
+
+        // then
+        assertThat(payment.getPaymentStatus()).isEqualTo(PaymentStatus.CANCELED);
+    }
+
     @DisplayName("완료 상태는 결제 불가, 준비 상태는 결제 가능이다.")
     @Test
     void cannotPayable(){

@@ -28,8 +28,6 @@ public class CouponServiceTest {
     @InjectMocks
     private CouponService couponService;
 
-
-
     @DisplayName("쿠폰을 사용한다.")
     @Test
     void useCoupon() {
@@ -45,6 +43,22 @@ public class CouponServiceTest {
         // then
         assertThat(userCoupon.getUsedStatus()).isEqualTo(UserCouponUsedStatus.USED);
         verify(couponRepository, times(1)).saveUserCoupon(userCoupon);
+    }
+
+    @DisplayName("사용자 쿠폰 사용을 취소한다.")
+    @Test
+    void cancelUserCoupon() {
+        // given
+        UserCoupon userCoupon = UserCoupon.create(1L, 5L);
+        userCoupon.use();
+        given(couponRepository.findUserCouponById(100L)).willReturn(Optional.of(userCoupon));
+
+        // when
+        couponService.cancelUserCoupon(100L);
+
+        // then
+        assertThat(userCoupon.getUsedStatus()).isEqualTo(UserCouponUsedStatus.UNUSED);
+        verify(couponRepository, times(1)).saveUserCoupon(any());
     }
 
     @DisplayName("존재하지 않는 사용자 쿠폰은 사용할 수 없다.")

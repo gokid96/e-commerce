@@ -25,7 +25,7 @@ public class BalanceTransaction {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "balance_id")
-    private Balance  balance;
+    private Balance balance;
 
     private long amount;
 
@@ -33,7 +33,7 @@ public class BalanceTransaction {
     private BalanceTransactionType type;
 
     @Builder
-    private BalanceTransaction(Balance balance,long amount, BalanceTransactionType type){
+    private BalanceTransaction(Balance balance, long amount, BalanceTransactionType type) {
         this.balance = balance;
         this.amount = amount;
         this.type = type;
@@ -42,7 +42,7 @@ public class BalanceTransaction {
     public static BalanceTransaction ofCharge(Balance balance, long amount) {
         return BalanceTransaction.builder()
                 .balance(balance)
-                .amount(amount)        // +amount (가계부 스타일, 충전은 양수)
+                .amount(amount)        // +amount (충전은 양수)
                 .type(BalanceTransactionType.CHARGE)
                 .build();
     }
@@ -50,9 +50,16 @@ public class BalanceTransaction {
     public static BalanceTransaction ofUse(Balance balance, long amount) {
         return BalanceTransaction.builder()
                 .balance(balance)
-                .amount(-amount)       // -amount (음수, 가계부 스타일)
+                .amount(-amount)       // -amount (사용은 음수)
                 .type(BalanceTransactionType.USE)
                 .build();
     }
 
+    public static BalanceTransaction ofRefund(Balance balance, long amount) {
+        return BalanceTransaction.builder()
+                .balance(balance)
+                .amount(amount)        // +amount (환불은 양수)
+                .type(BalanceTransactionType.REFUND)
+                .build();
+    }
 }

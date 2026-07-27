@@ -23,7 +23,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "orders", indexes = {
-        @Index(name = "idx_order_status_paid_at", columnList = "order_status, paid_at")
+        @Index(name = "idx_order_status_completed_at", columnList = "order_status, completed_at")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
@@ -47,16 +47,19 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
-    private LocalDateTime paidAt;
+    private LocalDateTime completedAt;
 
     @Builder
     private Order(Long userId, Long userCouponId, double discountRate, List<OrderProduct> orderProducts) {
         this.userId = userId;
         this.userCouponId = userCouponId;
         this.orderStatus = OrderStatus.CREATED;
+
         orderProducts.forEach(this::addOrderProduct);
+
         long calculatedTotalPrice = calculateTotalPrice(orderProducts);
         long calculatedDiscountPrice = calculateDiscountPrice(calculatedTotalPrice, discountRate);
+
         this.totalPrice = calculatedTotalPrice - calculatedDiscountPrice;
         this.discountPrice = calculatedDiscountPrice;
     }
@@ -73,9 +76,13 @@ public class Order {
                 .build();
     }
 
-    public void paid(LocalDateTime paidAt) {
-        this.orderStatus = OrderStatus.PAID;
-        this.paidAt = paidAt;
+    public void completed(LocalDateTime completedAt) {
+        this.orderStatus = OrderStatus.COMPLETED;
+        this.completedAt = completedAt;
+    }
+
+    public void cancel() {
+        this.orderStatus = OrderStatus.CANCELED;
     }
 
     private long calculateTotalPrice(List<OrderProduct> orderProducts) {

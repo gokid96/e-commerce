@@ -1,13 +1,10 @@
 package com.github.gokid96.e_commerce.order.interfaces;
 
-import com.github.gokid96.e_commerce.order.application.OrderResult;
 import com.github.gokid96.e_commerce.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -18,36 +15,26 @@ class OrderControllerTest extends ControllerTestSupport {
     @DisplayName("주문을 생성한다.")
     @Test
     void createOrder() throws Exception {
-        // given
-        given(orderFacade.createOrder(any())).willReturn(
-                OrderResult.Order.builder().orderId(100L).totalPrice(2000L).discountPrice(0L).build());
-
         String content = """
                 {
                   "userId": 1,
-                  "couponId": 50,
+                  "userCouponId": 50,
                   "products": [ { "productId": 10, "quantity": 2 } ]
                 }
                 """;
 
-        // when & then
         mockMvc.perform(post("/api/v1/orders")
                         .content(content)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data.orderId").value(100L))
-                .andExpect(jsonPath("$.data.totalPrice").value(2000L));
+                .andExpect(jsonPath("$.message").value("OK"));
     }
 
-    @DisplayName("주문 생성 시, 쿠폰 ID는 선택이다.")
+    @DisplayName("주문 생성 시, 사용자 쿠폰 ID는 선택이다.")
     @Test
     void createOrderWithoutCoupon() throws Exception {
-        // given
-        given(orderFacade.createOrder(any())).willReturn(
-                OrderResult.Order.builder().orderId(100L).totalPrice(2000L).discountPrice(0L).build());
-
         String content = """
                 {
                   "userId": 1,
@@ -55,7 +42,6 @@ class OrderControllerTest extends ControllerTestSupport {
                 }
                 """;
 
-        // when & then
         mockMvc.perform(post("/api/v1/orders")
                         .content(content)
                         .contentType(MediaType.APPLICATION_JSON))

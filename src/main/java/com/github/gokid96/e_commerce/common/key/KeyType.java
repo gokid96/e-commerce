@@ -9,6 +9,7 @@ public enum KeyType {
 
     RANK("랭크"),
     USER_COUPON("사용자 쿠폰"),
+    ORDER("주문"),
     ;
 
     private final String description;
@@ -16,6 +17,4 @@ public enum KeyType {
     public String getKey() {
         return this.name().toLowerCase();
     }
-
-
 }

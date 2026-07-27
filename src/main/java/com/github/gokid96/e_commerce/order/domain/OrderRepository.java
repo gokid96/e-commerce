@@ -12,4 +12,7 @@ public interface OrderRepository {
 
     Optional<Order> findById(Long orderId);
 
+    void updateProcess(OrderCommand.Process command);
+
+    List<OrderProcess> getProcess(OrderKey key);
 }

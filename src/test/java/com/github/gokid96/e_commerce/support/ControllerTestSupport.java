@@ -5,7 +5,7 @@ import com.github.gokid96.e_commerce.balance.interfaces.BalanceController;
 import com.github.gokid96.e_commerce.common.ApiControllerAdvice;
 import com.github.gokid96.e_commerce.coupon.application.CouponFacade;
 import com.github.gokid96.e_commerce.coupon.interfaces.CouponController;
-import com.github.gokid96.e_commerce.order.application.OrderFacade;
+import com.github.gokid96.e_commerce.order.domain.OrderService;
 import com.github.gokid96.e_commerce.order.interfaces.OrderController;
 import com.github.gokid96.e_commerce.product.application.ProductFacade;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
@@ -25,7 +25,9 @@ import tools.jackson.databind.ObjectMapper;
         RankController.class,
         OrderController.class,
         ApiControllerAdvice.class
-})
+
+}
+)
 public abstract class ControllerTestSupport {
     @Autowired
     protected MockMvc mockMvc;
@@ -42,5 +44,5 @@ public abstract class ControllerTestSupport {
     @MockitoBean
     protected RankFacade rankFacade;
     @MockitoBean
-    protected OrderFacade orderFacade;
+    protected OrderService orderService;
 }
