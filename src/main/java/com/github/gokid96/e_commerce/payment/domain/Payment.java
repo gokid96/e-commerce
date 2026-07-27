@@ -60,4 +60,8 @@ public class Payment {
         }
         this.paymentStatus = PaymentStatus.COMPLETED;
     }
+
+    public void cancel() {
+        this.paymentStatus = PaymentStatus.CANCELED;
+    }
 }

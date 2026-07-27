@@ -6,6 +6,8 @@ import com.github.gokid96.e_commerce.payment.infrastructure.jpa.PaymentJpaReposi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class PaymentCoreRepository implements PaymentRepository {
@@ -13,8 +15,12 @@ public class PaymentCoreRepository implements PaymentRepository {
     private final PaymentJpaRepository paymentJpaRepository;
 
     @Override
-    public Payment save(Payment payment){
+    public Payment save(Payment payment) {
         return paymentJpaRepository.save(payment);
     }
 
+    @Override
+    public Optional<Payment> findById(Long id) {
+        return paymentJpaRepository.findById(id);
+    }
 }
