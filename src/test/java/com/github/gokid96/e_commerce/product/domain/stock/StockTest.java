@@ -8,6 +8,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class StockTest {
 
+    @DisplayName("정상적으로 재고를 생성한다.")
+    @Test
+    void creat(){
+        // when
+        Stock stock = Stock.create(5L,100);
+
+        // then
+        assertThat(stock.getProductId()).isEqualTo(5L);
+        assertThat(stock.getQuantity()).isEqualTo(100);
+    }
+
     @DisplayName("재고 생성 시 수량은 0 이상이어야 한다.")
     @Test
     void createWithNegativeQuantity(){
@@ -27,16 +38,18 @@ public class StockTest {
         assertThat(stock.getQuantity()).isZero();
     }
 
-    @DisplayName("정상적으로 재고를 생성한다.")
+    @DisplayName("재고를 복구한다.")
     @Test
-    void creat(){
+    void restore() {
+        // given
+        Stock stock = Stock.create(1L, 10);
+        stock.deduct(3);
+
         // when
-        Stock stock = Stock.create(5L,100);
+        stock.restore(3);
 
         // then
-        assertThat(stock.getProductId()).isEqualTo(5L);
-        assertThat(stock.getQuantity()).isEqualTo(100);
+        assertThat(stock.getQuantity()).isEqualTo(10);
     }
-
 
 }
