@@ -22,7 +22,6 @@ class StockOrderEventListenerUnitTest {
     private StockOrderEventListener eventListener;
 
     @Mock
-    @Mock
     private StockService stockService;
 
     @Mock
