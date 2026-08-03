@@ -24,19 +24,4 @@ public class CouponSpringEventPublisher implements CouponEventPublisher {
     public void published(CouponEvent.Published event) {
         eventPublisher.publishEvent(event);
     }
-
-    @Override
-    public void used(CouponEvent.Used event) {
-        eventPublisher.publishEvent(event);
-    }
-
-    @Override
-    public void useFailed(CouponEvent.UseFailed event) {
-        eventPublisher.publishEvent(event);
-    }
-
-    @Override
-    public void canceled(CouponEvent.Canceled event) {
-        eventPublisher.publishEvent(event);
-    }
 }
