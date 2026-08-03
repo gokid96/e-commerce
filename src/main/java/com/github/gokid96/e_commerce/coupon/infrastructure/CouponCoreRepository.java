@@ -1,8 +1,6 @@
 package com.github.gokid96.e_commerce.coupon.infrastructure;
 
 import com.github.gokid96.e_commerce.coupon.domain.Coupon;
-import com.github.gokid96.e_commerce.coupon.domain.CouponCommand;
-import com.github.gokid96.e_commerce.coupon.domain.CouponInfo;
 import com.github.gokid96.e_commerce.coupon.domain.CouponRepository;
 import com.github.gokid96.e_commerce.coupon.domain.CouponStatus;
 import com.github.gokid96.e_commerce.coupon.domain.UserCoupon;
@@ -21,7 +19,6 @@ public class CouponCoreRepository implements CouponRepository {
     private final CouponJpaRepository couponJpaRepository;
     private final UserCouponJpaRepository userCouponJpaRepository;
     private final UserCouponRedisRepository userCouponRedisRepository;
-    private final UserCouponJdbcTemplateRepository userCouponJdbcTemplateRepository;
     /*
      * coupon
      * */
@@ -74,27 +71,17 @@ public class CouponCoreRepository implements CouponRepository {
     }
 
     @Override
-    public boolean savePublishRequest(CouponCommand.PublishRequest command) {
-        return userCouponRedisRepository.save(command);
-    }
-
-    @Override
-    public int countUserCouponsByCouponId(Long couponId) {
-        return userCouponJpaRepository.countByCouponId(couponId);
-    }
-
-    @Override
-    public List<CouponInfo.Candidates> findPublishCandidates(CouponCommand.Candidates command) {
-        return userCouponRedisRepository.findPublishCandidates(command);
-    }
-
-    @Override
-    public void saveAllUserCoupons(List<UserCoupon> userCoupons) {
-        userCouponJdbcTemplateRepository.batchInsert(userCoupons);
-    }
-
-    @Override
     public List<UserCoupon> findUserCouponsByCouponId(Long couponId) {
         return userCouponJpaRepository.findByCouponId(couponId);
+    }
+
+    @Override
+    public boolean findPublishableCouponById(Long couponId) {
+        return userCouponRedisRepository.findPublishableCouponById(couponId);
+    }
+
+    @Override
+    public void updateAvailableCoupon(Long couponId, boolean available) {
+        userCouponRedisRepository.updateAvailable(couponId, available);
     }
 }

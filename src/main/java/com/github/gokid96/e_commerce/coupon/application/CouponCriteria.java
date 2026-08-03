@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CouponCriteria {
 
@@ -26,25 +24,8 @@ public class CouponCriteria {
             return PublishRequest.builder().userId(userId).couponId(couponId).build();
         }
 
-        public CouponCommand.PublishRequest toCommand(LocalDateTime dateTime) {
-            return CouponCommand.PublishRequest.of(userId, couponId, dateTime);
-        }
-    }
-
-    @Getter
-    public static class Publish {
-        private final int maxPublishCount;
-
-        private Publish(int maxPublishCount) {
-            this.maxPublishCount = maxPublishCount;
-        }
-
-        public static Publish of(int maxPublishCount) {
-            return new Publish(maxPublishCount);
-        }
-
-        public CouponCommand.Publish toCommand(Long couponId, int quantity) {
-            return CouponCommand.Publish.of(couponId, quantity, maxPublishCount);
+        public CouponCommand.Publish toCommand() {
+            return CouponCommand.Publish.of(userId, couponId);
         }
     }
 

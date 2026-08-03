@@ -68,7 +68,7 @@ public class Coupon {
                 .build();
     }
 
-    public void issue() {
+    public Coupon publish() {
         if (status.cannotPublishable()) {
             throw new IllegalStateException("발급 불가능한 쿠폰입니다.");
         }
@@ -79,6 +79,13 @@ public class Coupon {
             throw new IllegalStateException("쿠폰이 모두 소진되었습니다.");
         }
         this.quantity--;
+        return this;
+    }
+
+    public boolean isNotPublishable() {
+        return status.cannotPublishable()
+                || expiredAt.isBefore(LocalDateTime.now())
+                || quantity <= 0;
     }
 
     public void finish() {

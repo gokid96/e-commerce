@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CouponCommand {
 
@@ -48,75 +46,19 @@ public class CouponCommand {
         }
     }
 
-    // 임포트: java.time.LocalDateTime
-
-    @Getter
-    public static class PublishRequest {
-        private final Long userId;
-        private final Long couponId;
-        private final LocalDateTime issuedAt;
-
-        @Builder
-        private PublishRequest(Long userId, Long couponId, LocalDateTime issuedAt) {
-            this.userId = userId;
-            this.couponId = couponId;
-            this.issuedAt = issuedAt;
-        }
-
-        public static PublishRequest of(Long userId, Long couponId, LocalDateTime issuedAt) {
-            return PublishRequest.builder().userId(userId).couponId(couponId).issuedAt(issuedAt).build();
-        }
-    }
-
     @Getter
     public static class Publish {
+        private final Long userId;
         private final Long couponId;
-        private final int quantity;
-        private final int maxPublishCount;
 
         @Builder
-        private Publish(Long couponId, int quantity, int maxPublishCount) {
+        private Publish(Long userId, Long couponId) {
+            this.userId = userId;
             this.couponId = couponId;
-            this.quantity = quantity;
-            this.maxPublishCount = maxPublishCount;
         }
 
-        public static Publish of(Long couponId, int quantity, int maxPublishCount) {
-            return Publish.builder().couponId(couponId).quantity(quantity).maxPublishCount(maxPublishCount).build();
-        }
-    }
-
-    @Getter
-    public static class PublishFinish {
-        private final Long couponId;
-        private final int quantity;
-
-        @Builder
-        private PublishFinish(Long couponId, int quantity) {
-            this.couponId = couponId;
-            this.quantity = quantity;
-        }
-
-        public static PublishFinish of(Long couponId, int quantity) {
-            return PublishFinish.builder().couponId(couponId).quantity(quantity).build();
-        }
-    }
-
-    @Getter
-    public static class Candidates {
-        private final Long couponId;
-        private final int start;
-        private final int end;
-
-        @Builder
-        private Candidates(Long couponId, int start, int end) {
-            this.couponId = couponId;
-            this.start = start;
-            this.end = end;
-        }
-
-        public static Candidates of(Long couponId, int start, int end) {
-            return Candidates.builder().couponId(couponId).start(start).end(end).build();
+        public static Publish of(Long userId, Long couponId) {
+            return Publish.builder().userId(userId).couponId(couponId).build();
         }
     }
 }
