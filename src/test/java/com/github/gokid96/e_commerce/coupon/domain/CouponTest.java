@@ -51,7 +51,7 @@ class CouponTest {
         Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
 
         // when
-        coupon.issue();
+        coupon.publish();
 
         // then
         assertThat(coupon.getQuantity()).isEqualTo(99);
@@ -64,7 +64,7 @@ class CouponTest {
         Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.REGISTERED, LocalDateTime.now().plusDays(7));
 
         // when & then
-        assertThatThrownBy(coupon::issue)
+        assertThatThrownBy(coupon::publish)
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("발급 불가능한 쿠폰입니다.");
     }
@@ -82,7 +82,7 @@ class CouponTest {
                 .build();
 
         // when & then
-        assertThatThrownBy(coupon::issue)
+        assertThatThrownBy(coupon::publish)
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("쿠폰이 만료되었습니다.");
     }
@@ -92,10 +92,10 @@ class CouponTest {
     void cannotIssueWhenSoldOut() {
         // given
         Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 1, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
-        coupon.issue(); // 수량 1 → 0
+        coupon.publish(); // 수량 1 → 0
 
         // when & then
-        assertThatThrownBy(coupon::issue)
+        assertThatThrownBy(coupon::publish)
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("쿠폰이 모두 소진되었습니다.");
     }

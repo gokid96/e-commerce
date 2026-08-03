@@ -1,5 +1,7 @@
 package com.github.gokid96.e_commerce.payment.domain;
 
+import com.github.gokid96.e_commerce.balance.domain.BalanceService;
+import com.github.gokid96.e_commerce.coupon.domain.CouponService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,35 +23,52 @@ public class PaymentServiceTest {
     @Mock
     private PaymentRepository paymentRepository;
 
+    @Mock
+    private PaymentEventPublisher paymentEventPublisher;
+
+    @Mock
+    private BalanceService balanceService;
+
+    @Mock
+    private CouponService couponService;
+
     @InjectMocks
     private PaymentService paymentService;
 
-    @DisplayName("결제를 완료하고 저장한다.")
+    @DisplayName("결제 시 잔액을 차감하고 결제 완료 이벤트를 발행한다.")
     @Test
-    void pay() {
-        // given
-        PaymentCommand.Payment command = PaymentCommand.Payment.of(1L, 10_000L);
+    void payPayment() {
+        PaymentCommand.Payment command = PaymentCommand.Payment.of(1L, 1L, null, 10_000L);
 
-        // when
-        paymentService.pay(command);
+        paymentService.payPayment(command);
 
-        // then
+        verify(balanceService, times(1)).useBalance(any());
         verify(paymentRepository, times(1)).save(any(Payment.class));
+        verify(paymentEventPublisher, times(1)).paid(any());
     }
 
-    @DisplayName("결제를 취소한다.")
+    @DisplayName("쿠폰이 있으면 결제 시 쿠폰도 사용한다.")
+    @Test
+    void payPaymentWithCoupon() {
+        PaymentCommand.Payment command = PaymentCommand.Payment.of(1L, 1L, 5L, 10_000L);
+
+        paymentService.payPayment(command);
+
+        verify(couponService, times(1)).useUserCoupon(5L);
+        verify(paymentEventPublisher, times(1)).paid(any());
+    }
+
+    @DisplayName("결제를 취소하고 취소 이벤트를 발행한다.")
     @Test
     void cancelPayment() {
-        // given
         Payment payment = Payment.create(1L, 10_000L);
         payment.pay();
         given(paymentRepository.findById(1L)).willReturn(Optional.of(payment));
 
-        // when
         paymentService.cancelPayment(1L);
 
-        // then
         assertThat(payment.getPaymentStatus()).isEqualTo(PaymentStatus.CANCELED);
         verify(paymentRepository, times(1)).save(any(Payment.class));
+        verify(paymentEventPublisher, times(1)).canceled(any());
     }
 }
