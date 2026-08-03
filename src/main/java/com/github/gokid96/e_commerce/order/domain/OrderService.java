@@ -1,8 +1,7 @@
 package com.github.gokid96.e_commerce.order.domain;
 
-import com.github.gokid96.e_commerce.common.lock.DistributedLock;
-import com.github.gokid96.e_commerce.common.lock.LockType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -31,31 +31,43 @@ public class OrderService {
                 products
         );
         orderRepository.save(order);
+
+        orderClient.deductStock(command.getProducts());
+
         orderEventPublisher.created(OrderEvent.Created.of(order));
 
         return OrderInfo.Order.of(order);
     }
 
     @Transactional
-    public OrderInfo.Completed completedOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-        order.completed(LocalDateTime.now());
-        return OrderInfo.Completed.of(order);
+    public void completedOrder(Long orderId) {
+        try {
+            Order order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+            order.completed(LocalDateTime.now());
+
+            orderEventPublisher.completed(OrderEvent.Completed.of(order));
+        } catch (Exception e) {
+            orderEventPublisher.completeFailed(OrderEvent.CompleteFailed.of(orderId));
+            throw e;
+        }
     }
 
     @Transactional
     public void cancelOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-        order.cancel();
-    }
+        try {
+            Order order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
 
-    @Transactional(readOnly = true)
-    @DistributedLock(type = LockType.ORDER, key = "#command.orderId")
-    public void updateProcess(OrderCommand.Process command) {
-        orderRepository.updateProcess(command);
-        tryCompletedProcess(command.getOrderId());
+            orderClient.restoreStock(order.getOrderProducts().stream()
+                    .map(op -> OrderCommand.OrderProduct.of(op.getProductId(), op.getQuantity()))
+                    .toList());
+
+            order.cancel();
+        } catch (Exception e) {
+            log.error("주문 취소 실패 - orderId: {}", orderId, e);
+            throw e;
+        }
     }
 
     private void validateUser(Long userId) {
@@ -77,24 +89,5 @@ public class OrderService {
             return Optional.empty();
         }
         return Optional.of(orderClient.getUsableCoupon(userCouponId));
-    }
-
-    private void tryCompletedProcess(Long orderId) {
-        OrderKey key = OrderKey.of(orderId);
-        OrderProcesses processes = OrderProcesses.of(orderRepository.getProcess(key));
-
-        if (processes.existPending()) {
-            return;
-        }
-
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-
-        if (processes.existFailed()) {
-            orderEventPublisher.failed(OrderEvent.Failed.of(order, processes));
-            return;
-        }
-
-        orderEventPublisher.paymentWaited(OrderEvent.PaymentWaited.of(order));
     }
 }

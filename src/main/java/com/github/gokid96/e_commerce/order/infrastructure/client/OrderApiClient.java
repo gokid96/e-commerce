@@ -24,4 +24,14 @@ public class OrderApiClient implements OrderClient {
     public OrderInfo.Coupon getUsableCoupon(Long userCouponId) {
         return null;
     }
+
+    @Override
+    public void deductStock(List<OrderCommand.OrderProduct> products) {
+
+    }
+
+    @Override
+    public void restoreStock(List<OrderCommand.OrderProduct> products) {
+
+    }
 }
