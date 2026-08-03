@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -223,6 +224,6 @@ public class CouponServiceTest {
 
         couponService.stopPublishCoupon(5L);
 
-        verify(couponRepository, never()).updateAvailableCoupon(any(), any());
+        verify(couponRepository, never()).updateAvailableCoupon(any(), anyBoolean());
     }
 }
