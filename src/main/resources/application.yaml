@@ -31,3 +31,27 @@ spring:
     properties:
       request.timeout.ms: 20000
       retry.backoff.ms: 500
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    enable:
+      all: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://mysql:3306/ecommerce
+  jpa:
+    show-sql: false
+  data:
+    redis:
+      host: redis
+  kafka:
+    bootstrap-servers: kafka:9092
