@@ -18,6 +18,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderEventPublisher orderEventPublisher;
 
+    @Transactional(readOnly = true)
+    public OrderInfo.Order getOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+        return OrderInfo.Order.of(order);
+    }
+
     @Transactional
     public OrderInfo.Order createOrder(OrderCommand.Create command) {
         validateUser(command.getUserId());

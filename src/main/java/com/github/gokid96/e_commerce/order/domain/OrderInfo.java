@@ -13,24 +13,43 @@ public class OrderInfo {
     @Getter
     public static class Order {
         private final Long orderId;
+        private final Long userId;
+        private final Long userCouponId;
         private final long totalPrice;
         private final long discountPrice;
+        private final OrderStatus status;
 
-        private Order(Long orderId, long totalPrice, long discountPrice) {
+        @Builder
+        private Order(Long orderId, Long userId, Long userCouponId,
+                      long totalPrice, long discountPrice, OrderStatus status) {
             this.orderId = orderId;
+            this.userId = userId;
+            this.userCouponId = userCouponId;
             this.totalPrice = totalPrice;
             this.discountPrice = discountPrice;
+            this.status = status;
         }
 
         public static Order of(Long orderId, long totalPrice, long discountPrice) {
-            return new Order(orderId, totalPrice, discountPrice);
+            return Order.builder()
+                    .orderId(orderId)
+                    .totalPrice(totalPrice)
+                    .discountPrice(discountPrice)
+                    .build();
         }
 
         public static Order of(com.github.gokid96.e_commerce.order.domain.Order order) {
-            return new Order(order.getId(), order.getTotalPrice(), order.getDiscountPrice());
+            return Order.builder()
+                    .orderId(order.getId())
+                    .userId(order.getUserId())
+                    .userCouponId(order.getUserCouponId())
+                    .totalPrice(order.getTotalPrice())
+                    .discountPrice(order.getDiscountPrice())
+                    .status(order.getOrderStatus())
+                    .build();
         }
     }
-
+    
     @Getter
     public static class User {
         private final Long userId;
