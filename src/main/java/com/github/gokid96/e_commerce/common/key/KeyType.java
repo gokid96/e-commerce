@@ -9,6 +9,7 @@ public enum KeyType {
 
     RANK("랭크"),
     USER_COUPON("사용자 쿠폰"),
+    COUPON_AVAILABLE("쿠폰 발급 가능"),
     ORDER("주문"),
     ;
 

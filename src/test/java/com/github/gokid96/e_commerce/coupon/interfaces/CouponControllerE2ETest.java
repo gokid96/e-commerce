@@ -53,6 +53,7 @@ class CouponControllerE2ETest extends E2EControllerTestSupport {
     void issueCoupon() {
         Coupon coupon = couponRepository.saveCoupon(
                 Coupon.create("쿠폰명1", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1)));
+        couponRepository.updateAvailableCoupon(coupon.getId(), true);
 
         client.post()
                 .uri("/api/v1/users/{userId}/coupons/issue", user.getId())

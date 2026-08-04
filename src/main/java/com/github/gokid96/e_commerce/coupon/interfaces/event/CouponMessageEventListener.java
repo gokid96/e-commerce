@@ -1,0 +1,32 @@
+package com.github.gokid96.e_commerce.coupon.interfaces.event;
+
+import com.github.gokid96.e_commerce.common.event.Event;
+import com.github.gokid96.e_commerce.common.event.EventType.GroupId;
+import com.github.gokid96.e_commerce.common.event.EventType.Topic;
+import com.github.gokid96.e_commerce.coupon.domain.CouponCommand;
+import com.github.gokid96.e_commerce.coupon.domain.CouponEvent;
+import com.github.gokid96.e_commerce.coupon.domain.CouponService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class CouponMessageEventListener {
+
+    private final CouponService couponService;
+
+    @KafkaListener(topics = Topic.COUPON_PUBLISH_REQUESTED, groupId = GroupId.COUPON)
+    public void handle(String message, Acknowledgment ack) {
+        log.info("쿠폰 발급 요청 이벤트 수신 {}", message);
+
+        Event<CouponEvent.PublishRequested> event = Event.of(message, CouponEvent.PublishRequested.class);
+        CouponEvent.PublishRequested payload = event.getPayload();
+
+        couponService.publishUserCoupon(CouponCommand.Publish.of(payload.getUserId(), payload.getCouponId()));
+        ack.acknowledge();
+    }
+}
