@@ -43,4 +43,12 @@ public class ProductService {
                 .toList();
         return ProductInfo.Products.of(products);
     }
+
+    @Transactional(readOnly = true)
+    public ProductInfo.Products getProducts(ProductCommand.Query command) {
+        List<ProductInfo.Product> products = productRepository.findAll(command).stream()
+                .map(ProductInfo.Product::of)
+                .toList();
+        return ProductInfo.Products.of(products);
+    }
 }

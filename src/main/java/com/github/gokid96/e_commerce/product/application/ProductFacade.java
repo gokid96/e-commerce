@@ -1,5 +1,6 @@
 package com.github.gokid96.e_commerce.product.application;
 
+import com.github.gokid96.e_commerce.product.domain.product.ProductCommand;
 import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,16 @@ public class ProductFacade {
                 .toList());
     }
 
+    public ProductResult.Products getProducts(ProductCommand.Query command) {
+        ProductInfo.Products products = productService.getProducts(command);
+        return ProductResult.Products.of(products.getProducts().stream()
+                .map(this::toProductResult)
+                .toList());
+    }
+    
     private ProductResult.Product toProductResult(ProductInfo.Product product) {
         return ProductResult.Product.of(
                 product.getProductId(), product.getProductName(), product.getProductPrice());
     }
+
 }

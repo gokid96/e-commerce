@@ -8,4 +8,6 @@ public interface ProductRepository {
     List<Product> findBySellStatusIn(List<ProductSellingStatus> statuses);
 
     Product findById(Long productId);
+
+    List<Product> findAll(ProductCommand.Query command);
 }
