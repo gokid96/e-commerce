@@ -18,6 +18,7 @@ TRUNCATE TABLE user_coupon;
 TRUNCATE TABLE orders;
 TRUNCATE TABLE order_product;
 TRUNCATE TABLE payment;
+TRUNCATE TABLE `user`;
 
 -- 상품 + 재고 (1만 건)
 DROP PROCEDURE IF EXISTS generate_product_stock_data;
@@ -55,6 +56,21 @@ BEGIN
 END //
 DELIMITER ;
 
+-- 사용자 (1만 건, balance.user_id 1~10000과 매칭)
+DROP PROCEDURE IF EXISTS generate_user_data;
+DELIMITER //
+CREATE PROCEDURE generate_user_data()
+BEGIN
+  DECLARE i INT DEFAULT 1;
+  WHILE i <= 10000 DO
+    INSERT INTO `user` (nickname)
+    VALUES (CONCAT('사용자', i));
+
+    SET i = i + 1;
+  END WHILE;
+END //
+DELIMITER ;
+
 -- 쿠폰 (발급 가능 1건, 수량 10만)
 DROP PROCEDURE IF EXISTS generate_coupon_data;
 DELIMITER //
@@ -68,11 +84,13 @@ DELIMITER ;
 -- 프로시저 실행
 CALL generate_product_stock_data();
 CALL generate_balance_data();
+CALL generate_user_data();
 CALL generate_coupon_data();
 
 -- 프로시저 정리
 DROP PROCEDURE IF EXISTS generate_product_stock_data;
 DROP PROCEDURE IF EXISTS generate_balance_data;
+DROP PROCEDURE IF EXISTS generate_user_data;
 DROP PROCEDURE IF EXISTS generate_coupon_data;
 
 COMMIT;
