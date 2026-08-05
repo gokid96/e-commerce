@@ -17,7 +17,10 @@ public class OrderApiClient implements OrderClient {
 
     @Override
     public List<OrderInfo.Product> getProducts(List<OrderCommand.OrderProduct> command) {
-        return List.of();
+        return List.of(
+                OrderInfo.Product.of(1L, "Sample Product", 10_000L, 100),
+                OrderInfo.Product.of(2L, "Another Product", 20_000L, 50)
+        );
     }
 
     @Override
