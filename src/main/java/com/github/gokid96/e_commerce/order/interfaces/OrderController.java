@@ -27,9 +27,14 @@ public class OrderController {
         return ApiResponse.ok(OrderResponse.Order.of(order));
     }
 
+//    @PostMapping
+//    public ApiResponse<Void> createOrder(@Valid @RequestBody OrderRequest request) {
+//        orderService.createOrder(request.toCommand());
+//        return ApiResponse.ok();
+//    }
     @PostMapping
-    public ApiResponse<Void> createOrder(@Valid @RequestBody OrderRequest request) {
-        orderService.createOrder(request.toCommand());
-        return ApiResponse.ok();
+    public ApiResponse<OrderResponse.Order> createOrder(@Valid @RequestBody OrderRequest request) {
+        OrderInfo.Order order = orderService.createOrder(request.toCommand());
+        return ApiResponse.ok(OrderResponse.Order.of(order));
     }
 }
