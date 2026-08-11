@@ -10,4 +10,10 @@ public interface ProductApiClient {
 
     @PostMapping("/api/v1/products/list")
     ApiResponse<ProductResponse.Products> getProducts(@RequestBody ProductRequest.Products request);
+
+    @PostMapping("/api/v1/products/stocks/deduct")
+    ApiResponse<Void> deductStock(@RequestBody StockRequest.Deduct request);
+
+    @PostMapping("/api/v1/products/stocks/restore")
+    ApiResponse<Void> restoreStock(@RequestBody StockRequest.Restore request);
 }
