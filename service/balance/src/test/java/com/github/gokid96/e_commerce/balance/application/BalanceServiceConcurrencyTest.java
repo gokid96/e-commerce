@@ -4,7 +4,7 @@ import com.github.gokid96.e_commerce.balance.domain.Balance;
 import com.github.gokid96.e_commerce.balance.domain.BalanceCommand;
 import com.github.gokid96.e_commerce.balance.domain.BalanceRepository;
 import com.github.gokid96.e_commerce.balance.domain.BalanceService;
-import com.github.gokid96.e_commerce.support.ConcurrencyTestSupport;
+import com.github.gokid96.e_commerce.balance.support.ConcurrencyTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

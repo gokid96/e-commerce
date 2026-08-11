@@ -4,7 +4,6 @@ import com.github.gokid96.e_commerce.balance.application.BalanceFacade;
 import com.github.gokid96.e_commerce.balance.application.BalanceResult;
 import com.github.gokid96.e_commerce.balance.interfaces.dto.BalanceRequest;
 import com.github.gokid96.e_commerce.balance.interfaces.dto.BalanceResponse;
-import com.github.gokid96.e_commerce.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +31,22 @@ public class BalanceController {
             @PathVariable("userId") Long userId,
             @Valid @RequestBody BalanceRequest.Charge request) {
         balanceFacade.chargeBalance(request.toCriteria(userId));
+        return ApiResponse.ok();
+    }
+
+    @PostMapping("/{userId}/balance/use")
+    public ApiResponse<Void> use(
+            @PathVariable("userId") Long userId,
+            @Valid @RequestBody BalanceRequest.Use request) {
+        balanceFacade.useBalance(userId, request.getAmount());
+        return ApiResponse.ok();
+    }
+
+    @PostMapping("/{userId}/balance/refund")
+    public ApiResponse<Void> refund(
+            @PathVariable("userId") Long userId,
+            @Valid @RequestBody BalanceRequest.Refund request) {
+        balanceFacade.refundBalance(userId, request.getAmount());
         return ApiResponse.ok();
     }
 

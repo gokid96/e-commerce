@@ -1,9 +1,9 @@
 package com.github.gokid96.e_commerce.balance.application;
 
+import com.github.gokid96.e_commerce.balance.domain.BalanceClient;
 import com.github.gokid96.e_commerce.balance.domain.BalanceCommand;
 import com.github.gokid96.e_commerce.balance.domain.BalanceInfo;
 import com.github.gokid96.e_commerce.balance.domain.BalanceService;
-import com.github.gokid96.e_commerce.user.domain.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,14 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
 public class BalanceFacadeTest {
 
     @Mock
-    private UserService userService;
+    private BalanceClient balanceClient;
 
     @Mock
     private BalanceService balanceService;
@@ -35,14 +34,14 @@ public class BalanceFacadeTest {
     @Test
     void chargeBalance(){
         // given
-        BalanceCriteria.Charge criteria = BalanceCriteria.Charge.of(1L,1_000_000L);
+        BalanceCriteria.Charge criteria = BalanceCriteria.Charge.of(1L, 1_000_000L);
 
         // when
         balanceFacade.chargeBalance(criteria);
 
         // then
-        InOrder inOrder = inOrder(userService,balanceService);
-        inOrder.verify(userService).getUser(1L);
+        InOrder inOrder = inOrder(balanceClient, balanceService);
+        inOrder.verify(balanceClient).getUser(1L);
         inOrder.verify(balanceService).chargeBalance(any(BalanceCommand.Charge.class));
     }
 
@@ -62,11 +61,9 @@ public class BalanceFacadeTest {
         // then
         assertThat(result.getAmount()).isEqualTo(1_000_000L);
 
-        InOrder inOder = inOrder(userService, balanceService);
-        inOder.verify(userService).getUser(1L);
-        inOder.verify(balanceService).getBalance(1L);
-
+        InOrder inOrder = inOrder(balanceClient, balanceService);
+        inOrder.verify(balanceClient).getUser(1L);
+        inOrder.verify(balanceService).getBalance(1L);
     }
-
 
 }

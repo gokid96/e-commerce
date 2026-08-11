@@ -1,7 +1,7 @@
 package com.github.gokid96.e_commerce.balance.interfaces;
 
 import com.github.gokid96.e_commerce.balance.application.BalanceResult;
-import com.github.gokid96.e_commerce.support.ControllerTestSupport;
+import com.github.gokid96.e_commerce.balance.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
