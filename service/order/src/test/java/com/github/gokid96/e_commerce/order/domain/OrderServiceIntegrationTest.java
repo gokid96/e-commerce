@@ -1,8 +1,6 @@
 package com.github.gokid96.e_commerce.order.domain;
 
-import com.github.gokid96.e_commerce.support.IntegrationTestSupport;
-import com.github.gokid96.e_commerce.support.database.RedisKeyCleaner;
-import org.junit.jupiter.api.AfterEach;
+import com.github.gokid96.e_commerce.order.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +28,11 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
     @Autowired
     private OrderRepository orderRepository;
 
-    @Autowired
-    private RedisKeyCleaner redisKeyCleaner;
-
     @MockitoBean
     private OrderClient orderClient;
 
     @MockitoSpyBean
     private OrderEventPublisher orderEventPublisher;
-
-    @AfterEach
-    void tearDown() {
-        redisKeyCleaner.clean();
-    }
 
     @DisplayName("주문 생성 시, 사용자는 존재해야 한다.")
     @Test

@@ -1,6 +1,6 @@
 package com.github.gokid96.e_commerce.order.interfaces;
 
-import com.github.gokid96.e_commerce.support.ControllerTestSupport;
+import com.github.gokid96.e_commerce.order.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
