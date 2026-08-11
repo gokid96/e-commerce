@@ -1,6 +1,5 @@
 package com.github.gokid96.e_commerce.coupon.interfaces;
 
-import com.github.gokid96.e_commerce.common.ApiResponse;
 import com.github.gokid96.e_commerce.coupon.application.CouponFacade;
 import com.github.gokid96.e_commerce.coupon.application.CouponResult;
 import com.github.gokid96.e_commerce.coupon.interfaces.dto.CouponRequest;

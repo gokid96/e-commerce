@@ -77,4 +77,23 @@ public class CouponInfo {
                     .build();
         }
     }
+
+    @Getter
+    public static class User {
+        private final Long userId;
+        private final String nickname;
+
+        @Builder
+        private User(Long userId, String nickname) {
+            this.userId = userId;
+            this.nickname = nickname;
+        }
+
+        public static User of(Long userId, String nickname) {
+            return User.builder()
+                    .userId(userId)
+                    .nickname(nickname)
+                    .build();
+        }
+    }
 }

@@ -1,10 +1,10 @@
 package com.github.gokid96.e_commerce.coupon.application;
 
+import com.github.gokid96.e_commerce.coupon.domain.CouponClient;
 import com.github.gokid96.e_commerce.coupon.domain.CouponCommand;
 import com.github.gokid96.e_commerce.coupon.domain.CouponInfo;
 import com.github.gokid96.e_commerce.coupon.domain.CouponService;
 import com.github.gokid96.e_commerce.coupon.domain.UserCouponUsedStatus;
-import com.github.gokid96.e_commerce.user.domain.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verify;
 public class CouponFacadeTest {
 
     @Mock
-    private UserService userService;
+    private CouponClient couponClient;
 
     @Mock
     private CouponService couponService;
@@ -47,8 +47,8 @@ public class CouponFacadeTest {
     void useCoupon() {
         couponFacade.useCoupon(CouponCriteria.Use.of(1L, 100L));
 
-        InOrder inOrder = inOrder(userService, couponService);
-        inOrder.verify(userService).getUser(1L);
+        InOrder inOrder = inOrder(couponClient, couponService);
+        inOrder.verify(couponClient).getUser(1L);
         inOrder.verify(couponService).useCoupon(any(CouponCommand.Use.class));
     }
 
@@ -69,8 +69,8 @@ public class CouponFacadeTest {
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getCouponName()).isEqualTo("신규 가입 할인");
 
-        InOrder inOrder = inOrder(userService, couponService);
-        inOrder.verify(userService).getUser(1L);
+        InOrder inOrder = inOrder(couponClient, couponService);
+        inOrder.verify(couponClient).getUser(1L);
         inOrder.verify(couponService).getUserCoupons(1L);
     }
 }

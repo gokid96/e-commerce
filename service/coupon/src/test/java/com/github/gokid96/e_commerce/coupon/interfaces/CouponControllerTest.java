@@ -2,7 +2,7 @@ package com.github.gokid96.e_commerce.coupon.interfaces;
 
 import com.github.gokid96.e_commerce.coupon.application.CouponResult;
 import com.github.gokid96.e_commerce.coupon.domain.UserCouponUsedStatus;
-import com.github.gokid96.e_commerce.support.ControllerTestSupport;
+import com.github.gokid96.e_commerce.coupon.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
