@@ -1,1 +1,18 @@
 rootProject.name = 'e-commerce'
+
+include 'common:cache'
+include 'common:client'
+include 'common:key'
+include 'common:lock'
+include 'common:message'
+include 'common:outbox'
+include 'common:serialize'
+
+include 'service:balance'
+include 'service:coupon'
+include 'service:order'
+include 'service:payment'
+include 'service:product'
+include 'service:user'
+
+include 'support:rest-docs'

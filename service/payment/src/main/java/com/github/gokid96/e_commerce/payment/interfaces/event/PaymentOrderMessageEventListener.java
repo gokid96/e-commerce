@@ -3,7 +3,6 @@ package com.github.gokid96.e_commerce.payment.interfaces.event;
 import com.github.gokid96.e_commerce.common.event.Event;
 import com.github.gokid96.e_commerce.common.event.EventType.GroupId;
 import com.github.gokid96.e_commerce.common.event.EventType.Topic;
-import com.github.gokid96.e_commerce.order.domain.OrderEvent;
 import com.github.gokid96.e_commerce.payment.domain.PaymentCommand;
 import com.github.gokid96.e_commerce.payment.domain.PaymentService;
 import lombok.RequiredArgsConstructor;

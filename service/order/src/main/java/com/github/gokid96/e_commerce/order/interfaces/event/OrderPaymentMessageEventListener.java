@@ -4,7 +4,6 @@ import com.github.gokid96.e_commerce.common.event.Event;
 import com.github.gokid96.e_commerce.common.event.EventType.GroupId;
 import com.github.gokid96.e_commerce.common.event.EventType.Topic;
 import com.github.gokid96.e_commerce.order.domain.OrderService;
-import com.github.gokid96.e_commerce.payment.domain.PaymentEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
