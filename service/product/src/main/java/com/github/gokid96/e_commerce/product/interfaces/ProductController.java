@@ -1,6 +1,6 @@
 package com.github.gokid96.e_commerce.product.interfaces;
 
-import com.github.gokid96.e_commerce.common.ApiResponse;
+import com.github.gokid96.e_commerce.product.interfaces.ApiResponse;
 import com.github.gokid96.e_commerce.product.application.ProductFacade;
 import com.github.gokid96.e_commerce.product.application.ProductResult;
 import com.github.gokid96.e_commerce.product.domain.product.ProductCommand;

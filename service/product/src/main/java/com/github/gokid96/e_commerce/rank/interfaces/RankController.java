@@ -1,6 +1,6 @@
 package com.github.gokid96.e_commerce.rank.interfaces;
 
-import com.github.gokid96.e_commerce.common.ApiResponse;
+import com.github.gokid96.e_commerce.product.interfaces.ApiResponse;
 import com.github.gokid96.e_commerce.rank.application.RankCriteria;
 import com.github.gokid96.e_commerce.rank.application.RankFacade;
 import com.github.gokid96.e_commerce.rank.application.RankResult;

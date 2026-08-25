@@ -1,0 +1,61 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: ecommerce-product-service
+  datasource:
+    url: jdbc:mysql://localhost:3307/ecommerce
+    username: application
+    password: application
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  kafka:
+    bootstrap-servers: localhost:9094
+    producer:
+      client-id: ecommerce-product-producer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 5
+    consumer:
+      group-id: ecommerce-product-consumer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: false
+    listener:
+      ack-mode: manual
+    properties:
+      request.timeout.ms: 20000
+      retry.backoff.ms: 500
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    enable:
+      all: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://mysql:3306/ecommerce
+  data:
+    redis:
+      host: redis
+      port: 6379
+  jpa:
+    show-sql: false
+  kafka:
+    bootstrap-servers: kafka:9092
