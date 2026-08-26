@@ -1,10 +1,13 @@
 package com.github.gokid96.e_commerce.order.interfaces;
 
+import com.github.gokid96.e_commerce.order.domain.OrderInfo;
 import com.github.gokid96.e_commerce.order.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -22,6 +25,8 @@ class OrderControllerTest extends ControllerTestSupport {
                   "products": [ { "productId": 10, "quantity": 2 } ]
                 }
                 """;
+
+        when(orderService.createOrder(any())).thenReturn(OrderInfo.Order.of(1L, 20000L, 0L));
 
         mockMvc.perform(post("/api/v1/orders")
                         .content(content)
@@ -41,6 +46,8 @@ class OrderControllerTest extends ControllerTestSupport {
                   "products": [ { "productId": 10, "quantity": 2 } ]
                 }
                 """;
+
+        when(orderService.createOrder(any())).thenReturn(OrderInfo.Order.of(1L, 20000L, 0L));
 
         mockMvc.perform(post("/api/v1/orders")
                         .content(content)
