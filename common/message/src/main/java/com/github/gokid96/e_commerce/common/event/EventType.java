@@ -43,5 +43,6 @@ public enum EventType {
         public static final String COUPON = "coupon-event-listener-group";
         public static final String ORDER = "order-event-listener-group";
         public static final String PAYMENT = "payment-event-listener-group";
+        public static final String RANK = "rank-event-listener-group";
     }
 }
