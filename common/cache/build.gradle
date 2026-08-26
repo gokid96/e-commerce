@@ -1,5 +1,4 @@
-package com.github.gokid96.e_commerce.common.cache
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-json'
 }

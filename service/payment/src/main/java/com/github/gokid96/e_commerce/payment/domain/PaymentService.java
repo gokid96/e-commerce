@@ -1,8 +1,5 @@
 package com.github.gokid96.e_commerce.payment.domain;
 
-import com.github.gokid96.e_commerce.balance.domain.BalanceCommand;
-import com.github.gokid96.e_commerce.balance.domain.BalanceService;
-import com.github.gokid96.e_commerce.coupon.domain.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,10 +12,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PaymentService {
 
+    private final PaymentClient paymentClient;
     private final PaymentRepository paymentRepository;
     private final PaymentEventPublisher paymentEventPublisher;
-    private final BalanceService balanceService;
-    private final CouponService couponService;
 
     @Transactional
     public void payPayment(PaymentCommand.Payment command) {
@@ -26,9 +22,9 @@ public class PaymentService {
             Payment payment = Payment.create(command.getOrderId(), command.getAmount());
             payment.pay();
 
-            balanceService.useBalance(BalanceCommand.Use.of(command.getUserId(), command.getAmount()));
+            paymentClient.useBalance(command.getUserId(), command.getAmount());
             Optional.ofNullable(command.getUserCouponId())
-                    .ifPresent(couponService::useUserCoupon);
+                    .ifPresent(paymentClient::useCoupon);
 
             paymentRepository.save(payment);
 

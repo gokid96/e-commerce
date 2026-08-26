@@ -3,7 +3,6 @@ package com.github.gokid96.e_commerce.rank.interfaces.event;
 import com.github.gokid96.e_commerce.common.event.Event;
 import com.github.gokid96.e_commerce.common.event.EventType.GroupId;
 import com.github.gokid96.e_commerce.common.event.EventType.Topic;
-import com.github.gokid96.e_commerce.order.domain.OrderEvent;
 import com.github.gokid96.e_commerce.rank.domain.RankCommand;
 import com.github.gokid96.e_commerce.rank.domain.RankService;
 import lombok.RequiredArgsConstructor;
