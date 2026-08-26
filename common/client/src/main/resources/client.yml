@@ -1,0 +1,9 @@
+endpoints:
+  user-service:
+    url: ${USER_SERVICE_URL:http://localhost:8081}
+  balance-service:
+    url: ${BALANCE_SERVICE_URL:http://localhost:8082}
+  coupon-service:
+    url: ${COUPON_SERVICE_URL:http://localhost:8083}
+  product-service:
+    url: ${PRODUCT_SERVICE_URL:http://localhost:8084}
