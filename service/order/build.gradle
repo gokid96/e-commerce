@@ -1,0 +1,22 @@
+dependencies {
+    // Spring
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-kafka'
+
+    // DB
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // Common
+    implementation project(':common:message')
+    implementation project(':common:outbox')
+    implementation project(':common:client')
+
+    // TestContainers
+    testImplementation 'org.testcontainers:mysql'
+    testImplementation 'org.testcontainers:kafka'
+
+    // RestDocs
+    testImplementation project(':support:rest-docs')
+}
