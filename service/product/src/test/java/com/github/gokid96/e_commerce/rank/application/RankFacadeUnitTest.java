@@ -1,5 +1,6 @@
 package com.github.gokid96.e_commerce.rank.application;
 
+import com.github.gokid96.e_commerce.product.domain.product.ProductCommand;
 import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import com.github.gokid96.e_commerce.product.domain.product.ProductService;
 import com.github.gokid96.e_commerce.rank.domain.RankInfo;
@@ -41,7 +42,7 @@ public class RankFacadeUnitTest {
                         RankInfo.PopularProduct.of(5L, 20L)
                 )));
 
-        given(productService.getProducts(any()))
+        given(productService.getProducts(any(ProductCommand.Products.class)))
                 .willReturn(ProductInfo.Products.of(List.of(
                         ProductInfo.Product.builder().productId(6L).productName("상품1").productPrice(1000L).build(),
                         ProductInfo.Product.builder().productId(5L).productName("상품2").productPrice(2000L).build()
@@ -52,7 +53,7 @@ public class RankFacadeUnitTest {
 
         InOrder inOrder = inOrder(rankService, productService);
         inOrder.verify(rankService, times(1)).getPopularSellRank(any());
-        inOrder.verify(productService, times(1)).getProducts(any());
+        inOrder.verify(productService, times(1)).getProducts(any(ProductCommand.Products.class));
 
         assertThat(result.getProducts()).hasSize(2)
                 .extracting("productId")

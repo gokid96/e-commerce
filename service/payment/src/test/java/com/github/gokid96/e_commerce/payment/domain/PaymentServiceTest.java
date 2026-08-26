@@ -1,7 +1,5 @@
 package com.github.gokid96.e_commerce.payment.domain;
 
-import com.github.gokid96.e_commerce.balance.domain.BalanceService;
-import com.github.gokid96.e_commerce.coupon.domain.CouponService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +11,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -21,16 +20,13 @@ import static org.mockito.Mockito.verify;
 public class PaymentServiceTest {
 
     @Mock
+    private PaymentClient paymentClient;
+
+    @Mock
     private PaymentRepository paymentRepository;
 
     @Mock
     private PaymentEventPublisher paymentEventPublisher;
-
-    @Mock
-    private BalanceService balanceService;
-
-    @Mock
-    private CouponService couponService;
 
     @InjectMocks
     private PaymentService paymentService;
@@ -42,7 +38,7 @@ public class PaymentServiceTest {
 
         paymentService.payPayment(command);
 
-        verify(balanceService, times(1)).useBalance(any());
+        verify(paymentClient, times(1)).useBalance(anyLong(), anyLong());
         verify(paymentRepository, times(1)).save(any(Payment.class));
         verify(paymentEventPublisher, times(1)).paid(any());
     }
@@ -54,7 +50,7 @@ public class PaymentServiceTest {
 
         paymentService.payPayment(command);
 
-        verify(couponService, times(1)).useUserCoupon(5L);
+        verify(paymentClient, times(1)).useCoupon(5L);
         verify(paymentEventPublisher, times(1)).paid(any());
     }
 
