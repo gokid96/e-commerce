@@ -59,11 +59,13 @@ public class PaymentServiceTest {
     void cancelPayment() {
         Payment payment = Payment.create(1L, 10_000L);
         payment.pay();
-        given(paymentRepository.findById(1L)).willReturn(Optional.of(payment));
+        given(paymentRepository.findByOrderId(1L)).willReturn(Optional.of(payment));
+        given(paymentClient.getOrder(1L)).willReturn(PaymentInfo.Order.of(1L, 1L, null, 10_000L));
 
         paymentService.cancelPayment(1L);
 
         assertThat(payment.getPaymentStatus()).isEqualTo(PaymentStatus.CANCELED);
+        verify(paymentClient, times(1)).refundBalance(anyLong(), anyLong());
         verify(paymentRepository, times(1)).save(any(Payment.class));
         verify(paymentEventPublisher, times(1)).canceled(any());
     }

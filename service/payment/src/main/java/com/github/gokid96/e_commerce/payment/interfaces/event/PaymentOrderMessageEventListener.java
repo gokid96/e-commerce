@@ -36,4 +36,15 @@ public class PaymentOrderMessageEventListener {
 
         ack.acknowledge();
     }
+
+    @KafkaListener(topics = Topic.ORDER_COMPLETE_FAILED, groupId = GroupId.PAYMENT)
+    public void handleOrderCompleteFailed(String message, Acknowledgment ack) {
+        log.info("주문 완료 실패 이벤트 수신 {}", message);
+
+        Event<OrderEvent.CompleteFailed> event = Event.of(message, OrderEvent.CompleteFailed.class);
+        OrderEvent.CompleteFailed payload = event.getPayload();
+
+        paymentService.cancelPayment(payload.getOrderId());
+        ack.acknowledge();
+    }
 }
