@@ -1,10 +1,10 @@
 services:
-  api:
+  user-api:
     build:
-      context: .
+      context: service/user
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "18081:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - TZ=Asia/Seoul
@@ -12,11 +12,84 @@ services:
       - mysql
       - redis
       - kafka
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 4G
+
+  balance-api:
+    build:
+      context: service/balance
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+      - USER_SERVICE_URL=http://user-api:8081
+    depends_on:
+      - mysql
+      - redis
+      - kafka
+
+  coupon-api:
+    build:
+      context: service/coupon
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+      - USER_SERVICE_URL=http://user-api:8081
+    depends_on:
+      - mysql
+      - redis
+      - kafka
+
+  product-api:
+    build:
+      context: service/product
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+    depends_on:
+      - mysql
+      - redis
+      - kafka
+
+  order-api:
+    build:
+      context: service/order
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+      - USER_SERVICE_URL=http://user-api:8081
+      - PRODUCT_SERVICE_URL=http://product-api:8084
+      - COUPON_SERVICE_URL=http://coupon-api:8083
+    depends_on:
+      - mysql
+      - redis
+      - kafka
+
+  payment-api:
+    build:
+      context: service/payment
+      dockerfile: Dockerfile
+    ports:
+      - "18086:8086"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+      - ORDER_SERVICE_URL=http://order-api:8085
+      - BALANCE_SERVICE_URL=http://balance-api:8082
+      - COUPON_SERVICE_URL=http://coupon-api:8083
+    depends_on:
+      - mysql
+      - redis
+      - kafka
 
   mysql:
     image: mysql:8.0
@@ -76,7 +149,12 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
-      - api
+      - user-api
+      - balance-api
+      - coupon-api
+      - product-api
+      - order-api
+      - payment-api
 
   influxdb:
     image: influxdb:1.8
