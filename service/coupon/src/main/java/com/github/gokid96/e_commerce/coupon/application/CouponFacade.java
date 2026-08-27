@@ -24,6 +24,10 @@ public class CouponFacade {
         couponService.useCoupon(criteria.toCommand());
     }
 
+    public void cancelUserCoupon(Long userCouponId){
+        couponService.cancelUserCoupon(userCouponId);
+    }
+
     public void useUserCoupon(Long userCouponId) {
         couponService.useUserCoupon(userCouponId);
     }

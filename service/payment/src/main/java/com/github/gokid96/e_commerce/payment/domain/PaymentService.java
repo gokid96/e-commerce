@@ -43,16 +43,24 @@ public class PaymentService {
     }
 
     @Transactional
-    public void cancelPayment(Long paymentId) {
+    public void cancelPayment(Long orderId) {
         try {
-            Payment payment = paymentRepository.findById(paymentId)
+            Payment payment = paymentRepository.findByOrderId(orderId)
                     .orElseThrow(() -> new IllegalArgumentException("결제가 존재하지 않습니다."));
+
+            PaymentInfo.Order order = paymentClient.getOrder(orderId);
+
+            paymentClient.refundBalance(order.getUserId(), payment.getAmount());
+            if (order.getUserCouponId() != null) {
+                paymentClient.cancelCoupon(order.getUserCouponId());
+            }
+
             payment.cancel();
             paymentRepository.save(payment);
 
             paymentEventPublisher.canceled(PaymentEvent.Canceled.of(payment.getOrderId()));
         } catch (Exception e) {
-            log.error("결제 취소 실패 - paymentId: {}", paymentId, e);
+            log.error("결제 취소 실패 - orderId: {}", orderId, e);
             throw e;
         }
     }

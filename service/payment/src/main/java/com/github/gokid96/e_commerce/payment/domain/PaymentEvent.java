@@ -41,4 +41,11 @@ public class PaymentEvent {
             return new Canceled(orderId);
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CompleteFailed {
+        private Long orderId;
+    }
 }

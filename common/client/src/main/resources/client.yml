@@ -7,3 +7,5 @@ endpoints:
     url: ${COUPON_SERVICE_URL:http://localhost:8083}
   product-service:
     url: ${PRODUCT_SERVICE_URL:http://localhost:8084}
+  order-service:
+    url: ${ORDER_SERVICE_URL:http://localhost:8085}

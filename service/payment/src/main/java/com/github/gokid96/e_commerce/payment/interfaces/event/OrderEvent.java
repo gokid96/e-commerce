@@ -15,4 +15,11 @@ public class OrderEvent {
         private Long userCouponId;
         private long totalPrice;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CompleteFailed {
+        private Long orderId;
+    }
 }
