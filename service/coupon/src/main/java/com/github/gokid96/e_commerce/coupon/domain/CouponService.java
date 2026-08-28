@@ -39,6 +39,20 @@ public class CouponService {
         return CouponInfo.UsableCoupon.of(userCoupon.getId());
     }
 
+    public CouponInfo.UserCoupon getUsableUserCoupon(Long userCouponId) {
+        UserCoupon userCoupon = couponRepository.findUserCouponById(userCouponId)
+                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+
+        if (userCoupon.cannotUse()) {
+            throw new IllegalStateException("사용할 수 없는 쿠폰입니다.");
+        }
+
+        Coupon coupon = couponRepository.findCouponById(userCoupon.getCouponId())
+                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+
+        return CouponInfo.UserCoupon.of(userCoupon, coupon);
+    }
+
     public CouponInfo.Coupon getCoupon(Long couponId) {
         Coupon coupon = couponRepository.findCouponById(couponId)
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));

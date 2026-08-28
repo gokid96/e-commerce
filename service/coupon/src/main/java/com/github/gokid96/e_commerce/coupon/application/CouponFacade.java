@@ -24,7 +24,7 @@ public class CouponFacade {
         couponService.useCoupon(criteria.toCommand());
     }
 
-    public void cancelUserCoupon(Long userCouponId){
+    public void cancelUserCoupon(Long userCouponId) {
         couponService.cancelUserCoupon(userCouponId);
     }
 
@@ -39,5 +39,9 @@ public class CouponFacade {
         return infos.stream()
                 .map(CouponResult.UserCoupon::of)
                 .toList();
+    }
+
+    public CouponInfo.UserCoupon getUsableUserCoupon(Long userCouponId) {
+        return couponService.getUsableUserCoupon(userCouponId);
     }
 }
