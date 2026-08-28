@@ -6,8 +6,6 @@ import com.github.gokid96.e_commerce.common.client.api.product.ProductApiClient;
 import com.github.gokid96.e_commerce.common.client.api.product.ProductRequest;
 import com.github.gokid96.e_commerce.common.client.api.product.ProductResponse;
 import com.github.gokid96.e_commerce.common.client.api.product.StockRequest;
-import com.github.gokid96.e_commerce.common.client.api.user.UserApiClient;
-import com.github.gokid96.e_commerce.common.client.api.user.UserResponse;
 import com.github.gokid96.e_commerce.order.domain.OrderClient;
 import com.github.gokid96.e_commerce.order.domain.OrderCommand;
 import com.github.gokid96.e_commerce.order.domain.OrderInfo;
@@ -20,15 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderCoreClient implements OrderClient {
 
-    private final UserApiClient userApiClient;
     private final ProductApiClient productApiClient;
     private final CouponApiClient couponApiClient;
-
-    @Override
-    public OrderInfo.User getUser(Long userId) {
-        UserResponse.User user = userApiClient.getUser(userId).getData();
-        return OrderInfo.User.of(user.getUserId(), user.getNickname());
-    }
 
     @Override
     public List<OrderInfo.Product> getProducts(List<OrderCommand.OrderProduct> command) {
