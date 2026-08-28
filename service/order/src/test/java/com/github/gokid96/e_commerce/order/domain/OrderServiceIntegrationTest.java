@@ -34,19 +34,6 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
     @MockitoSpyBean
     private OrderEventPublisher orderEventPublisher;
 
-    @DisplayName("주문 생성 시, 사용자는 존재해야 한다.")
-    @Test
-    void createOrderWithInvalidUser() {
-        OrderCommand.Create command = OrderCommand.Create.of(1L, 1L, List.of(
-                OrderCommand.OrderProduct.of(1L, 2)));
-
-        when(orderClient.getUser(anyLong()))
-                .thenThrow(new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        assertThatThrownBy(() -> orderService.createOrder(command))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("사용자를 찾을 수 없습니다.");
-    }
 
     @DisplayName("주문 생성 시, 유효한 상품만 존재해야 한다.")
     @Test
@@ -82,8 +69,6 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         OrderCommand.Create command = OrderCommand.Create.of(1L, 1L, List.of(
                 OrderCommand.OrderProduct.of(1L, 2)));
 
-        when(orderClient.getUser(anyLong()))
-                .thenReturn(OrderInfo.User.of(1L, "사용자"));
         when(orderClient.getProducts(any()))
                 .thenReturn(List.of(OrderInfo.Product.of(1L, "상품명", 2_000L, 2)));
         when(orderClient.getUsableCoupon(anyLong()))
@@ -101,8 +86,6 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         OrderCommand.Create command = OrderCommand.Create.of(1L, 1L, List.of(
                 OrderCommand.OrderProduct.of(1L, 2)));
 
-        when(orderClient.getUser(anyLong()))
-                .thenReturn(OrderInfo.User.of(1L, "사용자"));
         when(orderClient.getProducts(any()))
                 .thenReturn(List.of(OrderInfo.Product.of(1L, "상품명", 2_000L, 2)));
         when(orderClient.getUsableCoupon(anyLong()))

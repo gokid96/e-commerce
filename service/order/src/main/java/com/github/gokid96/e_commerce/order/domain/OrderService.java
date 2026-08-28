@@ -27,7 +27,6 @@ public class OrderService {
 
     @Transactional
     public OrderInfo.Order createOrder(OrderCommand.Create command) {
-        validateUser(command.getUserId());
         List<OrderProduct> products = getProducts(command);
         Optional<OrderInfo.Coupon> coupon = getUsableCoupon(command.getUserCouponId());
 
@@ -75,10 +74,6 @@ public class OrderService {
             log.error("주문 취소 실패 - orderId: {}", orderId, e);
             throw e;
         }
-    }
-
-    private void validateUser(Long userId) {
-        orderClient.getUser(userId);
     }
 
     private List<OrderProduct> getProducts(OrderCommand.Create command) {
