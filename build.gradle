@@ -53,9 +53,14 @@ subprojects {
     tasks.named('test') {
         useJUnitPlatform()
     }
+
+    tasks.matching { it.name == 'bootJar' }.configureEach {
+        archiveFileName = "${project.name}.jar"
+    }
 }
 
 configure(subprojects.findAll { !it.path.startsWith(':service:') }) {
     tasks.matching { it.name == 'bootJar' }.configureEach { enabled = false }
     tasks.matching { it.name == 'jar' }.configureEach { enabled = true }
 }
+
