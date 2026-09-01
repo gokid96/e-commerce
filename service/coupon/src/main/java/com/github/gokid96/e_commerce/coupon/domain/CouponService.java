@@ -15,7 +15,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final CouponEventPublisher couponEventPublisher;
 
-
+    @Transactional
     public void useCoupon(CouponCommand.Use command) {
         UserCoupon userCoupon = couponRepository.findUserCouponById(command.getUserCouponId())
                 .orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
@@ -28,6 +28,7 @@ public class CouponService {
         couponRepository.saveUserCoupon(userCoupon);
     }
 
+    @Transactional(readOnly = true)
     public CouponInfo.UsableCoupon getUsableCoupon(CouponCommand.UsableCoupon command) {
         UserCoupon userCoupon = couponRepository.findUserCouponByUserIdAndCouponId(
                 command.getUserId(), command.getCouponId());
@@ -39,6 +40,7 @@ public class CouponService {
         return CouponInfo.UsableCoupon.of(userCoupon.getId());
     }
 
+    @Transactional(readOnly = true)
     public CouponInfo.UserCoupon getUsableUserCoupon(Long userCouponId) {
         UserCoupon userCoupon = couponRepository.findUserCouponById(userCouponId)
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
@@ -53,12 +55,14 @@ public class CouponService {
         return CouponInfo.UserCoupon.of(userCoupon, coupon);
     }
 
+    @Transactional(readOnly = true)
     public CouponInfo.Coupon getCoupon(Long couponId) {
         Coupon coupon = couponRepository.findCouponById(couponId)
                 .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
         return CouponInfo.Coupon.of(coupon);
     }
 
+    @Transactional
     public void useUserCoupon(Long userCouponId) {
         UserCoupon userCoupon = couponRepository.findUserCouponById(userCouponId)
                 .orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
@@ -66,6 +70,7 @@ public class CouponService {
         couponRepository.saveUserCoupon(userCoupon);
     }
 
+    @Transactional
     public void cancelUserCoupon(Long userCouponId) {
         UserCoupon userCoupon = couponRepository.findUserCouponById(userCouponId)
                 .orElseThrow(() -> new IllegalArgumentException("발급된 쿠폰이 존재하지 않습니다."));
@@ -73,6 +78,7 @@ public class CouponService {
         couponRepository.saveUserCoupon(userCoupon);
     }
 
+    @Transactional(readOnly = true)
     public List<CouponInfo.UserCoupon> getUserCoupons(Long userId) {
         List<UserCoupon> userCoupons = couponRepository.findUserCouponsByUserIdAndUsedStatusIn(
                 userId, UserCouponUsedStatus.forUsable());
