@@ -26,7 +26,7 @@ public class OutboxMessageEventListener {
             Topic.PAYMENT_PAID,
             Topic.PAYMENT_FAILED,
             Topic.PAYMENT_CANCELED,
-    }, groupId = GroupId.OUTBOX)
+    }, groupId = GroupId.OUTBOX + "-${spring.application.name}")
     public void handle(String message, Acknowledgment ack) {
         log.info("아웃 박스 이벤트 수신 {}", message);
 
