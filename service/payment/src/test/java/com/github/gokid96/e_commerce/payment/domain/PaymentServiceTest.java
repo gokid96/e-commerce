@@ -31,6 +31,9 @@ public class PaymentServiceTest {
     @InjectMocks
     private PaymentService paymentService;
 
+    @Mock
+    private PaymentCompensationPublisher paymentCompensationPublisher;
+
     @DisplayName("결제 시 잔액을 차감하고 결제 완료 이벤트를 발행한다.")
     @Test
     void payPayment() {
