@@ -15,6 +15,7 @@ public class PaymentService {
     private final PaymentClient paymentClient;
     private final PaymentRepository paymentRepository;
     private final PaymentEventPublisher paymentEventPublisher;
+    private final PaymentCompensationPublisher paymentCompensationPublisher;
 
     @Transactional
     public void payPayment(PaymentCommand.Payment command) {
@@ -37,7 +38,7 @@ public class PaymentService {
                     )
             );
         } catch (Exception e) {
-            paymentEventPublisher.payFailed(PaymentEvent.PayFailed.of(command.getOrderId()));
+            paymentCompensationPublisher.payFailed(command.getOrderId());
             throw e;
         }
     }
