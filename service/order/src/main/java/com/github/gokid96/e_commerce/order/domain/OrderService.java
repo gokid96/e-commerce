@@ -51,8 +51,13 @@ public class OrderService {
         try {
             Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-            order.completed(LocalDateTime.now());
 
+            if (order.isCompleted()) {
+                log.info("이미 완료된 주문 - 중복 이벤트로 판단하고 무시합니다. orderId: {}", orderId);
+                return;
+            }
+
+            order.completed(LocalDateTime.now());
             orderEventPublisher.completed(OrderEvent.Completed.of(order));
         } catch (Exception e) {
             orderCompensationPublisher.completeFailed(orderId);
@@ -65,6 +70,11 @@ public class OrderService {
         try {
             Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+
+            if (order.isCanceled()) {
+                log.info("이미 취소된 주문 - 중복 이벤트로 판단하고 무시합니다. orderId: {}", orderId);
+                return;
+            }
 
             orderClient.restoreStock(order.getOrderProducts().stream()
                     .map(op -> OrderCommand.OrderProduct.of(op.getProductId(), op.getQuantity()))

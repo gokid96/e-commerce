@@ -19,6 +19,11 @@ public class PaymentService {
 
     @Transactional
     public void payPayment(PaymentCommand.Payment command) {
+        if (paymentRepository.findByOrderId(command.getOrderId()).isPresent()) {
+            log.info("이미 결제된 주문 - 중복 이벤트로 판단하고 무시합니다. orderId: {}", command.getOrderId());
+            return;
+        }
+
         try {
             Payment payment = Payment.create(command.getOrderId(), command.getAmount());
             payment.pay();

@@ -18,6 +18,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceUnitTest {
@@ -145,5 +146,19 @@ class OrderServiceUnitTest {
 
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
         verify(orderClient, times(1)).restoreStock(any());
+    }
+
+    @DisplayName("이미 완료된 주문이면 완료 이벤트를 다시 발행하지 않는다.")
+    @Test
+    void completedOrderWhenAlreadyCompleted() {
+        Order order = Order.create(1L, null, 0,
+                List.of(OrderProduct.create(1L, "상품A", 1_000L, 1)));
+        order.completed(LocalDateTime.now());
+
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        orderService.completedOrder(1L);
+
+        verify(orderEventPublisher, never()).completed(any());
     }
 }
