@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class StockService {
@@ -12,12 +15,18 @@ public class StockService {
 
     @Transactional
     public void deductStock(StockCommand.Deduct command) {
-        command.getProducts().forEach(this::deductStock);
+        lockOrdered(command.getProducts()).forEach(this::deductStock);
     }
 
     @Transactional
     public void restoreStock(StockCommand.Restore command) {
-        command.getProducts().forEach(this::restoreStock);
+        lockOrdered(command.getProducts()).forEach(this::restoreStock);
+    }
+
+    private List<StockCommand.OrderProduct> lockOrdered(List<StockCommand.OrderProduct> products) {
+        return products.stream()
+                .sorted(Comparator.comparing(StockCommand.OrderProduct::getProductId))
+                .toList();
     }
 
     private void deductStock(StockCommand.OrderProduct command) {
