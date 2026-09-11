@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +25,13 @@ public class OrderCoreClient implements OrderClient {
 
     @Override
     public List<OrderInfo.Product> getProducts(List<OrderCommand.OrderProduct> command) {
+        Map<Long, Integer> orderQuantities = command.stream()
+                .collect(Collectors.toMap(
+                        OrderCommand.OrderProduct::getProductId,
+                        OrderCommand.OrderProduct::getQuantity,
+                        Integer::sum
+                ));
+
         ProductResponse.Products products = productApiClient.getProducts(
                 ProductRequest.Products.of(
                         command.stream()
@@ -36,7 +45,7 @@ public class OrderCoreClient implements OrderClient {
                         product.getProductId(),
                         product.getProductName(),
                         product.getProductPrice(),
-                        product.getStock()
+                        orderQuantities.get(product.getProductId())
                 ))
                 .toList();
     }
