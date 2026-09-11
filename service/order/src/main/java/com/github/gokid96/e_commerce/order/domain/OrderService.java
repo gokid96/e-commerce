@@ -17,6 +17,7 @@ public class OrderService {
     private final OrderClient orderClient;
     private final OrderRepository orderRepository;
     private final OrderEventPublisher orderEventPublisher;
+    private final OrderCompensationPublisher orderCompensationPublisher;
 
     @Transactional(readOnly = true)
     public OrderInfo.Order getOrder(Long orderId) {
@@ -54,7 +55,7 @@ public class OrderService {
 
             orderEventPublisher.completed(OrderEvent.Completed.of(order));
         } catch (Exception e) {
-            orderEventPublisher.completeFailed(OrderEvent.CompleteFailed.of(orderId));
+            orderCompensationPublisher.completeFailed(orderId);
             throw e;
         }
     }
