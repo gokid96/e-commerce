@@ -34,6 +34,9 @@ class OrderServiceUnitTest {
     @Mock
     private OrderClient orderClient;
 
+    @Mock
+    private OrderCompensationPublisher orderCompensationPublisher;
+
     @DisplayName("주문 생성 시, 유효한 상품만 존재해야 한다.")
     @Test
     void createOrderWithInvalidProduct() {

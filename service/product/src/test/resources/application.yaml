@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: ecommerce-product-service
   jpa:
     hibernate:
       ddl-auto: create-drop
