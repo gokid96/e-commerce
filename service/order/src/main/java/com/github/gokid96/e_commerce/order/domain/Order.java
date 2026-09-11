@@ -85,6 +85,14 @@ public class Order {
         this.orderStatus = OrderStatus.CANCELED;
     }
 
+    public boolean isCompleted() {
+        return this.orderStatus == OrderStatus.COMPLETED;
+    }
+
+    public boolean isCanceled() {
+        return this.orderStatus == OrderStatus.CANCELED;
+    }
+
     private long calculateTotalPrice(List<OrderProduct> orderProducts) {
         return orderProducts.stream()
                 .mapToLong(OrderProduct::getPrice)
