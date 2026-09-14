@@ -9,6 +9,11 @@ spring:
     username: application
     password: application
     driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 3
+      connection-timeout: 10000
+      max-lifetime: 60000
   jpa:
     open-in-view: false
     hibernate:
