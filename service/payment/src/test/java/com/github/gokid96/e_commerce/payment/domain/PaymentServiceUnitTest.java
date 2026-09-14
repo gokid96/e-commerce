@@ -1,23 +1,27 @@
 package com.github.gokid96.e_commerce.payment.domain;
 
+import com.github.gokid96.e_commerce.payment.support.MockTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
-public class PaymentServiceTest {
+class PaymentServiceUnitTest extends MockTestSupport {
+
+    @InjectMocks
+    private PaymentService paymentService;
 
     @Mock
     private PaymentClient paymentClient;
@@ -27,9 +31,6 @@ public class PaymentServiceTest {
 
     @Mock
     private PaymentEventPublisher paymentEventPublisher;
-
-    @InjectMocks
-    private PaymentService paymentService;
 
     @Mock
     private PaymentCompensationPublisher paymentCompensationPublisher;
@@ -57,6 +58,35 @@ public class PaymentServiceTest {
         verify(paymentEventPublisher, times(1)).paid(any());
     }
 
+    @DisplayName("이미 결제된 주문이면 결제를 진행하지 않는다.")
+    @Test
+    void payPaymentWithAlreadyPaid() {
+        PaymentCommand.Payment command = PaymentCommand.Payment.of(1L, 1L, null, 10_000L);
+        given(paymentRepository.findByOrderId(1L))
+                .willReturn(Optional.of(Payment.create(1L, 10_000L)));
+
+        paymentService.payPayment(command);
+
+        verify(paymentClient, never()).useBalance(anyLong(), anyLong());
+        verify(paymentRepository, never()).save(any(Payment.class));
+        verify(paymentEventPublisher, never()).paid(any());
+    }
+
+    @DisplayName("결제 실패 시 보상 이벤트를 발행하고 예외를 전파한다.")
+    @Test
+    void payPaymentWithFailure() {
+        PaymentCommand.Payment command = PaymentCommand.Payment.of(1L, 1L, null, 10_000L);
+        willThrow(new IllegalArgumentException("잔액이 부족합니다."))
+                .given(paymentClient).useBalance(anyLong(), anyLong());
+
+        assertThatThrownBy(() -> paymentService.payPayment(command))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("잔액이 부족합니다.");
+
+        verify(paymentCompensationPublisher, times(1)).payFailed(1L);
+        verify(paymentEventPublisher, never()).paid(any());
+    }
+
     @DisplayName("결제를 취소하고 취소 이벤트를 발행한다.")
     @Test
     void cancelPayment() {
@@ -71,5 +101,15 @@ public class PaymentServiceTest {
         verify(paymentClient, times(1)).refundBalance(anyLong(), anyLong());
         verify(paymentRepository, times(1)).save(any(Payment.class));
         verify(paymentEventPublisher, times(1)).canceled(any());
+    }
+
+    @DisplayName("결제 취소 시 결제가 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void cancelPaymentWithoutPayment() {
+        given(paymentRepository.findByOrderId(1L)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> paymentService.cancelPayment(1L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("결제가 존재하지 않습니다.");
     }
 }
