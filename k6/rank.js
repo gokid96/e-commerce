@@ -15,7 +15,7 @@ export const options = {
 
 export default function main() {
     group("인기상품 캐싱 성능 테스트", function () {
-        const url = 'http://127.0.0.1:8080/api/v1/products/ranks';
+        const url = 'http://127.0.0.1:8084/api/v1/products/ranks';
         const res = http.get(url);
         check(res, {
             '응답 상태 200': (r) => r.status === 200

@@ -1,96 +1,4 @@
 services:
-  user-api:
-    build:
-      context: service/user
-      dockerfile: Dockerfile
-    ports:
-      - "18081:8081"
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - TZ=Asia/Seoul
-    depends_on:
-      - mysql
-      - redis
-      - kafka
-
-  balance-api:
-    build:
-      context: service/balance
-      dockerfile: Dockerfile
-    ports:
-      - "8082:8082"
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - TZ=Asia/Seoul
-      - USER_SERVICE_URL=http://user-api:8081
-    depends_on:
-      - mysql
-      - redis
-      - kafka
-
-  coupon-api:
-    build:
-      context: service/coupon
-      dockerfile: Dockerfile
-    ports:
-      - "8083:8083"
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - TZ=Asia/Seoul
-      - USER_SERVICE_URL=http://user-api:8081
-    depends_on:
-      - mysql
-      - redis
-      - kafka
-
-  product-api:
-    build:
-      context: service/product
-      dockerfile: Dockerfile
-    ports:
-      - "8084:8084"
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - TZ=Asia/Seoul
-    depends_on:
-      - mysql
-      - redis
-      - kafka
-
-  order-api:
-    build:
-      context: service/order
-      dockerfile: Dockerfile
-    ports:
-      - "8085:8085"
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - TZ=Asia/Seoul
-      - USER_SERVICE_URL=http://user-api:8081
-      - PRODUCT_SERVICE_URL=http://product-api:8084
-      - COUPON_SERVICE_URL=http://coupon-api:8083
-    depends_on:
-      - mysql
-      - redis
-      - kafka
-
-  payment-api:
-    build:
-      context: service/payment
-      dockerfile: Dockerfile
-    ports:
-      - "18086:8086"
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - TZ=Asia/Seoul
-      - ORDER_SERVICE_URL=http://order-api:8085
-      - BALANCE_SERVICE_URL=http://balance-api:8082
-      - COUPON_SERVICE_URL=http://coupon-api:8083
-    depends_on:
-      - mysql
-      - redis
-      - kafka
-
   mysql:
     image: mysql:8.0
     ports:
@@ -102,6 +10,8 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - mysql-data:/var/lib/mysql
+    networks:
+      - ecommerce
 
   redis:
     image: redis:7.2
@@ -110,6 +20,8 @@ services:
     volumes:
       - ./data/redis/:/data
     command: redis-server --appendonly yes
+    networks:
+      - ecommerce
 
   kafka:
     image: apache/kafka:4.1.0
@@ -130,6 +42,8 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    networks:
+      - ecommerce
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -141,6 +55,8 @@ services:
     depends_on:
       - kafka
     restart: always
+    networks:
+      - ecommerce
 
   prometheus:
     image: prom/prometheus:latest
@@ -148,13 +64,8 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    depends_on:
-      - user-api
-      - balance-api
-      - coupon-api
-      - product-api
-      - order-api
-      - payment-api
+    networks:
+      - ecommerce
 
   influxdb:
     image: influxdb:1.8
@@ -164,6 +75,8 @@ services:
       INFLUXDB_DB: k6
     volumes:
       - influxdb-data:/var/lib/influxdb
+    networks:
+      - ecommerce
 
   grafana:
     image: grafana/grafana:latest
@@ -175,12 +88,16 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: admin
     depends_on:
       - influxdb
+      - prometheus
+    networks:
+      - ecommerce
 
 volumes:
-  kafka-data:
   mysql-data:
+  kafka-data:
   influxdb-data:
 
 networks:
-  default:
+  ecommerce:
+    name: ecommerce
     driver: bridge
