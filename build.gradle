@@ -94,6 +94,13 @@ configure(subprojects.findAll { !it.path.startsWith(':service:') }) {
     tasks.matching { it.name == 'jar' }.configureEach { enabled = true }
 }
 
+configure(subprojects.findAll { it.path.startsWith(':service:') }) {
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'io.micrometer:micrometer-registry-prometheus'
+    }
+}
+
 def coverageProjects = subprojects.findAll { it.file('src/main/java').exists() }
 
 def coverageExcludes = [
