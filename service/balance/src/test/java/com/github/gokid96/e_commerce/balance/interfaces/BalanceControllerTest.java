@@ -9,8 +9,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,7 +37,16 @@ class BalanceControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.message").value("OK"))
-                .andExpect(jsonPath("$.data.amount").value(1_000_000L));
+                .andExpect(jsonPath("$.data.amount").value(1_000_000L))
+                .andDo(document("balance-get",
+                        pathParameters(
+                                parameterWithName("userId").description("사용자 ID")
+                        ),
+                        relaxedResponseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.amount").description("보유 잔액")
+                        )));
     }
 
     @DisplayName("잔액 충전 시, 금액은 필수다.")
@@ -84,9 +99,17 @@ class BalanceControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.message").value("OK"));
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andDo(document("balance-charge",
+                        pathParameters(
+                                parameterWithName("userId").description("사용자 ID")
+                        ),
+                        relaxedRequestFields(
+                                fieldWithPath("amount").description("충전 금액 (양수)")
+                        ),
+                        relaxedResponseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지")
+                        )));
     }
-
-
-
 }
