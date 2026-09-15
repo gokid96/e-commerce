@@ -45,8 +45,6 @@ jobs:
 
       - name: Pages 설정
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: 산출물 업로드
         uses: actions/upload-pages-artifact@v4
