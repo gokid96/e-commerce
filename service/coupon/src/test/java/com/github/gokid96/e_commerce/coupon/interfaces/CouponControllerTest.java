@@ -10,8 +10,14 @@ import org.springframework.http.MediaType;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,7 +37,18 @@ class CouponControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.message").value("OK"));
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andDo(document("coupon-issue",
+                        pathParameters(
+                                parameterWithName("userId").description("사용자 ID")
+                        ),
+                        relaxedRequestFields(
+                                fieldWithPath("couponId").description("발급 대상 쿠폰 ID")
+                        ),
+                        relaxedResponseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지")
+                        )));
     }
 
     @DisplayName("쿠폰 발급 시 쿠폰 ID는 필수이다.")
@@ -101,6 +118,20 @@ class CouponControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data[0].couponName").value("신규 가입 할인"))
-                .andExpect(jsonPath("$.data[0].discountRate").value(0.1))                .andExpect(jsonPath("$.data[0].usedStatus").value("UNUSED"));
+                .andExpect(jsonPath("$.data[0].discountRate").value(0.1))
+                .andExpect(jsonPath("$.data[0].usedStatus").value("UNUSED"))
+                .andDo(document("coupon-list",
+                        pathParameters(
+                                parameterWithName("userId").description("사용자 ID")
+                        ),
+                        relaxedResponseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data[].userCouponId").description("사용자 쿠폰 ID"),
+                                fieldWithPath("data[].couponId").description("쿠폰 ID"),
+                                fieldWithPath("data[].couponName").description("쿠폰명"),
+                                fieldWithPath("data[].discountRate").description("할인율"),
+                                fieldWithPath("data[].usedStatus").description("사용 여부 (UNUSED, USED)")
+                        )));
     }
 }

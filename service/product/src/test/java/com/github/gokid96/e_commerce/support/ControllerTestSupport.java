@@ -6,10 +6,10 @@ import com.github.gokid96.e_commerce.product.interfaces.ApiControllerAdvice;
 import com.github.gokid96.e_commerce.product.interfaces.ProductController;
 import com.github.gokid96.e_commerce.rank.application.RankFacade;
 import com.github.gokid96.e_commerce.rank.interfaces.RankController;
+import com.github.gokid96.e_commerce.support.restdocs.RestDocsSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = {
@@ -17,10 +17,7 @@ import tools.jackson.databind.ObjectMapper;
         RankController.class,
         ApiControllerAdvice.class
 })
-public abstract class ControllerTestSupport {
-
-    @Autowired
-    protected MockMvc mockMvc;
+public abstract class ControllerTestSupport extends RestDocsSupport {
 
     @Autowired
     protected ObjectMapper objectMapper;
