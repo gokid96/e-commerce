@@ -1,0 +1,50 @@
+
+
+  █ THRESHOLDS 
+
+    http_req_duration
+    ✗ 'p(99)<1000' p(99)=9.24s
+
+    http_req_failed
+    ✓ 'rate<0.01' rate=0.55%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 9544   103.892664/s
+    checks_succeeded...: 99.07% 9456 out of 9544
+    checks_failed......: 0.92%  88 out of 9544
+
+    ✓ 인기상품 조회 성공
+    ✓ 인기상품 데이터 확인
+    ✗ 잔액 충전 성공
+      ↳  99% — ✓ 783 / ✗ 5
+    ✓ 잔액 조회 성공
+    ✗ 주문 생성 성공
+      ↳  75% — ✓ 50 / ✗ 16
+    ✗ 주문 ID 확인
+      ↳  75% — ✓ 50 / ✗ 16
+    ✗ 주문 상태 조회 성공
+      ↳  80% — ✓ 40 / ✗ 10
+    ✗ 주문 완료 확인
+      ↳  18% — ✓ 9 / ✗ 41
+
+    HTTP
+    http_req_duration..............: avg=1.65s min=6.8ms med=1.49s max=17.74s p(50)=1.49s p(90)=3.6s  p(95)=4.54s p(99)=9.24s  p(99.9)=15.71s
+      { expected_response:true }...: avg=1.61s min=6.8ms med=1.49s max=17.74s p(50)=1.49s p(90)=3.58s p(95)=4.47s p(99)=6.31s  p(99.9)=15.73s
+    http_req_failed................: 0.55%  31 out of 5560
+    http_reqs......................: 5560   60.524226/s
+
+    EXECUTION
+    iteration_duration.............: avg=4.38s min=2s    med=4.46s max=34.23s p(50)=4.46s p(90)=6.17s p(95)=6.77s p(99)=13.95s p(99.9)=33.25s
+    iterations.....................: 3868   42.105702/s
+    vus............................: 2      min=2          max=300
+    vus_max........................: 300    min=300        max=300
+
+    NETWORK
+    data_received..................: 2.0 MB 22 kB/s
+    data_sent......................: 579 kB 6.3 kB/s
+
+
+
+time="2026-09-14T17:34:54+09:00" level=error msg="thresholds on metrics 'http_req_duration' have been crossed"

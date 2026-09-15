@@ -1,0 +1,45 @@
+
+
+  █ THRESHOLDS 
+
+    http_req_duration
+    ✓ 'p(99)<1000' p(99)=471.39ms
+
+    http_req_failed
+    ✓ 'rate<0.01' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 19734  215.122334/s
+    checks_succeeded...: 99.99% 19733 out of 19734
+    checks_failed......: 0.00%  1 out of 19734
+
+    ✓ 인기상품 조회 성공
+    ✓ 인기상품 데이터 확인
+    ✗ 잔액 충전 성공
+      ↳  99% — ✓ 1582 / ✗ 1
+    ✓ 잔액 조회 성공
+    ✓ 주문 생성 성공
+    ✓ 주문 ID 확인
+    ✓ 주문 상태 조회 성공
+    ✓ 주문 완료 확인
+
+    HTTP
+    http_req_duration..............: avg=62.78ms min=1.54ms med=26.07ms max=3.1s  p(50)=26.07ms p(90)=147.63ms p(95)=224.25ms p(99)=471.39ms p(99.9)=2s   
+      { expected_response:true }...: avg=62.71ms min=1.54ms med=26.06ms max=3.1s  p(50)=26.06ms p(90)=147.43ms p(95)=224.02ms p(99)=468.37ms p(99.9)=2s   
+    http_req_failed................: 0.00%  1 out of 11450
+    http_reqs......................: 11450  124.81761/s
+
+    EXECUTION
+    iteration_duration.............: avg=2.11s   min=2s     med=2.04s   max=5.34s p(50)=2.04s   p(90)=2.21s    p(95)=2.45s    p(99)=3.68s    p(99.9)=4.62s
+    iterations.....................: 7936   86.51114/s
+    vus............................: 3      min=3          max=300
+    vus_max........................: 300    min=300        max=300
+
+    NETWORK
+    data_received..................: 4.1 MB 44 kB/s
+    data_sent......................: 1.2 MB 13 kB/s
+
+
+

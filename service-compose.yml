@@ -1,0 +1,115 @@
+services:
+  user-api:
+    build:
+      context: service/user
+      dockerfile: Dockerfile
+    ports:
+      - "18081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+    networks:
+      - ecommerce
+
+  balance-api:
+    build:
+      context: service/balance
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+      - USER_SERVICE_URL=http://user-api:8081
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+    networks:
+      - ecommerce
+
+  coupon-api:
+    build:
+      context: service/coupon
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+      - USER_SERVICE_URL=http://user-api:8081
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+    networks:
+      - ecommerce
+
+  product-api:
+    build:
+      context: service/product
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+    networks:
+      - ecommerce
+
+  order-api:
+    build:
+      context: service/order
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+      - USER_SERVICE_URL=http://user-api:8081
+      - PRODUCT_SERVICE_URL=http://product-api:8084
+      - COUPON_SERVICE_URL=http://coupon-api:8083
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+    networks:
+      - ecommerce
+
+  payment-api:
+    build:
+      context: service/payment
+      dockerfile: Dockerfile
+    ports:
+      - "18086:8086"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ=Asia/Seoul
+      - ORDER_SERVICE_URL=http://order-api:8085
+      - BALANCE_SERVICE_URL=http://balance-api:8082
+      - COUPON_SERVICE_URL=http://coupon-api:8083
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+    networks:
+      - ecommerce
+
+networks:
+  ecommerce:
+    name: ecommerce
+    external: true

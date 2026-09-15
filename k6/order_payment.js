@@ -18,21 +18,31 @@ export const options = {
     }
 };
 
-const BASE_URL = 'http://127.0.0.1:8080/api/v1';
+const PRODUCT_URL = 'http://127.0.0.1:8084/api/v1';
+const BALANCE_URL = 'http://127.0.0.1:8082/api/v1';
+const ORDER_URL = 'http://127.0.0.1:8085/api/v1';
+
+const ORDER_CHECK_INTERVAL = 2;
 
 export default function main() {
     const userId = randomIntBetween(1, 10000);
+
+    let orderId = null;
     let shouldOrder = false;
     let shouldChargeBalance = false;
     let selectedProduct = null;
 
     group('주문/결제 시나리오', () => {
-        // 1. 인기 상품 조회
-        const popularProductsResponse = http.get(`${BASE_URL}/products/ranks`, {
+        const popularProductsResponse = http.get(`${PRODUCT_URL}/products/ranks`, {
             tags: { name: '인기상품조회' }
         });
         check(popularProductsResponse, {
             '인기상품 조회 성공': (r) => r.status === 200,
+            '인기상품 데이터 확인': (r) => {
+                if (r.status !== 200) return false;
+                const body = JSON.parse(r.body);
+                return body.data && Array.isArray(body.data.products) && body.data.products.length > 0;
+            }
         });
 
         if (popularProductsResponse.status === 200) {
@@ -44,31 +54,27 @@ export default function main() {
             }
         }
 
-        // 2. 포인트 충전 및 조회
         if (shouldChargeBalance) {
             const payload = JSON.stringify({ amount: 10000 });
             const params = {
                 headers: { 'Content-Type': 'application/json' },
-                tags: { name: '포인트충전' }
+                tags: { name: '잔액충전' }
             };
-            const chargeResponse = http.post(`${BASE_URL}/users/${userId}/balance/charge`, payload, params);
+            const chargeResponse = http.post(`${BALANCE_URL}/users/${userId}/balance/charge`, payload, params);
             check(chargeResponse, {
-                '포인트 충전 성공': (r) => r.status === 200 && JSON.parse(r.body).code === 200
+                '잔액 충전 성공': (r) => r.status === 200 && JSON.parse(r.body).code === 200
             });
 
-            const balanceResponse = http.get(`${BASE_URL}/users/${userId}/balance`, {
-                tags: { name: '포인트조회' }
+            const balanceResponse = http.get(`${BALANCE_URL}/users/${userId}/balance`, {
+                tags: { name: '잔액조회' }
             });
             check(balanceResponse, {
-                '포인트 조회 성공': (r) => r.status === 200 && JSON.parse(r.body).data.amount !== undefined
+                '잔액 조회 성공': (r) => r.status === 200 && JSON.parse(r.body).data.amount !== undefined
             });
 
             shouldOrder = Math.random() < 0.1;
         }
 
-        // 3. 주문 생성
-        // 주의: 우리 createOrder 응답은 ApiResponse<Void>라 orderId 미반환(비동기 사가).
-        //       레퍼런스의 주문상태 확인(GET /orders/{orderId}) 단계는 생략한다.
         if (shouldOrder && selectedProduct) {
             const orderPayload = JSON.stringify({
                 userId: userId,
@@ -78,12 +84,38 @@ export default function main() {
             });
             const orderParams = {
                 headers: { 'Content-Type': 'application/json' },
-                tags: { name: '상품주문' }
+                tags: { name: '주문생성' }
             };
-            const orderResponse = http.post(`${BASE_URL}/orders`, orderPayload, orderParams);
+            const orderResponse = http.post(`${ORDER_URL}/orders`, orderPayload, orderParams);
             check(orderResponse, {
-                '주문 생성 성공': (r) => r.status === 200 && JSON.parse(r.body).code === 200
+                '주문 생성 성공': (r) => r.status === 200,
+                '주문 ID 확인': (r) => {
+                    if (r.status !== 200) return false;
+                    const body = JSON.parse(r.body);
+                    if (body.data && body.data.orderId) {
+                        orderId = body.data.orderId;
+                        return true;
+                    }
+                    return false;
+                }
             });
+
+            // 주문/결제는 이벤트 기반 사가로 처리되므로, 일정 시간 대기 후 최종 상태를 확인한다.
+            if (orderId) {
+                sleep(ORDER_CHECK_INTERVAL);
+
+                const orderStatusResponse = http.get(`${ORDER_URL}/orders/${orderId}`, {
+                    tags: { name: '주문상태확인' }
+                });
+                check(orderStatusResponse, {
+                    '주문 상태 조회 성공': (r) => r.status === 200,
+                    '주문 완료 확인': (r) => {
+                        if (r.status !== 200) return false;
+                        const body = JSON.parse(r.body);
+                        return body.data && body.data.status === 'COMPLETED';
+                    }
+                });
+            }
         } else {
             sleep(1);
         }

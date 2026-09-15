@@ -20,7 +20,7 @@ export const options = {
     }
 };
 
-const BASE_URL = 'http://127.0.0.1:8080/api/v1';
+const BASE_URL = 'http://127.0.0.1:8083/api/v1';
 
 export default function main() {
     const userId = (exec.vu.idInTest * 1000000) + exec.vu.iterationInScenario;

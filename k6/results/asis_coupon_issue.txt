@@ -1,0 +1,39 @@
+
+
+  █ THRESHOLDS 
+
+    http_req_duration
+    ✗ 'p(99)<1000' p(99)=16.69s
+
+    http_req_failed
+    ✓ 'rate<0.05' rate=0.29%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 3039   35.308386/s
+    checks_succeeded...: 99.70% 3030 out of 3039
+    checks_failed......: 0.29%  9 out of 3039
+
+    ✗ 쿠폰 발급 성공
+      ↳  99% — ✓ 3030 / ✗ 9
+
+    HTTP
+    http_req_duration..............: avg=8.94s  min=24.92ms med=9.29s  max=19.54s p(50)=9.29s  p(90)=14.92s p(95)=16.36s p(99)=16.69s p(99.9)=17.21s
+      { expected_response:true }...: avg=8.93s  min=24.92ms med=9.28s  max=19.54s p(50)=9.28s  p(90)=14.92s p(95)=16.36s p(99)=16.69s p(99.9)=17.21s
+    http_req_failed................: 0.29%  9 out of 3039
+    http_reqs......................: 3039   35.308386/s
+
+    EXECUTION
+    iteration_duration.............: avg=10.95s min=1.02s   med=11.33s max=20.54s p(50)=11.33s p(90)=17.3s  p(95)=18.31s p(99)=19.6s  p(99.9)=19.79s
+    iterations.....................: 3039   35.308386/s
+    vus............................: 7      min=1         max=1000
+    vus_max........................: 1000   min=1000      max=1000
+
+    NETWORK
+    data_received..................: 558 kB 6.5 kB/s
+    data_sent......................: 540 kB 6.3 kB/s
+
+
+
+time="2026-09-14T17:39:14+09:00" level=error msg="thresholds on metrics 'http_req_duration' have been crossed"
