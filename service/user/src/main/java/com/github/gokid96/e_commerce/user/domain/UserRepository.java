@@ -1,8 +1,8 @@
 package com.github.gokid96.e_commerce.user.domain;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
+@Component
 public interface UserRepository {
     User save(User user);
     User findById(Long userId);

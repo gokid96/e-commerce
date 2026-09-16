@@ -1,10 +1,10 @@
 package com.github.gokid96.e_commerce.order.domain;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Repository
+@Component
 public interface OrderRepository {
 
     Order save(Order order);
