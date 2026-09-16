@@ -1,12 +1,14 @@
 package com.github.gokid96.e_commerce.coupon.infrastructure;
 
 import com.github.gokid96.e_commerce.coupon.domain.Coupon;
+import com.github.gokid96.e_commerce.coupon.domain.CouponInfo;
 import com.github.gokid96.e_commerce.coupon.domain.CouponRepository;
 import com.github.gokid96.e_commerce.coupon.domain.CouponStatus;
 import com.github.gokid96.e_commerce.coupon.domain.UserCoupon;
 import com.github.gokid96.e_commerce.coupon.domain.UserCouponUsedStatus;
 import com.github.gokid96.e_commerce.coupon.infrastructure.jpa.CouponJpaRepository;
 import com.github.gokid96.e_commerce.coupon.infrastructure.jpa.UserCouponJpaRepository;
+import com.github.gokid96.e_commerce.coupon.infrastructure.querydsl.UserCouponQueryDslRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,7 @@ public class CouponCoreRepository implements CouponRepository {
     private final CouponJpaRepository couponJpaRepository;
     private final UserCouponJpaRepository userCouponJpaRepository;
     private final UserCouponRedisRepository userCouponRedisRepository;
+    private final UserCouponQueryDslRepository userCouponQueryDslRepository;
     /*
      * coupon
      * */
@@ -56,8 +59,8 @@ public class CouponCoreRepository implements CouponRepository {
     }
 
     @Override
-    public List<UserCoupon> findUserCouponsByUserIdAndUsedStatusIn(Long userId, List<UserCouponUsedStatus> usedStatuses) {
-        return userCouponJpaRepository.findByUserIdAndUsedStatusIn(userId, usedStatuses);
+    public List<CouponInfo.UserCoupon> findUserCouponInfosByUserIdAndUsedStatusIn(Long userId, List<UserCouponUsedStatus> usedStatuses) {
+        return userCouponQueryDslRepository.findUserCouponsByUserIdAndUsedStatusIn(userId, usedStatuses);
     }
 
     @Override

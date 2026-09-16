@@ -2,6 +2,7 @@ package com.github.gokid96.e_commerce.product.infrastructure;
 
 import com.github.gokid96.e_commerce.product.domain.product.Product;
 import com.github.gokid96.e_commerce.product.domain.product.ProductCommand;
+import com.github.gokid96.e_commerce.product.domain.product.ProductInfo;
 import com.github.gokid96.e_commerce.product.domain.product.ProductRepository;
 import com.github.gokid96.e_commerce.product.domain.product.ProductSellingStatus;
 import com.github.gokid96.e_commerce.product.infrastructure.jpa.ProductJpaRepository;
@@ -23,18 +24,23 @@ public class ProductCoreRepository implements ProductRepository {
     }
 
     @Override
-    public List<Product> findBySellStatusIn(List<ProductSellingStatus> statuses) {
-        return productJpaRepository.findBySellStatusIn(statuses);
-    }
-
-    @Override
-    public Product findById(Long productId){
+    public Product findById(Long productId) {
         return productJpaRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
     }
 
     @Override
-    public List<Product> findAll(ProductCommand.Query command) {
+    public List<Product> findByIdIn(List<Long> productIds) {
+        return productJpaRepository.findByIdIn(productIds);
+    }
+
+    @Override
+    public List<ProductInfo.Product> findBySellStatusIn(List<ProductSellingStatus> statuses) {
+        return productQueryDslRepository.findBySellStatusIn(statuses);
+    }
+
+    @Override
+    public List<ProductInfo.Product> findAll(ProductCommand.Query command) {
         return productQueryDslRepository.findAll(command);
     }
 }

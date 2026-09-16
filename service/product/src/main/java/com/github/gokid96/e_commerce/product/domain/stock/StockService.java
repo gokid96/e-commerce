@@ -38,9 +38,4 @@ public class StockService {
         Stock stock = stockRepository.findWithLockByProductId(command.getProductId());
         stock.restore(command.getQuantity());
     }
-
-    @Transactional(readOnly = true)
-    public int getQuantity(Long productId) {
-        return stockRepository.findByProductId(productId).getQuantity();
-    }
 }

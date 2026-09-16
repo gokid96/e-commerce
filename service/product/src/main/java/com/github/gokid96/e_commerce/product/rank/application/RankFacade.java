@@ -41,7 +41,7 @@ public class RankFacade {
         RankInfo.PopularProducts popularProducts = rankService.getPopularSellRank(command);
 
         ProductInfo.Products products = productService.getProducts(
-                ProductCommand.Products.of(popularProducts.getProductIds()));
+                ProductCommand.Query.ofIds(popularProducts.getProductIds()));
 
         return RankResult.PopularProducts.of(products.getProducts().stream()
                 .map(this::toPopularProduct)

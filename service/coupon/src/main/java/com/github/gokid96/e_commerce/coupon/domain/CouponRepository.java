@@ -20,7 +20,8 @@ public interface CouponRepository {
 
     UserCoupon saveUserCoupon(UserCoupon userCoupon);
 
-    List<UserCoupon> findUserCouponsByUserIdAndUsedStatusIn(Long userId, List<UserCouponUsedStatus> usedStatuses);
+    /** 쿠폰 정보를 조인한 조회 결과를 반환한다. */
+    List<CouponInfo.UserCoupon> findUserCouponInfosByUserIdAndUsedStatusIn(Long userId, List<UserCouponUsedStatus> usedStatuses);
 
     UserCoupon findUserCouponByUserIdAndCouponId(Long userId, Long couponId);
 

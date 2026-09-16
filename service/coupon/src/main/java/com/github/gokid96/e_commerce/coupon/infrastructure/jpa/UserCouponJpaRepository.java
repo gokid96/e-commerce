@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserCouponJpaRepository extends JpaRepository<UserCoupon, Long> {
-    List<UserCoupon> findByUserIdAndUsedStatusIn(Long userId, List<UserCouponUsedStatus> usedStatuses);
 
     Optional<UserCoupon> findByUserIdAndCouponId(Long userId, Long couponId);
 

@@ -16,9 +16,10 @@ public class CouponInfo {
         private final double discountRate;
         private final UserCouponUsedStatus usedStatus;
 
+        /** QueryDSL {@code Projections.constructor} 대상이므로 public 을 유지한다. */
         @Builder
-        private UserCoupon(Long userCouponId, Long couponId, String couponName,
-                           double discountRate, UserCouponUsedStatus usedStatus) {
+        public UserCoupon(Long userCouponId, Long couponId, String couponName,
+                          double discountRate, UserCouponUsedStatus usedStatus) {
             this.userCouponId = userCouponId;
             this.couponId = couponId;
             this.couponName = couponName;

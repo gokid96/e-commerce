@@ -80,16 +80,8 @@ public class CouponService {
 
     @Transactional(readOnly = true)
     public List<CouponInfo.UserCoupon> getUserCoupons(Long userId) {
-        List<UserCoupon> userCoupons = couponRepository.findUserCouponsByUserIdAndUsedStatusIn(
+        return couponRepository.findUserCouponInfosByUserIdAndUsedStatusIn(
                 userId, UserCouponUsedStatus.forUsable());
-
-        return userCoupons.stream()
-                .map(userCoupon -> {
-                    Coupon coupon = couponRepository.findCouponById(userCoupon.getCouponId())
-                            .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
-                    return CouponInfo.UserCoupon.of(userCoupon, coupon);
-                })
-                .toList();
     }
 
     public void requestPublishUserCoupon(CouponCommand.Publish command) {

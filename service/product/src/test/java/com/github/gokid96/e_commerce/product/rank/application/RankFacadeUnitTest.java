@@ -42,10 +42,10 @@ public class RankFacadeUnitTest {
                         RankInfo.PopularProduct.of(5L, 20L)
                 )));
 
-        given(productService.getProducts(any(ProductCommand.Products.class)))
+        given(productService.getProducts(any(ProductCommand.Query.class)))
                 .willReturn(ProductInfo.Products.of(List.of(
-                        ProductInfo.Product.builder().productId(6L).productName("상품1").productPrice(1000L).build(),
-                        ProductInfo.Product.builder().productId(5L).productName("상품2").productPrice(2000L).build()
+                        ProductInfo.Product.of(6L, "상품1", 1000L, 4),
+                        ProductInfo.Product.of(5L, "상품2", 2000L, 9)
                 )));
 
         RankResult.PopularProducts result =
@@ -53,7 +53,7 @@ public class RankFacadeUnitTest {
 
         InOrder inOrder = inOrder(rankService, productService);
         inOrder.verify(rankService, times(1)).getPopularSellRank(any());
-        inOrder.verify(productService, times(1)).getProducts(any(ProductCommand.Products.class));
+        inOrder.verify(productService, times(1)).getProducts(any(ProductCommand.Query.class));
 
         assertThat(result.getProducts()).hasSize(2)
                 .extracting("productId")

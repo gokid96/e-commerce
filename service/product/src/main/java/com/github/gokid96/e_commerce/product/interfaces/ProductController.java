@@ -27,7 +27,7 @@ public class ProductController {
             @RequestParam("pageSize") Long pageSize,
             @RequestParam(value = "cursor", required = false) Long cursor
     ) {
-        ProductResult.Products products = productFacade.getProducts(ProductCommand.Query.of(pageSize, cursor));
+        ProductResult.Products products = productFacade.getProducts(ProductCommand.Query.ofSelling(pageSize, cursor));
         return ApiResponse.ok(ProductResponse.Products.of(products));
     }
 }
