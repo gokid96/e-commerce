@@ -1,8 +1,7 @@
 package com.github.gokid96.e_commerce.common.lock.infrastructure;
 
-import com.github.gokid96.e_commerce.common.lock.LockCallback;
+import com.github.gokid96.e_commerce.common.lock.DefaultLockTemplate;
 import com.github.gokid96.e_commerce.common.lock.LockStrategy;
-import com.github.gokid96.e_commerce.common.lock.LockTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -14,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class PubSubLockTemplate implements LockTemplate {
+public class PubSubLockTemplate extends DefaultLockTemplate {
 
     private final RedissonClient redissonClient;
 
@@ -24,22 +23,22 @@ public class PubSubLockTemplate implements LockTemplate {
     }
 
     @Override
-    public <T> T executeWithLock(String key, long waitTime, long leaseTime, TimeUnit timeUnit, LockCallback<T> callback) throws Throwable {
+    protected void acquireLock(String key, long waitTime, long leaseTime, TimeUnit timeUnit) throws InterruptedException {
+        RLock lock = redissonClient.getLock(key);
+        log.debug("락 획득 시도 : {}", key);
+
+        if (!lock.tryLock(waitTime, leaseTime, timeUnit)) {
+            throw new IllegalStateException("락 획득 실패 : " + key);
+        }
+    }
+
+    @Override
+    protected void releaseLock(String key) {
         RLock lock = redissonClient.getLock(key);
 
-        try {
-            log.debug("락 획득 시도 : {}", key);
-            boolean acquired = lock.tryLock(waitTime, leaseTime, timeUnit);
-            if (!acquired) {
-                throw new IllegalStateException("락 획득 실패 : " + key);
-            }
-
-            return callback.doInLock();
-        } finally {
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-                log.debug("락 해제 : {}", key);
-            }
+        if (lock.isHeldByCurrentThread()) {
+            lock.unlock();
+            log.debug("락 해제 : {}", key);
         }
     }
 }
