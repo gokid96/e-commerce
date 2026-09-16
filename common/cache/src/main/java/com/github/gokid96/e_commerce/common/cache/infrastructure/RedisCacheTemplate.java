@@ -36,7 +36,10 @@ public class RedisCacheTemplate implements CacheTemplate {
 
     @Override
     public <T> void put(Cacheable cacheable, String key, T value) {
-        byte[] bytes = SERIALIZER.serialize(value);
+        // 직렬화기는 실패 시 예외 대신 null 을 반환하므로, 캐시에 쓰기 전에 걸러낸다.
+        byte[] bytes = Optional.ofNullable(SERIALIZER.serialize(value))
+                .orElseThrow(() -> new IllegalArgumentException("캐시 직렬화에 실패했습니다. key: " + key));
+
         redisTemplate.opsForValue().set(
                 cacheable.createKey(key), new String(bytes, StandardCharsets.UTF_8), cacheable.ttl());
     }
