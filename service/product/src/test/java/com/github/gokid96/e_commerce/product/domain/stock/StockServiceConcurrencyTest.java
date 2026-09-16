@@ -1,6 +1,6 @@
 package com.github.gokid96.e_commerce.product.domain.stock;
 
-import com.github.gokid96.e_commerce.support.ConcurrencyTestSupport;
+import com.github.gokid96.e_commerce.product.support.ConcurrencyTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
