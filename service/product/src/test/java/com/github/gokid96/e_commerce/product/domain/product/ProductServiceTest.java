@@ -22,19 +22,21 @@ public class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
-    @DisplayName("판매 중인 상품 목록을 조회한다.")
+    @DisplayName("판매 중인 상품 목록을 재고와 함께 조회한다.")
     @Test
     void getSellingProducts() {
-        Product product1 = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.SELLING).build();
-        Product product2 = Product.builder().id(2L).name("상품B").price(2000L).sellStatus(ProductSellingStatus.SELLING).build();
         given(productRepository.findBySellStatusIn(ProductSellingStatus.forSelling()))
-                .willReturn(List.of(product1, product2));
+                .willReturn(List.of(
+                        ProductInfo.Product.of(1L, "상품A", 1000L, 7),
+                        ProductInfo.Product.of(2L, "상품B", 2000L, 0)
+                ));
 
         ProductInfo.Products result = productService.getSellingProducts();
 
         assertThat(result.getProducts()).hasSize(2);
         assertThat(result.getProducts().get(0).getProductName()).isEqualTo("상품A");
         assertThat(result.getProducts().get(0).getProductPrice()).isEqualTo(1000L);
+        assertThat(result.getProducts().get(0).getStockQuantity()).isEqualTo(7);
         assertThat(result.getProducts().get(1).getProductName()).isEqualTo("상품B");
     }
 
@@ -54,8 +56,7 @@ public class ProductServiceTest {
     void getOrderProducts() {
         Product product1 = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.SELLING).build();
         Product product2 = Product.builder().id(2L).name("상품B").price(2000L).sellStatus(ProductSellingStatus.SELLING).build();
-        given(productRepository.findById(1L)).willReturn(product1);
-        given(productRepository.findById(2L)).willReturn(product2);
+        given(productRepository.findByIdIn(List.of(1L, 2L))).willReturn(List.of(product1, product2));
 
         ProductCommand.OrderProducts command = ProductCommand.OrderProducts.of(List.of(
                 ProductCommand.OrderProduct.of(1L, 2),
@@ -74,9 +75,7 @@ public class ProductServiceTest {
     @Test
     void getOrderProducts_notFound() {
         Product product1 = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.SELLING).build();
-        given(productRepository.findById(1L)).willReturn(product1);
-        given(productRepository.findById(2L))
-                .willThrow(new IllegalArgumentException("존재하지 않는 상품입니다."));
+        given(productRepository.findByIdIn(List.of(1L, 2L))).willReturn(List.of(product1));
 
         ProductCommand.OrderProducts command = ProductCommand.OrderProducts.of(List.of(
                 ProductCommand.OrderProduct.of(1L, 2),
@@ -92,7 +91,7 @@ public class ProductServiceTest {
     @Test
     void getOrderProducts_notSelling() {
         Product product = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.STOP_SELLING).build();
-        given(productRepository.findById(1L)).willReturn(product);
+        given(productRepository.findByIdIn(List.of(1L))).willReturn(List.of(product));
 
         ProductCommand.OrderProducts command = ProductCommand.OrderProducts.of(List.of(
                 ProductCommand.OrderProduct.of(1L, 1)
@@ -103,20 +102,33 @@ public class ProductServiceTest {
                 .hasMessage("판매 중인 상품이 아닙니다.");
     }
 
-    @DisplayName("상품 ID 목록으로 상품을 조회한다.")
+    @DisplayName("상품 ID 목록으로 조회하면 요청한 ID 순서를 보존한다.")
     @Test
-    void getProducts() {
-        Product product1 = Product.builder().id(1L).name("상품A").price(1000L).sellStatus(ProductSellingStatus.SELLING).build();
-        Product product2 = Product.builder().id(2L).name("상품B").price(2000L).sellStatus(ProductSellingStatus.SELLING).build();
-        given(productRepository.findById(1L)).willReturn(product1);
-        given(productRepository.findById(2L)).willReturn(product2);
-
-        ProductCommand.Products command = ProductCommand.Products.of(List.of(1L, 2L));
+    void getProductsByIds() {
+        ProductCommand.Query command = ProductCommand.Query.ofIds(List.of(2L, 1L));
+        // 리포지토리는 id desc 로 반환하므로 요청 순서와 다르다.
+        given(productRepository.findAll(command))
+                .willReturn(List.of(
+                        ProductInfo.Product.of(1L, "상품A", 1000L, 5),
+                        ProductInfo.Product.of(2L, "상품B", 2000L, 3)
+                ));
 
         ProductInfo.Products result = productService.getProducts(command);
 
-        assertThat(result.getProducts()).hasSize(2);
-        assertThat(result.getProducts().get(0).getProductId()).isEqualTo(1L);
-        assertThat(result.getProducts().get(1).getProductId()).isEqualTo(2L);
+        assertThat(result.getProducts())
+                .extracting(ProductInfo.Product::getProductId)
+                .containsExactly(2L, 1L);
+    }
+
+    @DisplayName("ID 목록 조회 시 조회되지 않은 상품이 있으면 실패한다.")
+    @Test
+    void getProductsByIds_notFound() {
+        ProductCommand.Query command = ProductCommand.Query.ofIds(List.of(1L, 2L));
+        given(productRepository.findAll(command))
+                .willReturn(List.of(ProductInfo.Product.of(1L, "상품A", 1000L, 5)));
+
+        assertThatThrownBy(() -> productService.getProducts(command))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 상품입니다.");
     }
 }

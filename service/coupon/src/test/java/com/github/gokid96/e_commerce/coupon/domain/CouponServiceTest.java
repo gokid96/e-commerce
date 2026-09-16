@@ -135,11 +135,15 @@ public class CouponServiceTest {
     @DisplayName("사용자가 보유한 사용 가능 쿠폰 목록을 조회한다.")
     @Test
     void getUserCoupons() {
-        Coupon coupon = Coupon.create("신규 가입 할인", 0.1, 100, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(7));
-        UserCoupon userCoupon = UserCoupon.create(1L, 5L);
-        given(couponRepository.findUserCouponsByUserIdAndUsedStatusIn(1L, UserCouponUsedStatus.forUsable()))
-                .willReturn(List.of(userCoupon));
-        given(couponRepository.findCouponById(5L)).willReturn(Optional.of(coupon));
+        CouponInfo.UserCoupon info = CouponInfo.UserCoupon.builder()
+                .userCouponId(1L)
+                .couponId(5L)
+                .couponName("신규 가입 할인")
+                .discountRate(0.1)
+                .usedStatus(UserCouponUsedStatus.UNUSED)
+                .build();
+        given(couponRepository.findUserCouponInfosByUserIdAndUsedStatusIn(1L, UserCouponUsedStatus.forUsable()))
+                .willReturn(List.of(info));
 
         List<CouponInfo.UserCoupon> infos = couponService.getUserCoupons(1L);
 
@@ -150,7 +154,7 @@ public class CouponServiceTest {
     @DisplayName("보유한 쿠폰이 없으면 빈 목록을 반환한다.")
     @Test
     void getUserCoupons_empty() {
-        given(couponRepository.findUserCouponsByUserIdAndUsedStatusIn(1L, UserCouponUsedStatus.forUsable()))
+        given(couponRepository.findUserCouponInfosByUserIdAndUsedStatusIn(1L, UserCouponUsedStatus.forUsable()))
                 .willReturn(List.of());
 
         assertThat(couponService.getUserCoupons(1L)).isEmpty();

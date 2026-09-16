@@ -28,20 +28,24 @@ public class ProductInfo {
         private final Long productId;
         private final String productName;
         private final long productPrice;
+        /** 보유 재고. 상품 조회 시 stock 을 조인해 함께 채운다. */
+        private final int stockQuantity;
 
+        /** QueryDSL {@code Projections.constructor} 대상이므로 public 을 유지한다. */
         @Builder
-        private Product(Long productId, String productName, long productPrice) {
+        public Product(Long productId, String productName, long productPrice, int stockQuantity) {
             this.productId = productId;
             this.productName = productName;
             this.productPrice = productPrice;
+            this.stockQuantity = stockQuantity;
         }
 
-        public static Product of(
-                com.github.gokid96.e_commerce.product.domain.product.Product product) {
+        public static Product of(Long productId, String productName, long productPrice, int stockQuantity) {
             return Product.builder()
-                    .productId(product.getId())
-                    .productName(product.getName())
-                    .productPrice(product.getPrice())
+                    .productId(productId)
+                    .productName(productName)
+                    .productPrice(productPrice)
+                    .stockQuantity(stockQuantity)
                     .build();
         }
     }

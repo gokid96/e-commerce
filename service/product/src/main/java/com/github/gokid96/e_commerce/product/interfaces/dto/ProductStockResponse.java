@@ -19,8 +19,10 @@ public class ProductStockResponse {
             this.products = products;
         }
 
-        public static Products of(List<Product> products) {
-            return new Products(products);
+        public static Products of(ProductInfo.Products products) {
+            return new Products(products.getProducts().stream()
+                    .map(Product::of)
+                    .toList());
         }
     }
 
@@ -39,12 +41,12 @@ public class ProductStockResponse {
             this.stock = stock;
         }
 
-        public static Product of(ProductInfo.Product info, int stock) {
+        public static Product of(ProductInfo.Product info) {
             return Product.builder()
                     .productId(info.getProductId())
                     .productName(info.getProductName())
                     .productPrice(info.getProductPrice())
-                    .stock(stock)
+                    .stock(info.getStockQuantity())
                     .build();
         }
     }
