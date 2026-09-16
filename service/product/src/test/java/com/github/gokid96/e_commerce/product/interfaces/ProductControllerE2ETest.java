@@ -3,7 +3,7 @@ package com.github.gokid96.e_commerce.product.interfaces;
 import com.github.gokid96.e_commerce.product.domain.product.Product;
 import com.github.gokid96.e_commerce.product.domain.product.ProductRepository;
 import com.github.gokid96.e_commerce.product.domain.product.ProductSellingStatus;
-import com.github.gokid96.e_commerce.support.E2EControllerTestSupport;
+import com.github.gokid96.e_commerce.product.support.E2EControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
